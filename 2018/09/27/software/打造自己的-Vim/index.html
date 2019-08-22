@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux,Software," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="将自己的GVIM实现成为:  能自由显示/关闭目录栏 能实现自由文件搜索 [精准搜索/正则模糊搜索] 设置工作目录，并进行目录跳转-能在新目录文件搜索   全局文件关键字搜索 代码阅读 相关函数调用，定义等查看 代码静态检查 代码注释功能，提供snippets YCM  - Mac 已安装，Linux 与 Window 未安装  快捷键 F2   开启/关闭nerdtree F3   开启/关闭">
+<meta name="keywords" content="Linux,Software">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打造自己的 Vim">
+<meta property="og:url" content="http://www.gangzai.online/2018/09/27/software/打造自己的-Vim/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="将自己的GVIM实现成为:  能自由显示/关闭目录栏 能实现自由文件搜索 [精准搜索/正则模糊搜索] 设置工作目录，并进行目录跳转-能在新目录文件搜索   全局文件关键字搜索 代码阅读 相关函数调用，定义等查看 代码静态检查 代码注释功能，提供snippets YCM  - Mac 已安装，Linux 与 Window 未安装  快捷键 F2   开启/关闭nerdtree F3   开启/关闭">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-22T13:27:10.338Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="打造自己的 Vim">
+<meta name="twitter:description" content="将自己的GVIM实现成为:  能自由显示/关闭目录栏 能实现自由文件搜索 [精准搜索/正则模糊搜索] 设置工作目录，并进行目录跳转-能在新目录文件搜索   全局文件关键字搜索 代码阅读 相关函数调用，定义等查看 代码静态检查 代码注释功能，提供snippets YCM  - Mac 已安装，Linux 与 Window 未安装  快捷键 F2   开启/关闭nerdtree F3   开启/关闭">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>打造自己的 Vim | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2018/09/27/software/打造自己的-Vim/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">打造自己的 Vim</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-27T19:35:33+08:00">
+                2018-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vim篇/" itemprop="url" rel="index">
+                    <span itemprop="name">Vim篇</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/27/software/打造自己的-Vim/" class="leancloud_visitors" data-flag-title="打造自己的 Vim">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>将自己的GVIM实现成为:</p>
+<ul>
+<li>能自由显示/关闭目录栏</li>
+<li>能实现自由文件搜索 [精准搜索/正则模糊搜索]</li>
+<li>设置工作目录，并进行目录跳转-能在新目录文件搜索  </li>
+<li>全局文件关键字搜索</li>
+<li>代码阅读 相关函数调用，定义等查看</li>
+<li>代码静态检查</li>
+<li>代码注释功能，提供snippets</li>
+<li>YCM  - Mac 已安装，Linux 与 Window 未安装</li>
+</ul>
+<h4 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h4><ul>
+<li>F2   开启/关闭nerdtree</li>
+<li>F3   开启/关闭 Taglist</li>
+<li>F4   开启/关闭 quickfix面板 [ CtrlSF/ cscope ]</li>
+<li>“\” +  s 打开静态代码检查错误面板</li>
+<li>Ctrl + p 文件搜索</li>
+<li>Ctrl + b 文件搜索列表</li>
+<li>Ctrl + r  开启/关闭模糊匹配</li>
+<li>Ctrl + v 在当前文件 竖直方式打开新文件</li>
+<li>Ctrl + y 在当前目录添加新文件</li>
+<li>Ctrl + t 在新建Tab页打开</li>
+<li>Ctrl + f  全局关键字搜索</li>
+<li>Shift + s 查找代码函数链接</li>
+<li>Shift + c 查找调用本函数的函数</li>
+<li>Shift + g 查找本定义</li>
+<li>Alt + Num 进行Tab页的切换</li>
+<li>Alt + t   打开新的Tab页</li>
+</ul>
+<p><br><br><a id="more"></a></p>
+<p>搭建环境:</p>
+<ul>
+<li>Win 10</li>
+<li>CentOS 7.1</li>
+</ul>
+<p>前述:</p>
+<ul>
+<li>本文不讲解如何在window安装Gvim，学习window安装vim请阅读<a href="https://github.com/zhangguixu/window-vim" target="_blank" rel="noopener">请点击</a></li>
+<li>包管理<code>PluginInstal PluginClean</code>  不在此说明</li>
+<li>相关插件下载请看文章末尾</li>
+</ul>
+<h4 id="Linux-vim-8-0"><a href="#Linux-vim-8-0" class="headerlink" title="Linux-vim-8.0"></a><a href="/download/vim/vim.zip">Linux-vim-8.0</a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yum install ncurses-devel </span><br><span class="line">wget https://github.com/vim/vim/archive/master.zip </span><br><span class="line">unzip master.zip </span><br><span class="line">cd vim-master </span><br><span class="line">cd src/ </span><br><span class="line">./configure --enable-multibyte --enable-pythoninterp=yes</span><br><span class="line">make </span><br><span class="line">sudo make install </span><br><span class="line">vim --version</span><br></pre></td></tr></table></figure>
+<p>重新编译的时候，想要支持 <code>python2.x</code>，则加入 <code>--enable-pythoninterp=yes</code> 参数。如果想开启 <code>Python3</code> 支持，则 <code>--enable-python3interp=yes</code>。</p>
+<p><br></p>
+<h4 id="Tab标签页切换"><a href="#Tab标签页切换" class="headerlink" title="Tab标签页切换"></a>Tab标签页切换</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">:tabnew [++opt选项] ［＋cmd］ 文件            建立对指定文件新的tab</span><br><span class="line">:tabc       关闭当前的tab</span><br><span class="line">:tabo       关闭所有其他的tab</span><br><span class="line">:tabs       查看所有打开的tab</span><br><span class="line">:tabp      前一个</span><br><span class="line">:tabn      后一个</span><br><span class="line">标准模式下：</span><br><span class="line">gt , gT 可以直接在tab之间切换。</span><br><span class="line">更多可以查看帮助 :help table ， help -p</span><br></pre></td></tr></table></figure>
+<p>Vimrc快捷键设置: Alt被xshell占用，未配置;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nn &lt;M-1&gt; 1gt</span><br><span class="line">nn &lt;M-2&gt; 2gt</span><br><span class="line">nn &lt;M-3&gt; 3gt</span><br><span class="line">nn &lt;M-4&gt; 4gt</span><br><span class="line">nn &lt;M-5&gt; 5gt</span><br><span class="line">nn &lt;M-6&gt; 6gt</span><br><span class="line">nn &lt;M-7&gt; 7gt</span><br><span class="line">nn &lt;M-8&gt; 8gt</span><br><span class="line">nn &lt;M-9&gt; 9gt</span><br><span class="line">nn &lt;M-0&gt; :tablast&lt;CR&gt;</span><br><span class="line">nn &lt;M-t&gt; :tabnew&lt;CR&gt;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="菜单栏"><a href="#菜单栏" class="headerlink" title="菜单栏"></a>菜单栏</h4><p>包安装:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Bundle &apos;scrooloose/nerdtree&apos;</span><br></pre></td></tr></table></figure>
+<p>参数配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot; nerdTree快捷键映射</span><br><span class="line">let NERDTreeWinPos=&apos;left&apos;</span><br><span class="line">let NERDTreeWinSize=25</span><br><span class="line"></span><br><span class="line">map &lt;F2&gt; :NERDTreeToggle&lt;CR&gt;</span><br><span class="line">&quot; 如果最后一个是nerdTree 则自动关闭;</span><br><span class="line">autocmd bufenter * if (winnr(&quot;$&quot;) == 1 &amp;&amp; exists(&quot;b:NERDTreeType&quot;) &amp;&amp;b:NERDTreeType == &quot;primary&quot;) | q | endif</span><br></pre></td></tr></table></figure>
+<p>F2 启动/关闭菜单栏</p>
+<p><strong>模式:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">通过 ctrl + w 加上方向键切换到 NERDTree 工具条，键入 m：</span><br><span class="line"></span><br><span class="line">NERDTree Menu. Use j/k/enter and the shortcuts indicated</span><br><span class="line">==========================================================</span><br><span class="line">&gt; (a)dd a childnode	# 一个节点，可以是文件或者文件夹</span><br><span class="line">  (m)ove the current node	# 移动或者重命名当前节点</span><br><span class="line">  (d)elete the current node	# 删除当前节点</span><br><span class="line">  (c)opy the current node</span><br><span class="line">  (l)ist the current node</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="文件搜索"><a href="#文件搜索" class="headerlink" title="文件搜索"></a>文件搜索</h4><p>包安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Plugin &apos;ctrlpvim/ctrlp.vim&apos;</span><br></pre></td></tr></table></figure>
+<p>Vimrc配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">let g:ctrlp_map = &apos;&lt;c-p&gt;&apos;</span><br><span class="line">let g:ctrlp_cmd = &apos;CtrlP&apos;</span><br><span class="line">let g:ctrlp_match_window = &apos;min:4,max:15&apos;   &quot; 最大匹配15;</span><br><span class="line">let g:ctrlp_max_depth=20</span><br><span class="line">let g:ctrlp_follow_symlinks=1</span><br><span class="line">let g:ctrlp_use_caching=0  &quot;未启用 ；  每个回话的缓存; -</span><br><span class="line">let g:ctrlp_clear_cache_on_exit=0 &quot;退出vim不删除缓存文件;</span><br><span class="line">let g:ctrlp_cache_dir=$HOME.&apos;/.cache/ctrlp&apos; &quot;设置缓存目录; -- 如果添加文件 请F5重建;</span><br><span class="line">let g:ctrlp_working_path_mode = &apos;rw&apos;  &quot;用于支持lcd目录跳转，重建索引;  CtrlPRoot</span><br><span class="line">&quot; 单个版本控制系统，列出命令不会列出没有被追踪的文件:</span><br><span class="line">let g:ctrlp_user_command = [&apos;.git&apos;, &apos;cd %s &amp;&amp; git ls-files&apos;]</span><br><span class="line">set wildignore+=*\\node_modules\\*,*.git*,*.svn*,*.zip*,*.exe* &quot; 使用vim的忽略文件</span><br></pre></td></tr></table></figure>
+<p>我们在VIm中使用<code>lcd</code> 切换目录。 当我们切换时 需要在配置文件中开启<code>let g:ctrlp_working_path_mode = &#39;rw&#39;</code>   用于建立当前目录下的索引。 来快速搜索， 不然索引还是保持在之前文件中。</p>
+<p>:help CtrlP</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">总览:~</span><br><span class="line"></span><br><span class="line">  |loaded_ctrlp|................禁用插件。</span><br><span class="line">  |ctrlp_map|...................默认按键绑定。</span><br><span class="line">  |ctrlp_cmd|...................默认按键绑定调用的命令。</span><br><span class="line">  |ctrlp_by_filename|...........是否默认开启文件名模式。</span><br><span class="line">  |ctrlp_regexp|................是否默认开启正则表达式模式。</span><br><span class="line">  |ctrlp_match_window|..........匹配窗口的显示位置。</span><br><span class="line">  |ctrlp_switch_buffer|.........如果文件已在缓冲区中打开，跳转到该打开的缓冲区。</span><br><span class="line">  |ctrlp_reuse_window|..........重用特殊窗口（帮助、快速修复 |quickfix| ，等等）。</span><br><span class="line">  |ctrlp_tabpage_position|......新标签页出现的位置。</span><br><span class="line">  |ctrlp_working_path_mode|.....如何设置CtrlP的本地工作目录。</span><br><span class="line">  |ctrlp_root_markers|..........额外的，高优先级的根目录标识。</span><br><span class="line">  |ctrlp_use_caching|...........针对每个会话，设置是否开启缓存的。</span><br><span class="line">  |ctrlp_clear_cache_on_exit|...退出Vim后是否保留缓存。</span><br><span class="line">  |ctrlp_cache_dir|.............缓存目录的位置。</span><br><span class="line">  |ctrlp_show_hidden|...........是否显示隐藏文件和隐藏文件夹。</span><br><span class="line">  |ctrlp_custom_ignore|.........使用 |globpath()| 时自定义忽略的文件或目录。</span><br><span class="line">  |ctrlp_max_files|.............扫描文件的最大数目。</span><br><span class="line">  |ctrlp_max_depth|.............扫描目录的最大层数。</span><br><span class="line">  |ctrlp_user_command|..........使用外部的扫描工具。</span><br><span class="line">  |ctrlp_max_history|...........历史提示符面板中保留的最大条目数。</span><br><span class="line">  |ctrlp_open_new_file|.........由&lt;c-y&gt;创建的文件的打开方式。</span><br><span class="line">  |ctrlp_open_multiple_files|...由&lt;c-z&gt;选择的文件的打开方式。</span><br><span class="line">  |ctrlp_arg_map|...............是否拦截&lt;c-y&gt; 和 &lt;c-o&gt; 命令。</span><br><span class="line">  |ctrlp_follow_symlinks|.......是否跟随链接。</span><br><span class="line">  |ctrlp_lazy_update|...........停止输入时才更新。</span><br><span class="line">  |ctrlp_default_input|.........为提示符面板提供一个初始字符串。</span><br><span class="line">  |ctrlp_abbrev|................输入缩写。</span><br><span class="line">  |ctrlp_key_loop|..............为多字节输入开启输入事件循环。</span><br><span class="line">  |ctrlp_prompt_mappings|.......改变提示符面板内部的按键绑定。</span><br><span class="line">  |ctrlp_line_prefix|...........ctrlp 窗口中为每一行添加前缀。</span><br><span class="line">  |ctrlp_open_single_match|.....当只有一个候选时自动接受。</span><br><span class="line">  |ctrlp_brief_prompt|..........提示符为空的时候使用&lt;bs&gt;退出 CtrlP。</span><br><span class="line">  |ctrlp_match_current_file|....在匹配条目中包含当前文件。</span><br><span class="line">  |ctrlp_types|.................內建类型的名称。</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">    &lt;F5&gt;</span><br><span class="line">    - 刷新匹配窗口并且清除当前目录的缓存。</span><br><span class="line">    - 从最近最多使用中移除被删除的文件。</span><br><span class="line"></span><br><span class="line">  &lt;F7&gt;</span><br><span class="line">    最近最多使用模式：</span><br><span class="line">    - 清除最近最多使用列表。</span><br><span class="line">    - 删除被 &lt;c-z&gt; 标记的最近最多使用条目。</span><br><span class="line">    缓冲区模式：</span><br><span class="line">    - 删除光标下的条目或者删除被 &lt;c-z&gt; 标记的多个条目。</span><br></pre></td></tr></table></figure>
+<p><strong>常用操作</strong></p>
+<ul>
+<li>Ctrl + b 切换， 从缓冲区， 最近文件 与 目录 — 查找位置;</li>
+<li>Ctrl + r 切换  字符串与正则表达式之间切换。</li>
+<li>Ctrl + v 在当前文件 竖直方式打开新文件</li>
+<li>Ctrl + y 在当前目录添加新文件。</li>
+<li>Ctrl + t 在新建Tab页打开</li>
+<li>F5  重建当前目录文件，并且删除 最近打开文件中， 已删除文件</li>
+<li>F7  删除最近打开文件。</li>
+</ul>
+<p><br></p>
+<h4 id="全局文件内关键字搜索"><a href="#全局文件内关键字搜索" class="headerlink" title="全局文件内关键字搜索"></a>全局文件内关键字搜索</h4><p>存在插件有</p>
+<ol>
+<li>EasyGrep</li>
+<li>Ack.vim</li>
+</ol>
+<p>但是vim本身即实现此种操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /tablespace_sizeofcu/ ** | copen</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 只搜索当前文件 vim /main/ % | copen</span><br><span class="line">2. 只搜索当前目录 vim /main/ * | copen   </span><br><span class="line">3. 搜索上级目录下，并递归 vim /main/ ../** | copen</span><br><span class="line">4. 可以在多个路径中搜索  vim /main path1/** path2/** | copen</span><br></pre></td></tr></table></figure>
+<p><strong>效率太慢</strong></p>
+<p>CtrlSF</p>
+<p>包安装:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Plugin &apos;dyng/ctrlsf.vim&apos;</span><br></pre></td></tr></table></figure>
+<p>Vimrc配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">nnoremap &lt;C-f&gt; :CtrlSF&lt;Space&gt;</span><br><span class="line">let g:ctrlsf_default_view_mode = &apos;compact&apos;</span><br><span class="line">let g:ctrlsf_ackprg=&apos;ack&apos;   &quot; 设置为ag;</span><br><span class="line">let g:ctrlsf_auto_close=0  &quot;设置不自动关闭;</span><br><span class="line">let g:ctrlsf_case_sensitive=&apos;no&apos;  &quot;大小写不敏感;</span><br><span class="line">let g:ctrlsf_ignore_dir=[&apos;tags&apos;, &apos;.git&apos;, &apos;.svn&apos;]  &quot;忽略tags;</span><br><span class="line">let g:ctrlsf_default_root=&apos;project&apos;</span><br></pre></td></tr></table></figure>
+<p><strong>CtrlSF_default_root</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">g:ctrlsf_default_root                                  *&apos;g:ctrlsf_default_root&apos;*</span><br><span class="line">Default: &apos;cwd&apos;</span><br><span class="line">Available: &apos;cwd&apos;, &apos;project&apos;, &apos;project+xx&apos;</span><br><span class="line">Defines how CtrlSF works if no explicit search path is given. Possible value</span><br><span class="line">is &apos;cwd&apos;,&apos;project&apos; and &apos;project+xx&apos;.(&apos;xx&apos; is two sub-options for &apos;project&apos;.)</span><br><span class="line"></span><br><span class="line">Explanation for each option:</span><br><span class="line"></span><br><span class="line">&apos;cwd&apos;         - Use current working directory.</span><br><span class="line">&apos;project&apos;     - CtrlSF will try to find project root from current file to</span><br><span class="line">                its ancestors. A project root is a directory with VCS</span><br><span class="line">                folder is placed in. Currently CtrlSF can recognize .git,</span><br><span class="line">                .hg, .svn, .bzr, _darcs.</span><br><span class="line">&apos;project+xx&apos;  - Same as &apos;project&apos;. But you can have more control about how</span><br><span class="line">                project directory is found and fallback root if no project</span><br><span class="line">                root is found.</span><br><span class="line"></span><br><span class="line">    First &apos;x&apos; defines from where to search project root. It has 2 possible</span><br><span class="line">    values:</span><br><span class="line">        &apos;f&apos; - search from current file.</span><br><span class="line">        &apos;w&apos; - search from current working directory.</span><br><span class="line"></span><br><span class="line">    Second &apos;x&apos; defines the fallback search root for the case project root is</span><br><span class="line">    not found. It has 2 possible values:</span><br><span class="line">        &apos;f&apos; - current file is fallback search root.</span><br><span class="line">        &apos;w&apos; - current working directory is fallback search root.</span><br><span class="line"></span><br><span class="line">    Option &apos;project&apos; is identical to &apos;project+ff&apos;.</span><br></pre></td></tr></table></figure>
+<p>检索更快的 <a href="/download/vim/ag-install-pachage.zip">ag</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">yum -y install pcre-devel xz-devel</span><br><span class="line">sudo git clone https://github.com/ggreer/the_silver_searcher.git</span><br><span class="line">cd the_silver_searcher</span><br><span class="line">sudo ./build.sh</span><br><span class="line">sudo make install</span><br><span class="line">which ag</span><br><span class="line">==&gt; /usr/local/bin/ag</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="cscope-代码跳转"><a href="#cscope-代码跳转" class="headerlink" title="cscope 代码跳转"></a>cscope 代码跳转</h4><blockquote>
+<p>cscopen  本身就是Unix血统，是Linux所自动支持的。</p>
+</blockquote>
+<p><a href="/download/vim/cscope_windows.7z">window下载cscope</a>     解压后放置在 vim 同目录即可[不需再修改环境变量]。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cscope -Rbq  生成索引文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">cscope commands:</span><br><span class="line">add  : Add a new database             (Usage: add file|dir [pre-path] [flags])</span><br><span class="line">find : Query for a pattern            (Usage: find a|c|d|e|f|g|i|s|t name)</span><br><span class="line">       a: Find assignments to this symbol</span><br><span class="line">       c: Find functions calling this function</span><br><span class="line">       d: Find functions called by this function</span><br><span class="line">       e: Find this egrep pattern</span><br><span class="line">       f: Find this file</span><br><span class="line">       g: Find this definition</span><br><span class="line">       i: Find files #including this file</span><br><span class="line">       s: Find this C symbol</span><br><span class="line">       t: Find this text string</span><br><span class="line">help : Show this message              (Usage: help)</span><br><span class="line">kill : Kill a connection              (Usage: kill #)</span><br><span class="line">reset: Reinit all connections         (Usage: reset)</span><br><span class="line">show : Show connections               (Usage: show)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    0 或 s   查找本 C 符号(可以跳过注释) </span><br><span class="line">    1 或 g   查找本定义 </span><br><span class="line">    2 或 d   查找本函数调用的函数 </span><br><span class="line">    3 或 c   查找调用本函数的函数 </span><br><span class="line">    4 或 t   查找本字符串 </span><br><span class="line">    6 或 e   查找本 egrep 模式 </span><br><span class="line">    7 或 f   查找本文件 </span><br><span class="line">    8 或 i   查找包含本文件的文件</span><br></pre></td></tr></table></figure>
+<p>Vimrc 参数配置;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span><br><span class="line">&quot; cscope setting</span><br><span class="line">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span><br><span class="line">&quot;setcscopequickfix=s-,c-,d-,i-,t-,e-</span><br><span class="line"></span><br><span class="line">if has(&quot;cscope&quot;)</span><br><span class="line">    set csprg=/usr/bin/cscope</span><br><span class="line">    set csto=1</span><br><span class="line">    set cst</span><br><span class="line">    set nocsverb</span><br><span class="line">    &quot; add any database in current directory</span><br><span class="line">    if filereadable(&quot;cscope.out&quot;)</span><br><span class="line">        cs add cscope.out</span><br><span class="line">    endif</span><br><span class="line">    set csverb</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line">nmap &lt;S-s&gt; :cs find s &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-g&gt; :cs find g &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-c&gt; :cs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-t&gt; :cs find t &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-e&gt; :cs find e &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-f&gt; :cs find f &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br><span class="line">nmap &lt;S-i&gt; :cs find i ^&lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;$&lt;CR&gt;</span><br><span class="line">nmap &lt;S-d&gt; :cs find d &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;</span><br></pre></td></tr></table></figure>
+<p>Shit+ 热键即可使用;</p>
+<p>但window并不能显示qiuckfix窗口 后添加 <code>:copen</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap &lt;S-c&gt; :cs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt;:copen&lt;CR&gt;&lt;CR&gt;</span><br></pre></td></tr></table></figure>
+<p>能自动打开qiuckFix窗口，但是会自动跳转到第一个；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap &lt;S-c&gt; :cs find c &lt;C-R&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;CR&gt;&lt;CR&gt; :bd&lt;CR&gt; :copen&lt;CR&gt;/&lt;C-R&gt;0&lt;CR&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>:bd&lt;CR&gt;</code> - 删除缓冲区，所以这会关闭第一个搜索结果, 但多个Tab标签页，将会被关闭. 使用Tab请删掉bd</li>
+<li><code>:copen&lt;CR&gt;</code> - 在当前打开quickfix窗口</li>
+<li><code>/&lt;C-R&gt;0&lt;CR&gt;</code>-打开搜索结果 - 搜索的第0个 </li>
+</ul>
+<p><br></p>
+<h4 id="静态代码检查"><a href="#静态代码检查" class="headerlink" title="静态代码检查"></a>静态代码检查</h4><p>包安装:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot; 静态代码检查;</span><br><span class="line">Bundle &apos;scrooloose/syntastic&apos;s</span><br></pre></td></tr></table></figure>
+<p>Vimrc配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&quot;静态代码检查;</span><br><span class="line">&quot; 设置错误符号</span><br><span class="line">let g:syntastic_error_symbol=&apos;✗&apos;</span><br><span class="line">let g:syntastic_warning_symbol=&apos;&gt;&apos;</span><br><span class="line">let g:syntastic_check_on_open=1</span><br><span class="line">let g:syntastic_check_on_wq=0</span><br><span class="line">let g:syntastic_enable_highlighting=1</span><br><span class="line">let g:syntastic_python_checkers=[&apos;pyflakes&apos;] &quot; 使用pyflakes,速度比pylint快</span><br><span class="line">let g:syntastic_javascript_checkers = [&apos;jsl&apos;, &apos;jshint&apos;]</span><br><span class="line">let g:syntastic_html_checkers=[&apos;tidy&apos;, &apos;jshint&apos;]</span><br><span class="line"></span><br><span class="line">&quot; 修改高亮的背景色, 适应主题</span><br><span class="line">&quot;highlight SyntasticErrorSign guifg=white guibg=black</span><br><span class="line"></span><br><span class="line">&quot; to error location list</span><br><span class="line">let g:syntastic_always_populate_loc_list = 0</span><br><span class="line">let g:syntastic_auto_loc_list = 0</span><br><span class="line">let g:syntastic_loc_list_height = 5</span><br><span class="line"></span><br><span class="line">function! ToggleErrors()</span><br><span class="line">    let old_last_winnr = winnr(&apos;$&apos;)</span><br><span class="line">    lclose</span><br><span class="line">    if old_last_winnr == winnr(&apos;$&apos;)</span><br><span class="line">        &quot; Nothing was closed, open syntastic error location panel</span><br><span class="line">         Errors</span><br><span class="line">    endif</span><br><span class="line">endfunction</span><br><span class="line">&quot; &lt;Leader&gt;  &quot;\&quot;  + s </span><br><span class="line">nnoremap &lt;Leader&gt;s :call ToggleErrors()&lt;cr&gt;</span><br></pre></td></tr></table></figure>
+<p>\  + s 打开错误显示面板</p>
+<h4 id="格式化代码"><a href="#格式化代码" class="headerlink" title="格式化代码"></a>格式化代码</h4><p>包安装:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Plugin &apos;Chiel92/vim-autoformat&apos;</span><br></pre></td></tr></table></figure>
+<p>Vimrc配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">noremap &lt;F5&gt; :Autoformat&lt;CR&gt;</span><br><span class="line">let g:autoformat_verbosemode=1</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="代码助手"><a href="#代码助手" class="headerlink" title="代码助手"></a>代码助手</h4><p><strong>需要使用tab键，尽量与YCM不要冲突;</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Plugin &apos;honza/vim-snippets&apos;</span><br><span class="line">Plugin &apos;SirVer/ultisnips&apos;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="代码提示-YCM-未装"><a href="#代码提示-YCM-未装" class="headerlink" title="代码提示  YCM (未装)"></a>代码提示  YCM (未装)</h4><h4 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h4><p><a href="/download/vim/vimrc-window">Window配置文件</a><br><a href="/download/vim/cscope_windows.7z">window-cscope</a></p>
+<p><a href="/download/vim/linux-vim-set.tar.gz">Linux-配置文件与bundle包</a><br><a href="/download/vim/vim.zip">Linux-vim-8.0</a><br><a href="/download/vim/ag-install-pachage.zip">linux-ag</a><br><a href="https://gangzai.online/2017/08/16/software/vim%E9%85%8D%E7%BD%AEctags-taglist/" target="_blank" rel="noopener">vim-配置ctags+taglist</a><br><a href="https://gangzai.online/2018/07/17/software/Centos7-bash-%E5%AE%89%E8%A3%85powerline/" target="_blank" rel="noopener">Bash-配置powerline</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Software/" rel="tag"># Software</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/18/database/Postgresql扩展SQL与存储过程/" rel="next" title="postgresql扩展SQL与存储过程">
+                <i class="fa fa-chevron-left"></i> postgresql扩展SQL与存储过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/29/database/Postgresql扩展Sql-hook/" rel="prev" title="Postgresql扩展Sql-hook">
+                Postgresql扩展Sql-hook <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">106</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#快捷键"><span class="nav-number">1.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux-vim-8-0"><span class="nav-number">2.</span> <span class="nav-text">Linux-vim-8.0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tab标签页切换"><span class="nav-number">3.</span> <span class="nav-text">Tab标签页切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#菜单栏"><span class="nav-number">4.</span> <span class="nav-text">菜单栏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件搜索"><span class="nav-number">5.</span> <span class="nav-text">文件搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局文件内关键字搜索"><span class="nav-number">6.</span> <span class="nav-text">全局文件内关键字搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cscope-代码跳转"><span class="nav-number">7.</span> <span class="nav-text">cscope 代码跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态代码检查"><span class="nav-number">8.</span> <span class="nav-text">静态代码检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#格式化代码"><span class="nav-number">9.</span> <span class="nav-text">格式化代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码助手"><span class="nav-number">10.</span> <span class="nav-text">代码助手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码提示-YCM-未装"><span class="nav-number">11.</span> <span class="nav-text">代码提示  YCM (未装)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#下载"><span class="nav-number">12.</span> <span class="nav-text">下载</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+    <!-- custom analytics part create by xiamo -->
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+<script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+<script>
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+	$(".leancloud_visitors").each(function() {
+		var url = $(this).attr("id").trim();
+		query.equalTo("url", url);
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {
+					var content = '0 ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+					return;
+				}
+				for (var i = 0; i < results.length; i++) {
+					var object = results[i];
+					var content = object.get('time') + ' ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+				}
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+
+	});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content =  counter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else if ($('.post-title-link').length > 1) {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Postgresql," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="unde &amp;amp; redoundo – 回滚; redo – 前滚恢复: 发生崩溃时, 进行数据恢复, 通过已存在的预写式日志(WAL)来重新恢复数据库.">
+<meta name="keywords" content="Postgresql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postgresql Wal">
+<meta property="og:url" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="unde &amp;amp; redoundo – 回滚; redo – 前滚恢复: 发生崩溃时, 进行数据恢复, 通过已存在的预写式日志(WAL)来重新恢复数据库.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/1545960796300.png">
+<meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/wal-0.png">
+<meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/1564482331032.png">
+<meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/wal-1.png">
+<meta property="og:updated_time" content="2019-08-14T09:40:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Postgresql Wal">
+<meta name="twitter:description" content="unde &amp;amp; redoundo – 回滚; redo – 前滚恢复: 发生崩溃时, 进行数据恢复, 通过已存在的预写式日志(WAL)来重新恢复数据库.">
+<meta name="twitter:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/1545960796300.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>Postgresql Wal | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Postgresql Wal</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-19T20:27:32+08:00">
+                2019-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/" class="leancloud_visitors" data-flag-title="Postgresql Wal">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="unde-amp-redo"><a href="#unde-amp-redo" class="headerlink" title="unde &amp; redo"></a>unde &amp; redo</h4><p>undo – 回滚;</p>
+<p>redo – 前滚恢复: 发生崩溃时, 进行数据恢复, 通过已存在的预写式日志(WAL)来重新恢复数据库.</p>
+<a id="more"></a>
+<h4 id="Wal"><a href="#Wal" class="headerlink" title="Wal"></a>Wal</h4><p>预写式日志(WAL)是保证数据完整性的一种标准方法。 </p>
+<p>​    WAL的中心概念是数据文件(存储表 和 索引) 的修改[select操作并不会被记录]必须在这些动作被日志记录之后才会被写入, 即在<strong>描述这些改变的日志记录被刷到持久存储</strong>以后。</p>
+<p>​    因此我们不需要在每个事务提交时刷写数据页面到磁盘，因为我们知道发生崩溃时可以通过日志来恢复数据库。任何还没有被应用到数据页面的改变可以根据其日志记录进行重做。即前滚恢复。</p>
+<p>如果数据库在异步提交和事务WAL记录写入之间的风险窗口期间崩溃，在该事务期间所作的修改将丢失。</p>
+<p>后台进程(“WAL写进程”)每wal_writer_delay毫秒就会把未写入的wal记录刷写到磁盘。</p>
+<p>风险窗口实际的最大持续时间是 wal_writer_delay的3倍，因为wal写进程被设计成倾向于在忙时一次写入所有页面。</p>
+<p>commit_delay    Sets the delay in microseconds between transaction commit and flushing WAL to disk.; </p>
+<h4 id="wal段-文件命令组成"><a href="#wal段-文件命令组成" class="headerlink" title="wal段: 文件命令组成:"></a>wal段: 文件命令组成:</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#define XLogFilePath(path, tli, logSegNo)	\</span></span><br><span class="line">	snprintf(path, MAXPGPATH, XLOGDIR <span class="string">"/%08X%08X%08X"</span>, tli,				\</span><br><span class="line">			 (uint32) ((logSegNo) / XLogSegmentsPerXLogId),				\</span><br><span class="line">			 (uint32) ((logSegNo) % XLogSegmentsPerXLogId))</span><br></pre></td></tr></table></figure>
+<p>组成共 3 * 8 =&gt; 24位;</p>
+<p>分别由 ThisTimeLineID, logSegNo / XLogSegmentsPerXLogId, logSegNo % XLogSegmentsPerXLogId.</p>
+<p>构成;</p>
+<p>时间线:  从1开始,接收到ArchiveRecoveryRequested [.conf 存在归档恢复] 时， findNewestTimeline + 1; </p>
+<p>logSegNo: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static XLogSegNo openLogSegNo = 0;</span><br></pre></td></tr></table></figure>
+<p>时间线</p>
+<p>​    1    </p>
+<p>日志文件标号: </p>
+<p>​    5EA</p>
+<p>日志文件段标号:</p>
+<p>​    9</p>
+<p><img src="1545960796300.png" alt=""></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf %d <span class="number">0</span>x95FA20   ===&gt;  <span class="number">9828896</span></span><br></pre></td></tr></table></figure>
+<h4 id="Wal相关函数"><a href="#Wal相关函数" class="headerlink" title="Wal相关函数"></a>Wal相关函数</h4><ul>
+<li>pg_current_wal_lsn()</li>
+<li>pg_current_wal_insert_lsn() 显示当前预写日志插入位置.</li>
+<li>pg_current_wal_flush_lsn() 显示当前预写日志刷新位置;</li>
+<li>pg_wal_lsn_diff()  以字节数计算两个预写日志位置之间的差别..<ul>
+<li><code>select pg_wal_lsn_diff ( pg_current_wal_insert_lsn(),  pg_current_wal_lsn());</code></li>
+</ul>
+</li>
+<li>pg_wal_replay_pause()  立即暂停恢复. (仅限于超级用户..)</li>
+<li>pg_wal_replay_resume()  如果恢复被暂停, 重启之..</li>
+</ul>
+<p>pg_rman redo; -&gt; blockrecover;</p>
+<p>对照相应的lsn 查找对应的wal file; 按照其偏移 - </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">targetPgePtr = LSN - ( LSN % XLOG_BLCKSZ);</span><br><span class="line">targetRecoff = LSN % XLOG_BLCKSZ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">readOff = ReadPageINternal_rman(state, </span><br><span class="line">								targetPagePtr,</span><br><span class="line">								Min(targetRecOff + SizeOfXlogRecord, XLOG_BLCKSZ))</span><br></pre></td></tr></table></figure>
+<h4 id="Wal-file-结构"><a href="#Wal-file-结构" class="headerlink" title="Wal file 结构"></a><a href="https://www.jianshu.com/p/b9087d9f20e2" target="_blank" rel="noopener">Wal file 结构</a></h4><p><img src="wal-0.png" alt="img"></p>
+<p>内存布局:</p>
+<ol>
+<li><p>XLogLongPageHeaderData  – 40byte</p>
+</li>
+<li><p>prev xlog record        – 16byte [First Page]</p>
+</li>
+<li><p>Xlog Record             – 24byte</p>
+</li>
+<li><p>Xlog Record Block Header  –  4byte   【0-N】</p>
+<p>0..N个XLogRecordBlockHeader,每个XLogRecordBlockHeader对应一个block data;<br>注意:如设置了BKPBLOCK_HAS_IMAGE标记,则在XLogRecordBlockHeader结构体后跟XLogRecordBlockImageHeader结构体;</p>
+<p>如设置了BKPIMAGE_HAS_HOLE和 BKPIMAGE_IS_COMPRESSED, 则在XLogRecordBlockImageHeader后跟XLogRecordBlockCompressHeader结构体;</p>
+</li>
+<li><p>XLogRecordDataHeader[Short | Long ]</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogRecordDataHeaderShort</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint8		id;				<span class="comment">/* XLR_BLOCK_ID_DATA_SHORT */</span></span><br><span class="line">	uint8		data_length;	<span class="comment">/* number of payload bytes */</span></span><br><span class="line">&#125;			XLogRecordDataHeaderShort;</span><br></pre></td></tr></table></figure>
+<p><code>uint8 data_length</code> 是指main data的大小.  3字节的结构.</p>
+</li>
+<li><p>block Data</p>
+<ol>
+<li><p>xl_heap_header</p>
+</li>
+<li><p>Tuple data</p>
+<p>length = [ XLOG Record’s len ] - [ sizeof(xlog record block header) ] - [ sizeof(xlog record data header[short | long]) ] - [ xl_heap_header ] - [ main_data ]</p>
+</li>
+</ol>
+</li>
+<li><p>main Data</p>
+</li>
+</ol>
+<p>WAL 按照PageSize [8192] 进行排列.</p>
+<p>第一个Page才会使用此struct</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogLongPageHeaderData</span>   ==&gt; 40<span class="title">byte</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	XLogPageHeaderData <span class="built_in">std</span>;		<span class="comment">/* standard header fields */</span>               <span class="number">24b</span>yte</span><br><span class="line">	uint64		xlp_sysid;		<span class="comment">/* system identifier from pg_control */</span>   <span class="number">8b</span>yte</span><br><span class="line">	uint32		xlp_seg_size;	<span class="comment">/* just as a cross-check */</span>                <span class="number">4b</span>yte</span><br><span class="line">	uint32		xlp_xlog_blcksz;	<span class="comment">/* just as a cross-check */</span>            <span class="number">4b</span>yte</span><br><span class="line">&#125; XLogLongPageHeaderData;</span><br></pre></td></tr></table></figure>
+<p>其余Page使用…</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogPageHeaderData</span>  ==&gt; 24<span class="title">byte</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint16		xlp_magic;		<span class="comment">/* magic value for correctness checks */</span>  <span class="number">2b</span>yte</span><br><span class="line">	uint16		xlp_info;		<span class="comment">/* flag bits, see below */</span>                <span class="number">2b</span>yte</span><br><span class="line">	TimeLineID	xlp_tli;		<span class="comment">/* TimeLineID of first record on page */</span>  <span class="number">4b</span>yte</span><br><span class="line">	XLogRecPtr	xlp_pageaddr;	<span class="comment">/* XLOG address of this page */</span>           <span class="number">8b</span>yte</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * When there is not enough space on current page for whole record, we</span></span><br><span class="line"><span class="comment">	 * continue on the next page.  xlp_rem_len is the number of bytes</span></span><br><span class="line"><span class="comment">	 * remaining from a previous page.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * Note that xl_rem_len includes backup-block data; that is, it tracks</span></span><br><span class="line"><span class="comment">	 * xl_tot_len not xl_len in the initial header.  Also note that the</span></span><br><span class="line"><span class="comment">	 * continuation data isn't necessarily aligned.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	uint32		xlp_rem_len;	<span class="comment">/* total len of remaining data for record */</span>  <span class="number">4b</span>yte</span><br><span class="line">&#125; XLogPageHeaderData;</span><br></pre></td></tr></table></figure>
+<p>记录每个Record:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The overall layout of an XLOG record is:</span></span><br><span class="line"><span class="comment"> *		Fixed-size header (XLogRecord struct)</span></span><br><span class="line"><span class="comment"> *		XLogRecordBlockHeader struct</span></span><br><span class="line"><span class="comment"> *		XLogRecordBlockHeader struct</span></span><br><span class="line"><span class="comment"> *		...</span></span><br><span class="line"><span class="comment"> *		XLogRecordDataHeader[Short|Long] struct</span></span><br><span class="line"><span class="comment"> *		block data</span></span><br><span class="line"><span class="comment"> *		block data</span></span><br><span class="line"><span class="comment"> *		...</span></span><br><span class="line"><span class="comment"> *		main data</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * There can be zero or more XLogRecordBlockHeaders, and 0 or more bytes of</span></span><br><span class="line"><span class="comment"> * rmgr-specific data not associated with a block.  XLogRecord structs</span></span><br><span class="line"><span class="comment"> * always start on MAXALIGN boundaries in the WAL files, but the rest of</span></span><br><span class="line"><span class="comment"> * the fields are not aligned.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The XLogRecordBlockHeader, XLogRecordDataHeaderShort and</span></span><br><span class="line"><span class="comment"> * XLogRecordDataHeaderLong structs all begin with a single 'id' byte. It's</span></span><br><span class="line"><span class="comment"> * used to distinguish between block references, and the main data structs.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">XLOG Record按存储的数据内容来划分，大体可以分为三类：</span><br><span class="line"></span><br><span class="line">Record <span class="keyword">for</span> backup block：存储full-write-page的block，这种类型Record是为了解决page部分写的问题。在checkpoint完成后第一次修改数据page，在记录此变更写入事务日志文件时整页写入（需设置相应的初始化参数，默认为打开）；</span><br><span class="line">Record <span class="keyword">for</span> tuple data block：存储page中的tuple变更，使用这种类型的Record记录；</span><br><span class="line">Record <span class="keyword">for</span> Checkpoint：在checkpoint发生时，在事务日志文件中记录checkpoint信息(其中包括Redo point)。</span><br><span class="line"></span><br><span class="line">其中XLOG Record data是存储实际数据的地方，由以下几部分组成：</span><br><span class="line"></span><br><span class="line"><span class="number">0.</span>.N个XLogRecordBlockHeader，每一个XLogRecordBlockHeader对应一个block data；</span><br><span class="line">XLogRecordDataHeader[Short|Long]，如数据大小&lt;<span class="number">256</span> Bytes，则使用Short格式，否则使用Long格式；</span><br><span class="line">block data：full-write-page data和tuple data。对于full-write-page data，如启用了压缩，则数据压缩存储，压缩后该page相关的元数据存储在XLogRecordBlockCompressHeader中；</span><br><span class="line">main data： /checkpoint等日志数据.</span><br></pre></td></tr></table></figure>
+<p>固定Record Header结构:  – 记录 prev wal</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogRecord</span>   ==&gt; 24<span class="title">byte</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint32		xl_tot_len;		<span class="comment">/* total len of entire record */</span>         <span class="number">4b</span>yte</span><br><span class="line">	TransactionId xl_xid;		<span class="comment">/* xact id */</span>                            <span class="number">4b</span>yte</span><br><span class="line">	XLogRecPtr	xl_prev;		<span class="comment">/* ptr to previous record in log */</span>      <span class="number">8b</span>yte</span><br><span class="line">	uint8		xl_info;		<span class="comment">/* flag bits, see below */</span>              <span class="number">1b</span>yte</span><br><span class="line">	RmgrId		xl_rmid;		<span class="comment">/* resource manager for this record */</span>  <span class="number">1b</span>yte</span><br><span class="line">	<span class="comment">/* 2 bytes of padding here, initialize to zero */</span> --  +<span class="number">2</span> byte</span><br><span class="line">	pg_crc32c	xl_crc;			<span class="comment">/* CRC for this record */</span>                <span class="number">4b</span>yte</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* XLogRecordBlockHeaders and XLogRecordDataHeader follow, no padding */</span></span><br><span class="line"></span><br><span class="line">&#125; XLogRecord;</span><br></pre></td></tr></table></figure>
+<p>实际Record Block Data Header存放:  数据信息头.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogRecordBlockHeader</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint8		id;				<span class="comment">/* block reference ID */</span>   						<span class="number">1b</span>yte</span><br><span class="line">	uint8		fork_flags;		<span class="comment">/* fork within the relation, and flags */</span>  		  <span class="number">1b</span>yte</span><br><span class="line">	uint16		data_length;	<span class="comment">/* number of payload bytes (not including page     2byte</span></span><br><span class="line"><span class="comment">								 * image) */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* If BKPBLOCK_HAS_IMAGE, an XLogRecordBlockImageHeader struct follows */</span></span><br><span class="line">	<span class="comment">/* If BKPBLOCK_SAME_REL is not set, a RelFileNode follows */</span></span><br><span class="line">	<span class="comment">/* BlockNumber follows */</span></span><br><span class="line">&#125; XLogRecordBlockHeader;</span><br></pre></td></tr></table></figure>
+<p>Record Data Header ==&gt; XLogRecordDataHeader[Short|Long]，如数据大小&lt;256 Bytes，则使用Short格式，否则使用Long格式；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * XLogRecordDataHeaderShort/Long are used for the "main data" portion of</span></span><br><span class="line"><span class="comment"> * the record. If the length of the data is less than 256 bytes, the short</span></span><br><span class="line"><span class="comment"> * form is used, with a single byte to hold the length. Otherwise the long</span></span><br><span class="line"><span class="comment"> * form is used.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * (These structs are currently not used in the code, they are here just for</span></span><br><span class="line"><span class="comment"> * documentation purposes).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogRecordDataHeaderShort</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint8		id;				<span class="comment">/* XLR_BLOCK_ID_DATA_SHORT */</span></span><br><span class="line">	uint8		data_length;	<span class="comment">/* number of payload bytes */</span></span><br><span class="line">&#125;			XLogRecordDataHeaderShort;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SizeOfXLogRecordDataHeaderShort (sizeof(uint8) * 2)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">XLogRecordDataHeaderLong</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint8		id;				<span class="comment">/* XLR_BLOCK_ID_DATA_LONG */</span></span><br><span class="line">	<span class="comment">/* followed by uint32 data_length, unaligned */</span></span><br><span class="line">&#125;			XLogRecordDataHeaderLong;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SizeOfXLogRecordDataHeaderLong (sizeof(uint8) + sizeof(uint32))</span></span><br></pre></td></tr></table></figure>
+<p><strong>access/heapam_xlog.h</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">xl_heap_header</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint16		t_infomask2;  <span class="comment">//2byte</span></span><br><span class="line">	uint16		t_infomask;   <span class="comment">//2byte</span></span><br><span class="line">	uint8		t_hoff;       <span class="comment">//1byte</span></span><br><span class="line">&#125; xl_heap_header;</span><br></pre></td></tr></table></figure>
+<p>SQL 标记操作:</p>
+<p><img src="1564482331032.png" alt="img"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* This is what we need to know about insert */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">xl_heap_insert</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	OffsetNumber offnum;		<span class="comment">/* inserted tuple's offset */</span></span><br><span class="line">	uint8		flags;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* xl_heap_header &amp; TUPLE DATA in backup block 0 */</span></span><br><span class="line">&#125; xl_heap_insert;</span><br></pre></td></tr></table></figure>
+<p>执行INSERT数据为例, 在插入数据时的XLOG Record Data内部结构如下图.</p>
+<p><img src="wal-1.png" alt="img"></p>
+<p>[pg_waldump]PostgreSQL自带的wal解析;</p>
+<h4 id="连续归档"><a href="#连续归档" class="headerlink" title="连续归档"></a>连续归档</h4><p>在任何时候，Postgresql维护在数据库数据目录的子目录pg_wal/【下一个子预写日志】。  </p>
+<p>这个日志文件记录了任何对数据库数据文件的更改。文件的存在主要目的是用于崩溃安全(crash-safety). 如果数据库崩溃，数据库通过”重播”从最后检查点依赖产生的日志条目可以恢复一致。</p>
+<p>日志的存在性使人们可能以第三策略来备份数据库, 结合文件系统级别备份和wal文件备份。恢复文件系统备份，然后从备份WAL文件重新运行， 把系统恢复到当前状态。</p>
+<ul>
+<li>不需要一个从出发点完全一致的文件系统备份。备份中任何内部不一致的地方将会通过在日志重做被纠正。</li>
+<li>结合无限长的持续的重做WAL文件, 连续备份可以简单的归档，只要继续归档WAL文件即可。</li>
+<li>重做最终WAL条目一直到结束是没有必要的。 我们能够阻止任何点的重做, 并有一个一致的数据库快照</li>
+</ul>
+<h4 id="设置WAL归档"><a href="#设置WAL归档" class="headerlink" title="设置WAL归档."></a>设置WAL归档.</h4><p>正在运行的PostgreSQL系统产生无限长序列的WAL记录. 该系统物理上划分这个序列到多个WAL段文件，通常每个段只有16MB(但是在创建PostgreSQL时, 段的大小可以改变)。</p>
+<p>该段文件给出序列数字名称来映射它们在抽象WAL序列上的位置. </p>
+<p>当不使用WAL归档，系统就通常只创建几个段文件，然后回收它们，通过重命名不在需要的段文件到更高的段编号。 其内容在最后检查点之前则是没有使用价值和可以循环使用。</p>
+<h4 id="pg-start-backup"><a href="#pg-start-backup" class="headerlink" title="pg_start_backup"></a>pg_start_backup</h4><p>pg_start_backup 开始为制作基础备份进行准备工作. 恢复过程从重做点开始, 因此pg_start_backup必须执行检查点, 以便在制作基础备份的开始时刻显示创建一个重做点。此次检查点的位置必须保存在非pg_control的其它文件中, 因为在备份期间可能会执行多次常规检查点.</p>
+<ul>
+<li>强制进入整页写入模式.</li>
+<li>切换到当前的WAL段文件</li>
+<li>执行检查点.</li>
+<li>创建backup_label</li>
+</ul>
+<h5 id="backup-label-文件如下"><a href="#backup-label-文件如下" class="headerlink" title="backup_label 文件如下:"></a>backup_label 文件如下:</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">START WAL LOCATION: <span class="number">0</span>/<span class="number">2</span>B000060 (file <span class="number">00000002000000000000002</span>B)</span><br><span class="line">CHECKPOINT LOCATION: <span class="number">0</span>/<span class="number">2</span>B000098</span><br><span class="line">BACKUP METHOD: pg_start_backup</span><br><span class="line">BACKUP FROM: master</span><br><span class="line">START TIME: <span class="number">2019</span>-<span class="number">07</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">19</span>:<span class="number">55</span> CST</span><br><span class="line">LABEL: test_pitr_1</span><br></pre></td></tr></table></figure>
+<ol>
+<li>检查点位置 —— 该命令所创建检查点的LSN位置。</li>
+<li>WAL开始位置——这不是给PITR用的，而是为流复制准备的。它被命名为START WAL LOCATION，因为复制模式下的备用服务器在初始启动时只读取一次该值。</li>
+<li>备份方法——这是用于进行此基本备份的方法，如pg_start_backup或pg_basebackup。</li>
+<li>备份来源 —— 说明此备份是从主库还是备库拉取。</li>
+<li>开始时间 —— 这是执行pg_start_backup时的时间戳。</li>
+<li>备份标签 —— 这是pg_start_backup中指定的标签。</li>
+</ol>
+<h4 id="pg-stop-backup"><a href="#pg-stop-backup" class="headerlink" title="pg_stop_backup"></a>pg_stop_backup</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ligang=# select pg_stop_backup ();</span><br><span class="line">NOTICE:  pg_stop_backup complete, all required WAL segments have been archived</span><br><span class="line"> pg_stop_backup </span><br><span class="line"><span class="comment">----------------</span></span><br><span class="line"> 0/2F0001C8</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>pg_start_backup打开整页写入, 关闭整页写入.</p>
+</li>
+<li><p>写入一条备份结束的xlog记录。</p>
+</li>
+<li><p>切换WAL段文件</p>
+</li>
+<li><p>创建一个备份历史记录文件 – <code>00000002000000000000002B.00000060.backup</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">START WAL LOCATION: 0/2B000060 (file 00000002000000000000002B)</span><br><span class="line">STOP WAL LOCATION: 0/2F0001C8 (file 00000002000000000000002F)</span><br><span class="line">CHECKPOINT LOCATION: 0/2B000098</span><br><span class="line">BACKUP METHOD: pg_start_backup</span><br><span class="line">BACKUP FROM: master</span><br><span class="line">START TIME: 2019-07-30 15:19:55 CST</span><br><span class="line">LABEL: test_pitr_1</span><br><span class="line">STOP TIME: 2019-07-30 15:37:29 CST</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除backup_label文件.</p>
+</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rmgr: XLOG        len (rec/tot):    <span class="number">106</span>/   <span class="number">106</span>, tx:          <span class="number">0</span>, lsn: <span class="number">0</span>/<span class="number">2</span>E000060, prev <span class="number">0</span>/<span class="number">2</span>E000028, desc: CHECKPOINT_ONLINE redo <span class="number">0</span>/<span class="number">2</span>E000028; tli <span class="number">2</span>; prev tli <span class="number">2</span>; fpw true; xid <span class="number">0</span>:<span class="number">604</span>; oid <span class="number">24601</span>; multi <span class="number">1</span>; offset <span class="number">0</span>; oldest xid <span class="number">551</span> <span class="keyword">in</span> DB <span class="number">1</span>; oldest multi <span class="number">1</span> <span class="keyword">in</span> DB <span class="number">1</span>; oldest/newest commit timestamp xid: <span class="number">0</span>/<span class="number">0</span>; oldest running xid <span class="number">604</span>; online</span><br><span class="line">rmgr: XLOG        len (rec/tot):     <span class="number">34</span>/    <span class="number">34</span>, tx:          <span class="number">0</span>, lsn: <span class="number">0</span>/<span class="number">2</span>E0000D0, prev <span class="number">0</span>/<span class="number">2</span>E000060, desc: BACKUP_END <span class="number">0</span>/<span class="number">2</span>E000028</span><br><span class="line">rmgr: XLOG        len (rec/tot):     <span class="number">24</span>/    <span class="number">24</span>, tx:          <span class="number">0</span>, lsn: <span class="number">0</span>/<span class="number">2</span>E0000F8, prev <span class="number">0</span>/<span class="number">2</span>E0000D0, desc: <span class="keyword">SWITCH</span></span><br></pre></td></tr></table></figure>
+<h4 id="PITR-时间点恢复-Point-In-Time-Recovery"><a href="#PITR-时间点恢复-Point-In-Time-Recovery" class="headerlink" title="PITR 时间点恢复(Point In Time Recovery)"></a>PITR 时间点恢复(Point In Time Recovery)</h4><p>PITR 时间点恢复(Point In Time Recovery)与 常规恢复过程区别:</p>
+<ol>
+<li>从哪里读取WAL段文件<ol>
+<li>正常恢复模式 – 来自基础目录下pg_wal子目录</li>
+<li>PITR模式    – 来自配置参数archive_command的归档目录</li>
+</ol>
+</li>
+<li>从哪里读取检查点设置.<ol>
+<li>正常恢复模式 – 来自pg_control文件</li>
+<li>PITR模式    – 来自backup_label</li>
+</ol>
+</li>
+</ol>
+<h5 id="PITR恢复操作"><a href="#PITR恢复操作" class="headerlink" title="PITR恢复操作:"></a>PITR恢复操作:</h5><p>1.进入解压得到的data目录，删除pg_xlog文件夹，创建pg_xlog/archive_status文件夹：<br>    rm -rf pg_xlog<br>    mkdir -p pg_xlog/archive_status</p>
+<ol>
+<li>从/usr/local/postgres-9.3.5/share目录下，拷贝一份recovery.conf：<br>cp /usr/local/postgres-9.3.5/share/recovery.conf.sample recovery.conf</li>
+<li>修改recovery.conf<br>vi recovery.conf： 添加： restore_command =  ‘cp /home/postgres/archive/%f %p’</li>
+</ol>
+<h5 id="PITR流程"><a href="#PITR流程" class="headerlink" title="PITR流程:"></a>PITR流程:</h5><ol>
+<li>Postgresql 使用内部函数read_backup_label从backup_label文件中读取CHECKPOINT LOCATION值。</li>
+<li>PostgreSQL 从recover.conf中读取一些参数值。 restore_command 和 recovery_target_time.</li>
+<li>Postgresql 开始从重放点重放WAL数据, 重做点的位置可以简单的从CHECKPOINT LOCATION的值中获得，PostgreSQL执行restore_command配置的命令, 将归档命令从归档区域复制到临时区域, 并从中读取WAL数据, 复制到临时区域的日志文件会在使用后被删除.</li>
+<li>当恢复完成后, 会在pg_wal子目录创建时间线历史文件, 如xxxx.history. 如果启用了日志归档功能, 则还会在归档目录中创建相同的命名文件.</li>
+</ol>
+<h4 id="Redo-Pointer-验证"><a href="#Redo-Pointer-验证" class="headerlink" title="Redo Pointer 验证"></a>Redo Pointer 验证</h4><h5 id="阅读代码"><a href="#阅读代码" class="headerlink" title="阅读代码"></a>阅读代码</h5><p>src/backend/access/transam/xlog.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> XLogRecord*</span><br><span class="line">ReadRecord(XLogReaderState *xlogreader, XLogRecPtr RecPtr, <span class="keyword">int</span> emode,</span><br><span class="line">			<span class="keyword">bool</span> fetching_ckpt)</span><br></pre></td></tr></table></figure>
+<p>src/backend/access/transam/xlogreader.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">XLogRecord *</span><br><span class="line">XLogReadRecord(XLogReaderState *state, XLogRecPtr RecPtr, <span class="keyword">char</span> **errormsg)</span><br></pre></td></tr></table></figure>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p>lsn是全局唯一值, 用于wal记录中记录总偏移位置.  [pg_waldump]</p>
+<p>pg_controldata –&gt;  使用 $(PGDATA)/global/pg_control</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">pg_control version number:            <span class="number">1002</span></span><br><span class="line">Catalog version number:               <span class="number">201707211</span></span><br><span class="line">Database system identifier:           <span class="number">6721851427625463280</span></span><br><span class="line">Database cluster state:               in production</span><br><span class="line">pg_control last modified:             Tue <span class="number">06</span> Aug <span class="number">2019</span> <span class="number">08</span>:<span class="number">56</span>:<span class="number">48</span> AM CST</span><br><span class="line">Latest checkpoint location:           <span class="number">0</span>/<span class="number">170F</span>548</span><br><span class="line">Prior checkpoint location:            <span class="number">0</span>/<span class="number">170F</span>270</span><br><span class="line">Latest checkpoint's REDO location:    <span class="number">0</span>/<span class="number">170F</span>548</span><br><span class="line">Latest checkpoint's REDO WAL file:    <span class="number">000000010000000000000001</span></span><br><span class="line">Latest checkpoint's TimeLineID:       <span class="number">1</span></span><br><span class="line">Latest checkpoint's PrevTimeLineID:   <span class="number">1</span></span><br><span class="line">Latest checkpoint's full_page_writes: on</span><br><span class="line">Latest checkpoint's NextXID:          <span class="number">0</span>:<span class="number">558</span></span><br><span class="line">Latest checkpoint's NextOID:          <span class="number">13901</span></span><br><span class="line">Latest checkpoint's NextMultiXactId:  <span class="number">1</span></span><br><span class="line">Latest checkpoint's NextMultiOffset:  <span class="number">0</span></span><br><span class="line">Latest checkpoint's oldestXID:        <span class="number">551</span></span><br><span class="line">Latest checkpoint's oldestXID's DB:   <span class="number">1</span></span><br><span class="line">Latest checkpoint's oldestActiveXID:  <span class="number">0</span></span><br><span class="line">Latest checkpoint's oldestMultiXid:   <span class="number">1</span></span><br><span class="line">Latest checkpoint's oldestMulti's DB: <span class="number">1</span></span><br><span class="line">Latest checkpoint's oldestCommitTsXid:<span class="number">0</span></span><br><span class="line">Latest checkpoint's newestCommitTsXid:<span class="number">0</span></span><br><span class="line">Time of latest checkpoint:            Tue <span class="number">06</span> Aug <span class="number">2019</span> <span class="number">08</span>:<span class="number">56</span>:<span class="number">43</span> AM CST</span><br><span class="line">Fake LSN counter <span class="keyword">for</span> unlogged rels:   <span class="number">0</span>/<span class="number">1</span></span><br><span class="line">Minimum recovery ending location:     <span class="number">0</span>/<span class="number">0</span></span><br><span class="line">Min recovery ending loc's timeline:   <span class="number">0</span></span><br><span class="line">Backup start location:                <span class="number">0</span>/<span class="number">0</span></span><br><span class="line">Backup end location:                  <span class="number">0</span>/<span class="number">0</span></span><br><span class="line">End-of-backup record required:        no</span><br><span class="line">wal_level setting:                    replica</span><br><span class="line">wal_log_hints setting:                off</span><br><span class="line">max_connections setting:              <span class="number">100</span></span><br><span class="line">max_worker_processes setting:         <span class="number">10</span></span><br><span class="line">max_prepared_xacts setting:           <span class="number">0</span></span><br><span class="line">max_locks_per_xact setting:           <span class="number">64</span></span><br><span class="line">track_commit_timestamp setting:       off</span><br><span class="line">Maximum data alignment:               <span class="number">8</span></span><br><span class="line">Database block size:                  <span class="number">8192</span></span><br><span class="line">Blocks per segment of large relation: <span class="number">131072</span></span><br><span class="line">WAL block size:                       <span class="number">8192</span></span><br><span class="line">Bytes per WAL segment:                <span class="number">16777216</span></span><br><span class="line">Maximum length of identifiers:        <span class="number">64</span></span><br><span class="line">Maximum columns in an index:          <span class="number">32</span></span><br><span class="line">Maximum size of a TOAST chunk:        <span class="number">1996</span></span><br><span class="line">Size of a large-object chunk:         <span class="number">2048</span></span><br><span class="line">Date/time type storage:               <span class="number">64</span>-bit integers</span><br><span class="line">Float4 argument passing:              by value</span><br><span class="line">Float8 argument passing:              by value</span><br><span class="line">Data page checksum version:           <span class="number">0</span></span><br><span class="line">Mock authentication nonce:            <span class="number">9</span>d1637d4a6729f17d02cc91eac480e274342cd29ca69add6ca7b960e94c9c7b2</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/docker/Docker/" rel="next" title="Docker">
+                <i class="fa fa-chevron-left"></i> Docker
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/" rel="prev" title="Postgresql Guc">
+                Postgresql Guc <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">106</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#unde-amp-redo"><span class="nav-number">1.</span> <span class="nav-text">unde &amp; redo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Wal"><span class="nav-number">2.</span> <span class="nav-text">Wal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#wal段-文件命令组成"><span class="nav-number">3.</span> <span class="nav-text">wal段: 文件命令组成:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Wal相关函数"><span class="nav-number">4.</span> <span class="nav-text">Wal相关函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Wal-file-结构"><span class="nav-number">5.</span> <span class="nav-text">Wal file 结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连续归档"><span class="nav-number">6.</span> <span class="nav-text">连续归档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置WAL归档"><span class="nav-number">7.</span> <span class="nav-text">设置WAL归档.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pg-start-backup"><span class="nav-number">8.</span> <span class="nav-text">pg_start_backup</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#backup-label-文件如下"><span class="nav-number">8.1.</span> <span class="nav-text">backup_label 文件如下:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pg-stop-backup"><span class="nav-number">9.</span> <span class="nav-text">pg_stop_backup</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PITR-时间点恢复-Point-In-Time-Recovery"><span class="nav-number">10.</span> <span class="nav-text">PITR 时间点恢复(Point In Time Recovery)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PITR恢复操作"><span class="nav-number">10.1.</span> <span class="nav-text">PITR恢复操作:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PITR流程"><span class="nav-number">10.2.</span> <span class="nav-text">PITR流程:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redo-Pointer-验证"><span class="nav-number">11.</span> <span class="nav-text">Redo Pointer 验证</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#阅读代码"><span class="nav-number">11.1.</span> <span class="nav-text">阅读代码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#补充"><span class="nav-number">12.</span> <span class="nav-text">补充</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+    <!-- custom analytics part create by xiamo -->
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+<script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+<script>
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+	$(".leancloud_visitors").each(function() {
+		var url = $(this).attr("id").trim();
+		query.equalTo("url", url);
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {
+					var content = '0 ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+					return;
+				}
+				for (var i = 0; i < results.length; i++) {
+					var object = results[i];
+					var content = object.get('time') + ' ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+				}
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+
+	});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content =  counter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else if ($('.post-title-link').length > 1) {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Postgresql,Database," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Pg系统本身提供不同扩展,可以通过select * from pg_language 来查看支持 123456lanname  | lanowner | lanispl | lanpltrusted | lanplcallfoid | laninline | lanvalidator | lanacl----------+----------+---------+--------------+--">
+<meta name="keywords" content="Postgresql,Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="postgresql扩展SQL与存储过程">
+<meta property="og:url" content="http://www.gangzai.online/2018/09/18/database/Postgresql扩展SQL与存储过程/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="Pg系统本身提供不同扩展,可以通过select * from pg_language 来查看支持 123456lanname  | lanowner | lanispl | lanpltrusted | lanplcallfoid | laninline | lanvalidator | lanacl----------+----------+---------+--------------+--">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-19T16:11:16.362Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="postgresql扩展SQL与存储过程">
+<meta name="twitter:description" content="Pg系统本身提供不同扩展,可以通过select * from pg_language 来查看支持 123456lanname  | lanowner | lanispl | lanpltrusted | lanplcallfoid | laninline | lanvalidator | lanacl----------+----------+---------+--------------+--">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>postgresql扩展SQL与存储过程 | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2018/09/18/database/Postgresql扩展SQL与存储过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">postgresql扩展SQL与存储过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-18T19:04:50+08:00">
+                2018-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/18/database/Postgresql扩展SQL与存储过程/" class="leancloud_visitors" data-flag-title="postgresql扩展SQL与存储过程">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Pg系统本身提供不同扩展,可以通过<code>select * from pg_language</code> 来查看支持</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lanname  | lanowner | lanispl | lanpltrusted | lanplcallfoid | laninline | lanvalidator | lanacl</span><br><span class="line">----------+----------+---------+--------------+---------------+-----------+--------------+--------</span><br><span class="line"> internal |       10 | f       | f            |             0 |         0 |         2246 |</span><br><span class="line"> c        |       10 | f       | f            |             0 |         0 |         2247 |</span><br><span class="line"> sql      |       10 | f       | t            |             0 |         0 |         2248 |</span><br><span class="line"> plpgsql  |       10 | t       | t            |         13335 |     13336 |        13337 |</span><br></pre></td></tr></table></figure>
+<p><br><br><a id="more"></a></p>
+<h4 id="internal"><a href="#internal" class="headerlink" title="internal"></a><code>internal</code></h4><p>内部函数都是用C写的函数，它们<strong>已经通过静态链接的方式嵌入 PostgreSQL服务器进程中</strong>了。 函数定义的”函数体”确定了函数的C语言名称， 它不必与给 SQL 使用的名称相同。出于向下兼容考虑， 一个空的函数体也可以被接受， 这意味着 C 函数名与 SQL 函数名相同。</p>
+<p>通常，所有在服务器里出现的内部函数都在数据库初始化时定义。 但是用户可以用<code>CREATE FUNCTION</code>为内部函数创建额外的别名。 内部函数在<code>CREATE FUNCTION</code>命令里是带着<code>internal</code>语言名声明的。    </p>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> square_root(<span class="keyword">double</span> <span class="keyword">precision</span>) <span class="keyword">RETURNS</span> <span class="keyword">double</span> <span class="keyword">precision</span></span><br><span class="line">     <span class="keyword">AS</span> <span class="string">'dsqrt'</span></span><br><span class="line">     <span class="keyword">LANGUAGE</span> internal</span><br><span class="line">     <span class="keyword">STRICT</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>pg_proc.h</code></li>
+<li><p>需要在pg源码中添加c执行函数(静态编译到Postgres)</p>
+<p><strong>示例</strong></p>
+</li>
+<li><p><a href="https://gangzai.online/2018/08/22/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%BA%90%E7%A0%81%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">Pg源码添加系统函数</a>  创建函数相同,  直接在psql中<code>create function</code> 即可。</p>
+</li>
+</ul>
+<h4 id="c"><a href="#c" class="headerlink" title="c"></a><code>c</code></h4><p>用户定义的函数可以用 C 写(或者是与C兼容的语言，比如C++)。 这样的函数<strong>被编译进动态加载对象(共享库)并且由服务器根据需要加载。</strong> 动态加载的特性是”C 语言函数”和”内部函数”之间的区别—不过， 实际的编码习惯在两者之间实际上是一样的。</p>
+<ul>
+<li>需要在pg中添加C代码(插件形式)</li>
+<li>在插件sql代码中 或者 单独执行 <code>create function</code> 用来动态加载 <code>sa &#39;$libdir/xxx&#39;</code> 查找相应动态库  </li>
+</ul>
+<p><strong>示例</strong></p>
+<ul>
+<li><a href="https://gangzai.online/2018/08/23/database/PostgreSql%E6%89%A9%E5%B1%95Sql-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%B1%E4%BA%AB%E5%BA%93-C%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">共享库</a></li>
+<li><a href="https://gangzai.online/2018/08/30/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/" target="_blank" rel="noopener">插件</a></li>
+</ul>
+<h4 id="sql"><a href="#sql" class="headerlink" title="sql"></a><code>sql</code></h4><p>   方法是把该函数的返回类型声明为<code>SETOF *sometype*</code>。 或者等价声明它为<code>RETURNS TABLE(*columns*)</code>。 这种情况下，最后一条查询结果的所有行都会被返回。</p>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> clean_emp() <span class="keyword">RETURNS</span> <span class="built_in">void</span></span><br><span class="line"><span class="keyword">AS</span>  $$</span><br><span class="line">   <span class="keyword">DELETE</span> <span class="keyword">FROM</span> emp</span><br><span class="line">      <span class="keyword">WHERE</span> salary &lt; <span class="number">0</span>; </span><br><span class="line">$$   LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<h4 id="plpgsql"><a href="#plpgsql" class="headerlink" title="plpgsql"></a><code>plpgsql</code></h4>   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> clean_emp() <span class="keyword">RETURNS</span> <span class="built_in">void</span> </span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">    [ &lt;&lt;label&gt;&gt; ]</span><br><span class="line">    [ <span class="keyword">DECLARE</span></span><br><span class="line">        declaration ]</span><br><span class="line">    <span class="keyword">BEGIN</span></span><br><span class="line">        statements</span><br><span class="line">    <span class="keyword">END</span> [label];</span><br><span class="line">$$ LANGUAGE PLPGSQL;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>中括号部分为可选部分</li>
+<li>块中的每一个declaration和每一条statement都由一个分号终止</li>
+<li>块支持嵌套，嵌套时子块的END后面必须跟一个分号，最外层的块END后可不跟分号</li>
+<li>BEGIN后面不必也不能跟分号</li>
+<li>END后跟的label名必须和块开始时的标签名一致</li>
+<li>所有关键字都不区分大小写。标识符被隐含地转换成小写字符，除非被双引号包围</li>
+<li>声明的变量在当前块及其子块中有效，子块开始前可声明并覆盖（只在子块内覆盖）外部块的同名变量</li>
+<li>变量被子块中声明的变量覆盖时，子块可以通过外部块的label访问外部块的变量</li>
+</ul>
+<h4 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a><strong>存储过程</strong></h4><p>存储过程(Stored Procedure)是大型数据库系统中，一组为了完成特定功能的SQL语句集，存储在数据库中，首次编译后再次调用不需要再次编译，用户通过指定存储过程的名字并给出参数(如果有)来执行它。它是数据库中的一个重要对象，任何一个设计良好的数据库应用程序都应该用到存储过程。</p>
+<blockquote>
+<p>Postgresql对存储过程的描述是:存储过程和用户定义的函数(UDF)是SQL和过程语句的集合，它存储于数据库服务器并能呗SQL接口调用。</p>
+</blockquote>
+<p>存储过程特性:</p>
+<ul>
+<li>存储于数据库服务器</li>
+<li>一次编译后可多次调用</li>
+<li>由SQL和过程语句来定义</li>
+<li>应用程序通过SQL接口来调用</li>
+</ul>
+<h5 id="sql-PLSql的区别"><a href="#sql-PLSql的区别" class="headerlink" title="sql /PLSql的区别:"></a><strong>sql /PLSql的区别:</strong></h5><ul>
+<li>SQL 是结构化查询语言，比较接近自然语言，使用SQL，只需要说干什么，不需要说怎么干。有数据定义语言，数据操纵语言，数据控制语言构成。 它不面向对象，即前一句与后一句无关。SQL是标准的语句。</li>
+<li>PL/SQL ，Oracle对SQL标准的扩充，增加了面向过程功能，所以可以用来编写存储过程，存储函数，触发器等等。PL/SQL是结构化的SQL，就是在标准SQL中加入了 <code>IF..ELSE.</code> <code>FOR...</code> 等控制过程的SQL<ul>
+<li>PL/SQL是块结构语言,意味着程序可以分成若干逻辑块,各自包含那个单元里要求的逻辑语言资源。可以对块宣布本地变量，在块中使用这些变量,可在它们应用的块中特别地处理错误条件(叫做Exceptions)</li>
+</ul>
+</li>
+</ul>
+<h5 id="基于SQL的存储过程定义"><a href="#基于SQL的存储过程定义" class="headerlink" title="基于SQL的存储过程定义"></a>基于SQL的存储过程定义</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> <span class="keyword">add</span>(a <span class="built_in">INTEGER</span>, b <span class="built_in">NUMERIC</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="built_in">NUMERIC</span></span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> a+b;</span><br><span class="line">$$ LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<p><strong>包含输入输出</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> plus_and_minus</span><br><span class="line">(<span class="keyword">IN</span> a <span class="built_in">INTEGER</span>, <span class="keyword">IN</span> b <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> c <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> d <span class="built_in">NUMERIC</span>)</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> a+b, a-b;</span><br><span class="line">$$ LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<p><strong>在函数定义中，可以编写任意合法SQL语句，不一定是select ，但最后一条SQL必须是select语句，并且该sql的结果将作为该函数的输出结果</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> plus_and_minus</span><br><span class="line">(<span class="keyword">IN</span> a <span class="built_in">INTEGER</span>, <span class="keyword">IN</span> b <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> c <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> d <span class="built_in">NUMERIC</span>)</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> a+b, a-b;</span><br><span class="line">	<span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">test</span> <span class="keyword">VALUES</span>(<span class="string">'test1'</span>);</span><br><span class="line">	<span class="keyword">SELECT</span> a-b, a+b;</span><br><span class="line">$$ LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<p><strong>结果如下:</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> plus_and_minus(<span class="number">5</span>,<span class="number">3</span>);</span><br><span class="line"> c | d</span><br><span class="line"><span class="comment">---+---</span></span><br><span class="line"> 2 | 8</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+<h5 id="基于pl-pgsql存储过程定义"><a href="#基于pl-pgsql存储过程定义" class="headerlink" title="基于pl/pgsql存储过程定义"></a>基于pl/pgsql存储过程定义</h5><p>PL/pgsql是一个块结构语言，函数定义的所有文本都必须是一个块。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[ &lt;&lt;label&gt;&gt; ]</span><br><span class="line">[ DECLARE</span><br><span class="line">   	declaration ]</span><br><span class="line">BEGIN</span><br><span class="line">	statements</span><br><span class="line">END [label];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>中括号部分为可选部分</li>
+<li>块中的每一个declaration和每一条statement都由一个分号终止</li>
+<li>块支持嵌套，嵌套时子块的END后面必须跟一个分号，最外层的块END后可不跟分号</li>
+<li>BEGIN后面不必也不能跟分号</li>
+<li>END后跟的label名必须和块开始时的标签名一致</li>
+<li>所有关键字都不区分大小写。标识符被隐含地转换成小写字符，除非被双引号包围</li>
+<li>声明的变量在当前块及其子块中有效，子块开始前可声明并覆盖（只在子块内覆盖）外部块的同名变量</li>
+<li>变量被子块中声明的变量覆盖时，子块可以通过外部块的label访问外部块的变量</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> somefunc() <span class="keyword">RETURNS</span> <span class="built_in">integer</span> <span class="keyword">AS</span> $$</span><br><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">	quantity <span class="built_in">integer</span> := <span class="number">30</span>;  <span class="comment">-- 赋值;</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">	<span class="comment">-- Prints 30</span></span><br><span class="line">	<span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">'Quantity here is %'</span>, quantity;</span><br><span class="line">	quantity := 50;</span><br><span class="line">	<span class="comment">-- Create a subblock</span></span><br><span class="line">    <span class="keyword">DECLARE</span></span><br><span class="line">    	quantity <span class="built_in">integer</span> := <span class="number">80</span>;</span><br><span class="line">    <span class="keyword">BEGIN</span></span><br><span class="line">    	<span class="comment">-- Prints 80</span></span><br><span class="line">    	<span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">'Quantity here is %'</span>, quantity;</span><br><span class="line">    	<span class="comment">-- Prints 50</span></span><br><span class="line">    	RAISE NOTICE 'Outer quantity here is %', outerblock.quantity;</span><br><span class="line">    <span class="keyword">END</span>;</span><br><span class="line">    <span class="comment">-- Prints 50</span></span><br><span class="line">	RAISE NOTICE 'Quantity here is %', quantity;</span><br><span class="line">    RETURN quantity;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">$$ LANGUAGE plpgsql;</span><br></pre></td></tr></table></figure>
+<h5 id="返回多列"><a href="#返回多列" class="headerlink" title="返回多列"></a>返回多列</h5><p>PostgreSQL除了支持自带类型外，还支持用户创建自定义类型。在这里可以自定义一个复合类型，并在函数中返回一个该复合类型的值，从而实现返回一行多列</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TYPE</span> compfoo <span class="keyword">AS</span> (col1 <span class="built_in">INTEGER</span>, col2 <span class="built_in">TEXT</span>);</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> getCompFoo</span><br><span class="line">(in_col1 <span class="built_in">INTEGER</span>, in_col2 <span class="built_in">TEXT</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> compfoo</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line"><span class="keyword">DECLARE</span> <span class="keyword">result</span> compfoo;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">	result.col1 := in_col1 * <span class="number">2</span>;</span><br><span class="line">	result.col2 := in_col2 || '_result';</span><br><span class="line">	RETURN result;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">$$ LANGUAGE PLPGSQL;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> getCompFoo(<span class="number">1</span>,<span class="string">'1'</span>);</span><br><span class="line"> col1 |   col2</span><br><span class="line"><span class="comment">------+----------</span></span><br><span class="line">    2 | 1_result</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+<h5 id="使用SETOF返回多行记录"><a href="#使用SETOF返回多行记录" class="headerlink" title="使用SETOF返回多行记录"></a>使用SETOF返回多行记录</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TYPE</span> compfoo <span class="keyword">AS</span> (col1 <span class="built_in">INTEGER</span>, col2 <span class="built_in">TEXT</span>);  <span class="comment">-- 也可以返回一列;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> getSet(<span class="keyword">rows</span> <span class="built_in">INTEGER</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> SETOF compfoo</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">	<span class="keyword">RETURN</span> <span class="keyword">QUERY</span> <span class="keyword">SELECT</span> i * <span class="number">2</span>, i || <span class="string">'_text'</span> </span><br><span class="line">	<span class="keyword">FROM</span> generate_series(<span class="number">1</span>, <span class="keyword">rows</span>, <span class="number">1</span>) <span class="keyword">as</span> t(i);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">$$ LANGUAGE PLPGSQL;</span><br><span class="line"><span class="keyword">SELECT</span> col1, col2 <span class="keyword">FROM</span> getSet(<span class="number">2</span>);</span><br><span class="line"> col1 |  col2</span><br><span class="line"><span class="comment">------+--------</span></span><br><span class="line">    2 | 1_text</span><br><span class="line">    4 | 2_text</span><br><span class="line">(2 rows)</span><br></pre></td></tr></table></figure>
+<h5 id="使用return-table返回多行多列"><a href="#使用return-table返回多行多列" class="headerlink" title="使用return table返回多行多列"></a>使用return table返回多行多列</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> getTable(<span class="keyword">rows</span> <span class="built_in">INTEGER</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="keyword">TABLE</span>(col1 <span class="built_in">INTEGER</span>, col2 <span class="built_in">TEXT</span>)</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">	<span class="keyword">RETURN</span> <span class="keyword">QUERY</span> <span class="keyword">SELECT</span> i * <span class="number">2</span>, i || <span class="string">'_text'</span></span><br><span class="line">	<span class="keyword">FROM</span> generate_series(<span class="number">1</span>, <span class="keyword">rows</span>, <span class="number">1</span>) <span class="keyword">as</span> t(i);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">$$ LANGUAGE PLPGSQL;</span><br><span class="line"><span class="keyword">SELECT</span> col1, col2 <span class="keyword">FROM</span> getTable(<span class="number">2</span>);</span><br><span class="line"> col1 |  col2</span><br><span class="line"><span class="comment">------+--------</span></span><br><span class="line">    2 | 1_text</span><br><span class="line">    4 | 2_text</span><br><span class="line">(2 rows)</span><br></pre></td></tr></table></figure>
+<h5 id="多态SQL函数"><a href="#多态SQL函数" class="headerlink" title="多态SQL函数"></a>多态SQL函数</h5><p>SQL函数可以声明为接受多态类型(anyelement 和 anyarray )的参数或返回多态类型的返回值。</p>
+<ul>
+<li><p>函数参数和返回值均为多态类型，其调用方式和调用其他类型的SQL函数完全相同，只是在传递字符串类型的参数时，需要显示转换到目标类型，否则会被认为<code>unknown</code>类型。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> get_array(anyelement, anyelement)</span><br><span class="line"><span class="keyword">RETURNS</span> anyarray</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> <span class="built_in">ARRAY</span>[$<span class="number">1</span>, $<span class="number">2</span>];</span><br><span class="line">$$ LANGUAGE SQL;</span><br><span class="line"><span class="keyword">SELECT</span> get_array(<span class="number">1</span>,<span class="number">2</span>), get_array(<span class="string">'a'</span>::<span class="built_in">text</span>,<span class="string">'b'</span>::<span class="built_in">text</span>);</span><br><span class="line"> get_array | get_array </span><br><span class="line"><span class="comment">-----------+-----------</span></span><br><span class="line"> &#123;1,2&#125;     | &#123;a,b&#125;</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数参数为多态类型，而返回值为基本类型</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> is_greater(anyelement, anyelement)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="built_in">BOOLEAN</span></span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> $<span class="number">1</span> &gt; $<span class="number">2</span>;</span><br><span class="line">$$ LANGUAGE SQL;</span><br><span class="line"><span class="keyword">SELECT</span> is_greater(<span class="number">7.0</span>, <span class="number">4.5</span>);</span><br><span class="line"> is_greater </span><br><span class="line"><span class="comment">------------</span></span><br><span class="line"> t</span><br><span class="line">(1 row)</span><br><span class="line"><span class="keyword">SELECT</span> is_greater(<span class="number">2</span>, <span class="number">4</span>);    </span><br><span class="line"> is_greater </span><br><span class="line"><span class="comment">------------</span></span><br><span class="line"> f</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>输入输出参数均为多态类型。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> get_array</span><br><span class="line">(<span class="keyword">IN</span> anyelement, <span class="keyword">IN</span> anyelement, <span class="keyword">OUT</span> anyelement, <span class="keyword">OUT</span> anyarray)</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> $<span class="number">1</span>, <span class="built_in">ARRAY</span>[$<span class="number">1</span>, $<span class="number">2</span>];</span><br><span class="line">$$ LANGUAGE SQL;</span><br><span class="line"><span class="keyword">SELECT</span> get_array(<span class="number">4</span>,<span class="number">5</span>), get_array(<span class="string">'c'</span>::<span class="built_in">text</span>, <span class="string">'d'</span>::<span class="built_in">text</span>);</span><br><span class="line">  get_array  |  get_array  </span><br><span class="line"><span class="comment">-------------+-------------</span></span><br><span class="line"> (4,"&#123;4,5&#125;") | (c,"&#123;c,d&#125;")</span><br><span class="line">(1 row)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h5><p>在Postgresql中,多个函数可共用一个函数名，但它们的参数必须得不同。与面向对象的函数重载类似。 因此在Posgresql删除函数时，必须显示指定参数列表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> get_array(anyelement, anyelement);</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<ul>
+<li><a href="https://gangzai.online/2018/08/22/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%BA%90%E7%A0%81%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">Postgresql扩展Sql-源码添加系统函数</a></li>
+<li><a href="https://gangzai.online/2018/08/23/database/PostgreSql%E6%89%A9%E5%B1%95Sql-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%B1%E4%BA%AB%E5%BA%93-C%E5%87%BD%E6%95%B0/" target="_blank" rel="noopener">PostgreSql扩展Sql-动态加载共享库(C函数)</a></li>
+<li><a href="https://gangzai.online/2018/08/30/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/" target="_blank" rel="noopener">Postgresql扩展Sql-添加插件</a></li>
+</ul>
+<p><strong>参考</strong></p>
+<p><a href="http://www.postgres.cn/docs/9.5/xfunc.html" target="_blank" rel="noopener">Postgresql 9.5 用户定义函数</a></p>
+<p><a href="https://my.oschina.net/Suregogo/blog/311648?tdsourcetag=s_pcqq_aiomsg" target="_blank" rel="noopener">Postgresql 系统函数分析记录</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+          
+            <a href="/tags/Database/" rel="tag"># Database</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/13/database/Postgresql操作符重载/" rel="next" title="PostgresSql操作符重载">
+                <i class="fa fa-chevron-left"></i> PostgresSql操作符重载
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/27/software/打造自己的-Vim/" rel="prev" title="打造自己的 Vim">
+                打造自己的 Vim <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">106</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#internal"><span class="nav-number">1.</span> <span class="nav-text">internal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c"><span class="nav-number">2.</span> <span class="nav-text">c</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sql"><span class="nav-number">3.</span> <span class="nav-text">sql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#plpgsql"><span class="nav-number">4.</span> <span class="nav-text">plpgsql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存储过程"><span class="nav-number">5.</span> <span class="nav-text">存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#sql-PLSql的区别"><span class="nav-number">5.1.</span> <span class="nav-text">sql /PLSql的区别:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于SQL的存储过程定义"><span class="nav-number">5.2.</span> <span class="nav-text">基于SQL的存储过程定义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于pl-pgsql存储过程定义"><span class="nav-number">5.3.</span> <span class="nav-text">基于pl/pgsql存储过程定义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#返回多列"><span class="nav-number">5.4.</span> <span class="nav-text">返回多列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用SETOF返回多行记录"><span class="nav-number">5.5.</span> <span class="nav-text">使用SETOF返回多行记录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用return-table返回多行多列"><span class="nav-number">5.6.</span> <span class="nav-text">使用return table返回多行多列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#多态SQL函数"><span class="nav-number">5.7.</span> <span class="nav-text">多态SQL函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#函数重载"><span class="nav-number">5.8.</span> <span class="nav-text">函数重载</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+    <!-- custom analytics part create by xiamo -->
+<script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+<script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+<script>
+function showTime(Counter) {
+	var query = new AV.Query(Counter);
+	$(".leancloud_visitors").each(function() {
+		var url = $(this).attr("id").trim();
+		query.equalTo("url", url);
+		query.find({
+			success: function(results) {
+				if (results.length == 0) {
+					var content = '0 ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+					return;
+				}
+				for (var i = 0; i < results.length; i++) {
+					var object = results[i];
+					var content = object.get('time') + ' ' + $(document.getElementById(url)).text();
+					$(document.getElementById(url)).text(content);
+				}
+			},
+			error: function(object, error) {
+				console.log("Error: " + error.code + " " + error.message);
+			}
+		});
+
+	});
+}
+
+function addCount(Counter) {
+	var Counter = AV.Object.extend("Counter");
+	url = $(".leancloud_visitors").attr('id').trim();
+	title = $(".leancloud_visitors").attr('data-flag-title').trim();
+	var query = new AV.Query(Counter);
+	query.equalTo("url", url);
+	query.find({
+		success: function(results) {
+			if (results.length > 0) {
+				var counter = results[0];
+				counter.fetchWhenSave(true);
+				counter.increment("time");
+				counter.save(null, {
+					success: function(counter) {
+						var content =  counter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(counter, error) {
+						console.log('Failed to save Visitor num, with error message: ' + error.message);
+					}
+				});
+			} else {
+				var newcounter = new Counter();
+				newcounter.set("title", title);
+				newcounter.set("url", url);
+				newcounter.set("time", 1);
+				newcounter.save(null, {
+					success: function(newcounter) {
+					    console.log("newcounter.get('time')="+newcounter.get('time'));
+						var content = newcounter.get('time') + ' ' + $(document.getElementById(url)).text();
+						$(document.getElementById(url)).text(content);
+					},
+					error: function(newcounter, error) {
+						console.log('Failed to create');
+					}
+				});
+			}
+		},
+		error: function(error) {
+			console.log('Error:' + error.code + " " + error.message);
+		}
+	});
+}
+$(function() {
+	var Counter = AV.Object.extend("Counter");
+	if ($('.leancloud_visitors').length == 1) {
+		addCount(Counter);
+	} else if ($('.post-title-link').length > 1) {
+		showTime(Counter);
+	}
+}); 
+</script>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("a9z7LAt3Pe7Hqel3aG3chhYz-gzGzoHsz", "zBMDfKnLwClzr8PmiHp4sxmP");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>
