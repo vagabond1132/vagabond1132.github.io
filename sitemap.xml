@@ -2,16 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
     
-    <lastmod>2019-08-25T14:21:28.563Z</lastmod>
+    <lastmod>2019-08-26T11:16:31.288Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
     
-    <lastmod>2019-08-23T09:35:20.000Z</lastmod>
+    <lastmod>2019-08-26T09:48:57.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    
+    <lastmod>2019-08-26T02:29:19.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
+    
+    <lastmod>2019-08-25T14:21:28.563Z</lastmod>
     
   </url>
   
@@ -33,13 +47,6 @@
     <loc>http://www.gangzai.online/resources/index.html</loc>
     
     <lastmod>2019-08-16T11:57:34.412Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    
-    <lastmod>2019-08-15T13:16:28.966Z</lastmod>
     
   </url>
   

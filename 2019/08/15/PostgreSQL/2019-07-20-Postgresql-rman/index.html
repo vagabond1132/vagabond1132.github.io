@@ -104,7 +104,7 @@
 <meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449766687.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564450036123.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564450128908.png">
-<meta property="og:updated_time" content="2019-08-15T13:16:28.966Z">
+<meta property="og:updated_time" content="2019-08-26T02:29:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql rman">
 <meta name="twitter:description" content="联机程序. 并且目标数据库必须处于归档模式。 支持在线全备, 增量备份, 归档备份 增量备份基于已经存在的一个全库备份   rman 本身使用pg_start_backup(), copy, pg_stop_backup() 备份模式  本身采用的是文本拷贝…  cp/fwrite;  pg_start_backup() text 用户定义的标签, 是备份转储文件将被存储的名字 boolean">
@@ -449,6 +449,17 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">	pgBackupGetPath(prev_backup, prev_file_txt, lengthof(prev_file_txt),</span><br><span class="line">		DATABASE_FILE_LIST);</span><br><span class="line">	prev_files = dir_read_file_list(pgdata, prev_file_txt);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Do backup only pages having larger LSN than previous backup.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	lsn = &amp;prev_backup-&gt;start_lsn;</span><br><span class="line">	xlogid = (uint32) (*lsn &gt;&gt; <span class="number">32</span>);</span><br><span class="line">	xrecoff = (uint32) *lsn;</span><br><span class="line">	elog(DEBUG, _(<span class="string">"backup only the page updated after LSN(%X/%08X)"</span>),</span><br><span class="line">					xlogid, xrecoff);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Construct the directory for this backup within BACKUP_PATH. */</span></span><br><span class="line">pgBackupGetPath(&amp;current, path, lengthof(path), DATABASE_DIR);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Save the files listed above. */</span></span><br><span class="line">backup_files(pgdata, path, files, prev_files, lsn, current.compress_data, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
 <p>[新增]块恢复代码:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (loop = <span class="number">0</span>; loop &lt;= brc.base_index; loop++)</span><br><span class="line">&#123;</span><br><span class="line">	backup = (pgBackup *) parray_get(backups, loop);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* don't use incomplete nor different timeline backup */</span></span><br><span class="line">	<span class="keyword">if</span> (backup-&gt;status != BACKUP_STATUS_OK || backup-&gt;tli != base_backup-&gt;tli)</span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line">	<span class="keyword">if</span>(<span class="number">-1</span> == brc.lastBackupIndex &amp;&amp; HAVE_ARCLOG(backup) &amp;&amp; brc.last_needed_index &gt;= loop)</span><br><span class="line">	&#123;</span><br><span class="line">		restore_archive_logs(backup,<span class="literal">true</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/* use database backup only */</span></span><br><span class="line">	<span class="keyword">if</span> (BACKUP_MODE_INCREMENTAL &gt; backup-&gt;backup_mode || brc.last_needed_index &lt; loop)</span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">	elog(DEBUG, <span class="string">"found backup BK_KEY: \"%d\" can be used "</span>,backup-&gt;backup_id);</span><br><span class="line"></span><br><span class="line">	recoverBackup(backup,loop);</span><br><span class="line">       =&gt;  [[</span><br><span class="line">           	<span class="keyword">for</span>(loop = <span class="number">0</span>; loop &lt; brc.rbNum; loop++)</span><br><span class="line">               &#123;</span><br><span class="line">                   <span class="comment">/*If this block has find a page,skip it*/</span></span><br><span class="line">                   <span class="keyword">if</span>(brc.pageArray[loop])</span><br><span class="line">                   &#123;</span><br><span class="line">                       elog(DEBUG,<span class="string">"block \'%u\' has find it's page,skip."</span>,brc.recoverBlock[loop]);</span><br><span class="line">                       <span class="keyword">continue</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">                   page = findPageInBackup(backup, brc.recoverBlock[loop]);</span><br><span class="line">                   <span class="keyword">if</span>(page)</span><br><span class="line">                   &#123;</span><br><span class="line">                       brc.pageArray[loop] = page;</span><br><span class="line">                       <span class="keyword">if</span>(<span class="number">-1</span> == brc.lastBackupIndex)</span><br><span class="line">                       &#123;</span><br><span class="line">                           brc.lastBackupIndex = backupindex;</span><br><span class="line">                           elog(DEBUG,<span class="string">"Find last backup can be used:BK_KEY \'%d\'"</span>,backup-&gt;backup_id);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">       	]]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题:"></a>问题:</h4><ol>
+<li>随意增大filenode大小, 即无法整除8192时, 会默认增大一个Page。 此时的Page是不完整的. pg默认不开启checksum校验. 因此Pg会提示blk Num无效, 进行blockrecover操作时, 将会发生无法恢复.  因为整个filenode本身就没有正确的此Page;</li>
+<li>当随意修改Page数据时, 有时会发生显示数据不全，即数据条目与插入条目不符的情况. 此时Pg本身无法正常的数据异常告警. 请开启checksum. 进行验证.</li>
+</ol>
+<p>checkSum异常告警;</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WARNING:  <span class="number">01000</span>: page verification failed, calculated checksum <span class="number">11654</span> but expected <span class="number">8293</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>确定table的tuple Num</li>
+<li>确定table的page Num</li>
+</ol>
+<p><strong>确保开启checksum功能, 保证Page的数据正常.</strong>  但对上述问题不产生有效影响;;</p>
 
       
     </div>
@@ -602,7 +613,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">107</span>
+                  <span class="site-state-item-count">108</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -624,7 +635,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -695,7 +706,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#备份策略"><span class="nav-number">1.</span> <span class="nav-text">备份策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码组织架构"><span class="nav-number"></span> <span class="nav-text">代码组织架构:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pg-rman-源码浅析"><span class="nav-number"></span> <span class="nav-text">pg_rman-源码浅析</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#备份策略"><span class="nav-number">1.</span> <span class="nav-text">备份策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码组织架构"><span class="nav-number"></span> <span class="nav-text">代码组织架构:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pg-rman-源码浅析"><span class="nav-number"></span> <span class="nav-text">pg_rman-源码浅析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题"><span class="nav-number">1.</span> <span class="nav-text">问题:</span></a></li></ol></div>
             
 
           </div>
