@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[2019-08-26-Postgresql-pgarch]]></title>
+    <title><![CDATA[Postgresql pgarch]]></title>
     <url>%2F2019%2F08%2F26%2FPostgreSQL%2F2019-08-26-Postgresql-pgarch%2F</url>
     <content type="text"><![CDATA[归档信息文件 .backup Postgresql arch process 进程解析 archive_status文件夹 归档文件000000010000000000000002.000000D0.backupdo_pg_stop_backup() 产生backup 信息文件 1234#define BackupHistoryFilePath(path, tli, logSegNo, offset) \ snprintf(path, MAXPGPATH, XLOGDIR "/%08X%08X%08X.%08X.backup", tli, \ (uint32) ((logSegNo) / XLogSegmentsPerXLogId), \ (uint32) ((logSegNo) % XLogSegmentsPerXLogId), offset) Start WAL Location: offset; archive_status作用用于标记文件拷贝情况. postgres: archiver processpostmaster.c:PostmasterMain()1pqsignal_no_restart(SIGCHLD, reaper); postmaster.c:reaper()12345678910111213/* * reaper -- signal handler to cleanup after a child process dies; */static void reaper(SIGNAL_ARGS); //内部pgarch实现; if (pid == PgArchPID) &#123; PgArchPID = 0; if (PgArchStartupAllowed()) PgArchPID = pgarch_start(); continue; &#125; pgarch.c:pgarch_ArchiverCopyLoop() 使用.ready的archive_status循环遍历所有xlog并归档它们… 大多数情况下我们希望这是一个单独文件, 后端会将这些文件添加到需要归档的列表中. 而我们仍在复制早期的归档文件. pgarch.c:pgarch_archiveXlog() Invokes system(3) to copy one archive file to wherever it should go Returns true if successful 1rc = system(xlogarchcmd); 利用postgresql.conf中archive_command的参数. 进行系统拷贝; pgarch.c:pgarch_archiveDone() Emit notification that an xlog file has been successfully archived. We do this by renaming the status file from XXXX.ready to XXXX.done. Eventually, a checkpoint process will notice this and delete both the XXXX.done file and the xlog file itself. – 检查点进程将会清理xxx.done 和 xlog本身文件. 实现: 1234567891011static voidpgarch_archiveDone(char *xlog)&#123; char rlogready[MAXPGPATH]; char rlogdone[MAXPGPATH]; StatusFilePath(rlogready, xlog, ".ready"); StatusFilePath(rlogdone, xlog, ".done"); (void) durable_rename(rlogready, rlogdone, WARNING);&#125; xlogarchve.c XLogArchiveNotify Create an archive notification file XLogArchiveNotifySeg Convenience routine to notify using segment number representation of filename XLogArchiveForceDone Emit notification forcibly that an XLOG segment file has been successfully archived, bu creating \.done regardless of whether \.ready exists or not. XLogArchiveCheckDone XLogArchiveIsBusy Check to see if an XLOG segment file is still unarchived XLogArchiveIsReadyOrDone XLogArchiveIsReady Check to see if an XLOG segment file has an archive notification (.ready) file. XLogArchiveCleanup Cleanup archive notification file(s) for a particular xlog segment]]></content>
       <tags>
@@ -108,8 +108,8 @@
     <url>%2F2018%2F10%2F31%2Falogr%2FMultiply-Strings%2F</url>
     <content type="text"><![CDATA[Given two numbers represented as strings, return multiplication of the numbers as a string. Note: The numbers can be arbitrarily large and are non-negative. Note: The length of both num1 and num2 is &lt; 110. Both num1 and num2 contain only digits 0-9. Both num1 and num2 do not contain any leading zero, except the number 0 itself. You must not use any built-in BigInteger library or convert the inputs to integer directly. 思路: （Ps: 手写稍微忍耐一些吧 ^_^） 我们发现: p[i+j] = a[i] * b[j] + 进位; 代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960char* multiply(char* num1, char* num2) &#123; int sz1 = strlen(num1); int sz2 = strlen(num2); int i, j = 0; int k = 0; int high, low; char *p = malloc(sizeof(char) * (sz1 + sz2 + 1)); memset(p + sz1 + sz2, 0, 1); memset(p, '0', sz1 + sz2); for(i = 0; i &lt; sz1; i++) &#123; for(j =0; j &lt; sz2; j++) &#123; high = ( num1[i] - '0' ) * ( num2[j] - '0' ) / 10 + ( p[i+j] - '0'); low = ( num1[i] - '0' ) * ( num2[j] - '0' ) % 10 + ( p[i+j+1] - '0'); if(high &gt; 9) &#123; p[i+j] = high - 10 + '0'; for(k = i+j-1; ; k--) &#123; if( p[k] != '9' ) &#123; p[k] += 1; break; &#125; else p[k] = '0'; &#125; &#125; else p[i+j] = high + '0'; if(low &gt; 9) &#123; p[i+j+1] = low - 10 + '0'; for(k = i+j; ; k--) &#123; if( p[k] != '9' ) &#123; p[k] += 1; break; &#125; else p[k] = '0'; &#125; &#125; else p[i+j+1] = low + '0'; &#125; &#125; for(i =0 ; i &lt; (sz1 + sz2 - 1); i++, p++) if( *p != '0') return p; return p;&#125; LeetÇode-问题描述 运行1W次时间:12345char * str1 = "9999999999999999999999999999999999999999999999999999";char * str2 = "9999999999999999999999999999999999999999999999999999";int i = 0;for( i = 0 ; i &lt;10000 ; i++) multiply(str1, str2); 123real 0m0.455suser 0m0.451ssys 0m0.003s LeetCode 测试结果:]]></content>
       <tags>
-        <tag>Algorithm</tag>
         <tag>C/C++</tag>
+        <tag>Algorithm</tag>
         <tag>LeetCode</tag>
       </tags>
   </entry>
@@ -1028,6 +1028,19 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[Linux 字符编码 查看与转换]]></title>
+    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_encoding%2F</url>
+    <content type="text"><![CDATA[不同操作系统之间的换行表现形式不同需要常用编码转化 以及 文件转码; Linux 查看文件编码格式 Vim 查看文件编码 1set fileencoding // 即可显示文件编码格式 若想解决Vim查看文件乱码问题， 可以在 .vimrc 文件添加 1set encoding=utf-8 fileencoding=utf-8, cp936,gb2312 等 enca (yum install enca) 查看文件编码 1enca filename // enca对某些GBK编码文件并不识别 Unrecognized encoding 文件编码转化 Vim直接转化文件编码1set fileencoding=utf-8 iconv 1iconv -f encoding -t encoding inputfile 例如: 将一个utf-8 编码转化为GBK编码 1iconv -f utf-8 -t gbk file -o file2 1234567891011121314151617181920iconv命令用于转换指定文件的编码,默认输出到标准输出设备,亦可指定输出文件。 用法： iconv [选项...] [文件...] 有如下选项可用: 输入/输出格式规范： -f, --from-code=名称 原始文本编码 -t, --to-code=名称 输出编码 信息： -l, --list 列举所有已知的字符集 输出控制： -c 从输出中忽略无效的字符 -o, --output=FILE 输出文件 -s, --silent 关闭警告 --verbose 打印进度信息 -?, --help 给出该系统求助列表 --usage 给出简要的用法信息 -V, --version 打印程序版本号 例子: iconv -f utf-8 -t gb2312 aaa.txt &gt;bbb.txt 这个命令读取aaa.txt文件，从utf-8编码转换为gb2312编码,其输出定向到bbb.txt文件。 enconv将一个GBK编码转化为 utf-8编码 1enconv -L zh_CN -x utf-8 filename dos2unix : window 文件 cpoy 到 linux 格式转化 DOS下的文本文件是以\r\n作为断行标志的 Mac文本是以 \r 作为换行标志 Linux文本以 \n 作为换行标志 1dos2unix filename]]></content>
+      <categories>
+        <category>命令</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Commands</tag>
+        <tag>Vim</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Linux 常用命令]]></title>
     <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_command%2F</url>
     <content type="text"><![CDATA[本文将常用的Linux 命令按照功能划分从以下八个方面讲解: 1. 文件管理 2. 文件传输 3. 文档编辑 4. 磁盘管理 5. 磁盘维护 6. 网络通讯 7. 系统管理 8. 系统设置 1. 文件管理 cat用法：cat [选项]… [文件]… 将[文件]或标准输入组合输出到标准输出。 tail tailftail : 默认将文件的末尾10行输出到标准输出中;tailf: 只显示新追加到文件的内容 等价于: tail -f cp用法：cp [选项]… [-T] 源文件 目标文件 或：cp [选项]… 源文件… 目录 或：cp [选项]… -t 目录 源文件…拷贝源文件 到目标地址， 可以选择多个源文件 mv用法：mv [选项]… [-T] 源文件 目标文件 或：mv [选项]… 源文件… 目录 或：mv [选项]… -t 目录 源文件…重命名源文件名为目标文件名, 或者是移动源文件到指定目录 rm用法：rm [选项]… 文件…移除 删除 文件; od用法：od [选项]… [文件]… 或：od [-abcdfilosx]… [文件] [[+]偏移量[.][b]] 或：od –traditional [选项]… [文件] [[+]偏移量[.][b] [+][标签][.][b]] 将指定文件以八进制形式(默认)转储到标准输出。如果指定了多于一个的文件参数，程序会自动将输入的内容整合为列表并以同样的形式输出。如果没有指定文件，或指定文件为”-“，程序从标准输入读取数据。 patchpatch 命令读取如何更改文件 的源文件指示信息，然后应用这些更改。源文件包含由 diff -c 或 -u 命令产生的差别列表（或者 diff 列表），以及一个或多个 diff 命令输出集（通常称为 hunks）。patch 结合差异的文件， 进行补全; diff 配合 patch: diff -ruN test1 test2 &gt; patch.log # 生成patch文件 patch test2 patch.log # 利用patch文件和patch命令打补丁 mkdir 用法：mkdir [选项]… 目录… 创建一个空的目录 rmdir用法：rm [选项]… 文件…删除一个空目录 chmod用法：chmod [选项]… 模式[,模式]… 文件… 或：chmod [选项]… 八进制模式 文件… 或：chmod [选项]… –reference=参考文件 文件…更改文件的属性: r w x chown 用法：chown [选项]… [所有者][:[组]] 文件… 或：chown [选项]… –reference=参考文件 文件… 更改文件的所属用户和所属组; whichUsage: /usr/bin/which [options] [–] COMMAND […]将命令的路径输出命令行界面; fileUsage: file [OPTION…] [FILE…]探测给定文件的类型 2. 文件传输 ftp scp rz/sz (串口) 3. 文档编辑 grep sort tr wc split sed awk 4. 磁盘管理 ls cd df du pwd tar tree find 5. 磁盘维护 dd fdisk mkfd mkswap sync 6. 网络通讯 ifconfig ip nc mesg ping netstat [ss] telnet traceroute route 7. 系统管理 date free kill ps last w whoami nice reboot shutdown su sudo top[htop] 8. 系统设置 alias [unlimit] set [unset] chkconfig service crontab at export passwd ulimit 参照: Linux Tools Quick Tutorial]]></content>
@@ -1047,19 +1060,6 @@
         <tag>Linux</tag>
         <tag>渗透</tag>
         <tag>Kali</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Linux 字符编码 查看与转换]]></title>
-    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_encoding%2F</url>
-    <content type="text"><![CDATA[不同操作系统之间的换行表现形式不同需要常用编码转化 以及 文件转码; Linux 查看文件编码格式 Vim 查看文件编码 1set fileencoding // 即可显示文件编码格式 若想解决Vim查看文件乱码问题， 可以在 .vimrc 文件添加 1set encoding=utf-8 fileencoding=utf-8, cp936,gb2312 等 enca (yum install enca) 查看文件编码 1enca filename // enca对某些GBK编码文件并不识别 Unrecognized encoding 文件编码转化 Vim直接转化文件编码1set fileencoding=utf-8 iconv 1iconv -f encoding -t encoding inputfile 例如: 将一个utf-8 编码转化为GBK编码 1iconv -f utf-8 -t gbk file -o file2 1234567891011121314151617181920iconv命令用于转换指定文件的编码,默认输出到标准输出设备,亦可指定输出文件。 用法： iconv [选项...] [文件...] 有如下选项可用: 输入/输出格式规范： -f, --from-code=名称 原始文本编码 -t, --to-code=名称 输出编码 信息： -l, --list 列举所有已知的字符集 输出控制： -c 从输出中忽略无效的字符 -o, --output=FILE 输出文件 -s, --silent 关闭警告 --verbose 打印进度信息 -?, --help 给出该系统求助列表 --usage 给出简要的用法信息 -V, --version 打印程序版本号 例子: iconv -f utf-8 -t gb2312 aaa.txt &gt;bbb.txt 这个命令读取aaa.txt文件，从utf-8编码转换为gb2312编码,其输出定向到bbb.txt文件。 enconv将一个GBK编码转化为 utf-8编码 1enconv -L zh_CN -x utf-8 filename dos2unix : window 文件 cpoy 到 linux 格式转化 DOS下的文本文件是以\r\n作为断行标志的 Mac文本是以 \r 作为换行标志 Linux文本以 \n 作为换行标志 1dos2unix filename]]></content>
-      <categories>
-        <category>命令</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Commands</tag>
-        <tag>Vim</tag>
       </tags>
   </entry>
 </search>
