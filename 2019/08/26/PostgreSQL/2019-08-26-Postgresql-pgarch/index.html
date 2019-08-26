@@ -98,14 +98,14 @@
 <meta property="og:site_name" content="Rocky_Ansi Blog">
 <meta property="og:description" content="归档信息文件 .backup Postgresql arch process 进程解析 archive_status文件夹">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566549837206-1566551081988.png">
+<meta property="og:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566549837206.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566783010245.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566804346654.png">
-<meta property="og:updated_time" content="2019-08-26T11:16:31.288Z">
+<meta property="og:updated_time" content="2019-08-26T11:18:43.412Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019-08-26-Postgresql-pgarch">
 <meta name="twitter:description" content="归档信息文件 .backup Postgresql arch process 进程解析 archive_status文件夹">
-<meta name="twitter:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566549837206-1566551081988.png">
+<meta name="twitter:image" content="http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/1566549837206.png">
 
 
 
@@ -397,7 +397,7 @@
 </ol>
 <a id="more"></a>
 <h4 id="归档文件"><a href="#归档文件" class="headerlink" title="归档文件"></a>归档文件</h4><h5 id="000000010000000000000002-000000D0-backup"><a href="#000000010000000000000002-000000D0-backup" class="headerlink" title="000000010000000000000002.000000D0.backup"></a>000000010000000000000002.000000D0.backup</h5><p><code>do_pg_stop_backup()</code> 产生backup 信息文件</p>
-<p><img src="1566549837206-1566551081988.png" alt="1566549837206-1566551081988"></p>
+<p><img src="1566549837206.png" alt="1566549837206"></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BackupHistoryFilePath(path, tli, logSegNo, offset)	\</span></span><br><span class="line">	<span class="built_in">snprintf</span>(path, MAXPGPATH, XLOGDIR <span class="string">"/%08X%08X%08X.%08X.backup"</span>, tli, \</span><br><span class="line">			 (uint32) ((logSegNo) / XLogSegmentsPerXLogId), \</span><br><span class="line">			 (uint32) ((logSegNo) % XLogSegmentsPerXLogId), offset)</span><br></pre></td></tr></table></figure>
 <p>Start WAL Location:  offset;</p>
 <p><img src="1566783010245.png" alt="1566783010245"></p>
