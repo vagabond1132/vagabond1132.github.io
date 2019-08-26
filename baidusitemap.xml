@@ -4,18 +4,35 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-08-26T11:20:28.584Z</lastmod>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2019-08-26T11:21:46.946Z</lastmod>
     <data>
         <display>
-        <title>Postgresql pgarch</title>
-        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
          
-        <tag>数据库</tag>
+        <tag>Postgresql</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    <lastmod>2019-08-26T11:21:34.985Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Guc</title>
+        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -26,12 +43,14 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    <lastmod>2019-08-26T09:48:57.000Z</lastmod>
+    <lastmod>2019-08-26T11:21:18.865Z</lastmod>
     <data>
         <display>
         <title>Postgresql Wal</title>
         <pubTime>2019-07-19T12:27:32.000Z</pubTime>
         
+        <tag>Database</tag>
+         
         <tag>Postgresql</tag>
          
          
@@ -42,14 +61,18 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-08-26T02:29:19.000Z</lastmod>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <lastmod>2019-08-26T11:20:28.584Z</lastmod>
     <data>
         <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
+        <title>Postgresql pgarch</title>
+        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
         
+        <tag>Database</tag>
+         
         <tag>Postgresql</tag>
+         
+        <tag>数据库</tag>
          
          
            
@@ -126,23 +149,6 @@
     
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    <lastmod>2019-08-12T11:49:52.651Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Guc</title>
-        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
-        
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2018/10/09/database/PostgreSql-page/</loc>
     <lastmod>2019-07-29T10:46:06.202Z</lastmod>
     <data>
@@ -150,9 +156,9 @@
         <title>Postgresql开发 Page</title>
         <pubTime>2018-10-09T12:13:41.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1322,9 +1328,9 @@
         <title>PostgresSql操作符重载</title>
         <pubTime>2018-09-13T15:27:54.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1341,9 +1347,9 @@
         <title>Postgresql扩展Sql-源码添加系统函数</title>
         <pubTime>2018-08-22T10:52:18.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1360,9 +1366,9 @@
         <title>Postgresql扩展Sql-添加插件</title>
         <pubTime>2018-08-30T11:46:55.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1379,9 +1385,9 @@
         <title>Postgresql扩展Sql-hook</title>
         <pubTime>2018-09-29T13:03:38.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1398,9 +1404,9 @@
         <title>postgresql扩展SQL与存储过程</title>
         <pubTime>2018-09-18T11:04:50.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1417,9 +1423,9 @@
         <title>Postgresql-后台进程</title>
         <pubTime>2018-09-01T02:07:57.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1436,9 +1442,9 @@
         <title>Postgresql 入门学习</title>
         <pubTime>2017-07-15T10:23:52.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1455,9 +1461,9 @@
         <title>PostgreSql扩展Sql-动态加载共享库(C函数)</title>
         <pubTime>2018-08-23T11:13:40.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -1474,9 +1480,9 @@
         <title>Postgresql开发-添加系统表</title>
         <pubTime>2018-10-06T13:15:54.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            

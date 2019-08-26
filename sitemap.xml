@@ -2,23 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
     
-    <lastmod>2019-08-26T11:20:28.584Z</lastmod>
+    <lastmod>2019-08-26T11:21:46.946Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    
+    <lastmod>2019-08-26T11:21:34.985Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
     
-    <lastmod>2019-08-26T09:48:57.000Z</lastmod>
+    <lastmod>2019-08-26T11:21:18.865Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
     
-    <lastmod>2019-08-26T02:29:19.000Z</lastmod>
+    <lastmod>2019-08-26T11:20:28.584Z</lastmod>
     
   </url>
   
@@ -47,13 +54,6 @@
     <loc>http://www.gangzai.online/resources/index.html</loc>
     
     <lastmod>2019-08-16T11:57:34.412Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    
-    <lastmod>2019-08-12T11:49:52.651Z</lastmod>
     
   </url>
   
