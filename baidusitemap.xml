@@ -4,6 +4,27 @@
 
     
   <url>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <lastmod>2019-08-26T11:26:30.835Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Arch process</title>
+        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+        <tag>数据库</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
     <lastmod>2019-08-26T11:21:46.946Z</lastmod>
     <data>
@@ -52,27 +73,6 @@
         <tag>Database</tag>
          
         <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-08-26T11:20:28.584Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql pgarch</title>
-        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-        <tag>数据库</tag>
          
          
            
