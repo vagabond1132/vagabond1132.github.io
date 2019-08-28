@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
+    
+    <lastmod>2019-08-28T12:03:58.833Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
+    
+    <lastmod>2019-08-27T05:34:56.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
     
-    <lastmod>2019-08-26T11:26:30.835Z</lastmod>
+    <lastmod>2019-08-27T05:31:19.000Z</lastmod>
     
   </url>
   
@@ -19,13 +33,6 @@
     <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
     
     <lastmod>2019-08-26T11:21:34.985Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    
-    <lastmod>2019-08-26T11:21:18.865Z</lastmod>
     
   </url>
   

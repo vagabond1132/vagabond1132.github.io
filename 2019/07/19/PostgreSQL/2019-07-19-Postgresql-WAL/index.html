@@ -104,7 +104,7 @@
 <meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/wal-1.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/1566549837206.png">
 <meta property="og:image" content="http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/1566782984259.png">
-<meta property="og:updated_time" content="2019-08-26T11:21:18.865Z">
+<meta property="og:updated_time" content="2019-08-27T05:34:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Wal">
 <meta name="twitter:description" content="unde &amp;amp; redoundo – 回滚; redo – 前滚恢复: 发生崩溃时, 进行数据恢复, 通过已存在的预写式日志(WAL)来重新恢复数据库.">
@@ -419,7 +419,7 @@
 <p><img src="1545960796300.png" alt=""></p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf %d <span class="number">0</span>x95FA20   ===&gt;  <span class="number">9828896</span></span><br></pre></td></tr></table></figure>
 <p><strong>为什么用6位16进制.</strong></p>
-<p>16^^6 =&gt; 16777216 =&gt;  16 <em> 1024 </em> 1024 =&gt; 16M;</p>
+<p>16^^6 =&gt; 16777216 =&gt;  16 * 1024 * 1024 =&gt; 16M;</p>
 <h4 id="Wal相关函数"><a href="#Wal相关函数" class="headerlink" title="Wal相关函数"></a>Wal相关函数</h4><ul>
 <li>pg_current_wal_lsn()</li>
 <li>pg_current_wal_insert_lsn() 显示当前预写日志插入位置.</li>
@@ -716,7 +716,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">108</span>
+                  <span class="site-state-item-count">109</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
