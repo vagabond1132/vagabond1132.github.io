@@ -98,17 +98,17 @@
 <meta property="og:site_name" content="Rocky_Ansi Blog">
 <meta property="og:description" content="联机程序. 并且目标数据库必须处于归档模式。 支持在线全备, 增量备份, 归档备份 增量备份基于已经存在的一个全库备份   rman 本身使用pg_start_backup(), copy, pg_stop_backup() 备份模式  本身采用的是文本拷贝…  cp/fwrite;  pg_start_backup() text 用户定义的标签, 是备份转储文件将被存储的名字 boolean">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449414429.png">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449631751.png">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449737711.png">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449766687.png">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564450036123.png">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564450128908.png">
-<meta property="og:updated_time" content="2019-08-26T11:21:46.946Z">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449414429.png?raw=true">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449631751.png?raw=true">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449737711.png?raw=true">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449766687.png?raw=true">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564450036123.png?raw=true">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564450128908.png?raw=true">
+<meta property="og:updated_time" content="2019-08-30T07:30:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql rman">
 <meta name="twitter:description" content="联机程序. 并且目标数据库必须处于归档模式。 支持在线全备, 增量备份, 归档备份 增量备份基于已经存在的一个全库备份   rman 本身使用pg_start_backup(), copy, pg_stop_backup() 备份模式  本身采用的是文本拷贝…  cp/fwrite;  pg_start_backup() text 用户定义的标签, 是备份转储文件将被存储的名字 boolean">
-<meta name="twitter:image" content="http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/1564449414429.png">
+<meta name="twitter:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449414429.png?raw=true">
 
 
 
@@ -413,7 +413,7 @@
 </ul>
 <a id="more"></a>
 <p><strong>rman整体架构</strong></p>
-<p><img src="1564449414429.png" alt="1564449414429"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449414429.png?raw=true" alt="1564449414429"></p>
 <p>默认配置参数:</p>
 <ol>
 <li>PGDATA</li>
@@ -421,19 +421,19 @@
 <li>ARCLOG_PATH</li>
 </ol>
 <p>pg_rman  init</p>
-<p><img src="1564449631751.png" alt="1564449631751"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449631751.png?raw=true" alt="1564449631751"></p>
 <p>pg_rman  show </p>
 <p>pg_rman  config –list</p>
 <p>pg_rman  backup -b full</p>
-<p><img src="1564449737711.png" alt="1564449737711"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449737711.png?raw=true" alt="1564449737711"></p>
 <p>​                -b inc  [incremental]</p>
-<p>​            <img src="1564449766687.png" alt="1564449766687"></p>
+<p>​            <img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564449766687.png?raw=true" alt="1564449766687"></p>
 <p>​                 </p>
 <p>​            -b arch [archive]</p>
 <p>pg_rman  restore</p>
-<p><img src="1564450036123.png" alt="1564450036123"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564450036123.png?raw=true" alt="1564450036123"></p>
 <p>[新增功能] pg_rman  blockrecover  –datafile tablespaceOid/databaseOid/relfilenode  –block 0</p>
-<p><img src="1564450128908.png" alt="1564450128908"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-07-20-Postgresql-rman/1564450128908.png?raw=true" alt="1564450128908"></p>
 <h4 id="备份策略"><a href="#备份策略" class="headerlink" title="备份策略"></a>备份策略</h4><ol>
 <li>恢复窗口:  指定天数. 默认值为 7.</li>
 <li>备份数量:  冗余度保留。  默认值为 1.</li>

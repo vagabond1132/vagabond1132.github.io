@@ -4,30 +4,8 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2019-08-28T12:03:58.833Z</lastmod>
-    <data>
-        <display>
-        <title>Linux tar 协议格式解析</title>
-        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>C/C++</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    <lastmod>2019-08-27T05:34:56.000Z</lastmod>
+    <lastmod>2019-08-30T07:33:09.000Z</lastmod>
     <data>
         <display>
         <title>Postgresql Wal</title>
@@ -45,8 +23,46 @@
 
     
   <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2019-08-30T07:30:26.000Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    <lastmod>2019-08-30T07:28:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Guc</title>
+        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-08-27T05:31:19.000Z</lastmod>
+    <lastmod>2019-08-30T07:26:50.000Z</lastmod>
     <data>
         <display>
         <title>Postgresql Arch process</title>
@@ -66,38 +82,22 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-08-26T11:21:46.946Z</lastmod>
+    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2019-08-30T07:17:20.000Z</lastmod>
     <data>
         <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
+        <title>Linux tar 协议格式解析</title>
+        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
         
-        <tag>Database</tag>
+        <tag>Linux</tag>
          
-        <tag>Postgresql</tag>
+        <tag>C/C++</tag>
          
          
            
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    <lastmod>2019-08-26T11:21:34.985Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Guc</title>
-        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
+             
+              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
+          
         </display>
     </data>
     </url>
@@ -980,9 +980,9 @@
         
         <tag>Linux</tag>
          
-        <tag>GDB</tag>
-         
         <tag>调试</tag>
+         
+        <tag>GDB</tag>
          
          
            

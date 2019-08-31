@@ -98,12 +98,12 @@
 <meta property="og:site_name" content="Rocky_Ansi Blog">
 <meta property="og:description" content="GUC: Grand Unified Configuration 指的是postgreSQL数据库的一种对数据库变量进行设置对数据库进行控制的机制。通常理解是对postgresql.conf文件中变量进行修改，或通过set命令对参数进行设置。但实际上GUC变量的种类，设置方法要更加复杂多样。在guc.h和guc.c中可以看到GUC变量的详细实现。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/1565589409242.png">
-<meta property="og:updated_time" content="2019-08-26T11:21:34.985Z">
+<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-12-Postgresql-GUC/1565589409242.png?raw=true">
+<meta property="og:updated_time" content="2019-08-30T07:28:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Guc">
 <meta name="twitter:description" content="GUC: Grand Unified Configuration 指的是postgreSQL数据库的一种对数据库变量进行设置对数据库进行控制的机制。通常理解是对postgresql.conf文件中变量进行修改，或通过set命令对参数进行设置。但实际上GUC变量的种类，设置方法要更加复杂多样。在guc.h和guc.c中可以看到GUC变量的详细实现。">
-<meta name="twitter:image" content="http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/1565589409242.png">
+<meta name="twitter:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-12-Postgresql-GUC/1565589409242.png?raw=true">
 
 
 
@@ -410,7 +410,7 @@
 </li>
 </ol>
 <p>每一个类型建立一个对应的静态数组. 用于存储相应的Guc类型  <code>src/backend/utils/misc/guc.c</code></p>
-<p><img src="1565589409242.png" alt="1565589409242"></p>
+<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-08-12-Postgresql-GUC/1565589409242.png?raw=true" alt="1565589409242"></p>
 <h4 id="Guc作用上下文"><a href="#Guc作用上下文" class="headerlink" title="Guc作用上下文:"></a>Guc作用上下文:</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span></span><br><span class="line">&#123;</span><br><span class="line">	PGC_INTERNAL,</span><br><span class="line">	PGC_POSTMASTER,</span><br><span class="line">	PGC_SIGHUP,</span><br><span class="line">	PGC_SU_BACKEND,</span><br><span class="line">	PGC_BACKEND,</span><br><span class="line">	PGC_SUSET,</span><br><span class="line">	PGC_USERSET</span><br><span class="line">&#125; GucContext;</span><br></pre></td></tr></table></figure>
 <ol>
 <li>Internal 无法被用户修改, 只能被内部进程设置, show 命令能查看此类变量, 通常在编译时设置与改变.</li>
