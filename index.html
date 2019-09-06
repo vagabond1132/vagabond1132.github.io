@@ -308,6 +308,155 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/06/docker/2019-09-06-飞腾-aarch64-install-docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/09/06/docker/2019-09-06-飞腾-aarch64-install-docker/" itemprop="url">飞腾 aarch64安装Docker</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-06T19:18:29+08:00">
+                2019-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/工具篇/" itemprop="url" rel="index">
+                    <span itemprop="name">工具篇</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>设置中科大源:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">### 默认注释了源码仓库，如有需要可自行取消注释</span></span><br><span class="line"><span class="comment">#deb https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty main restricted universe multiverse</span></span><br><span class="line"><span class="comment">## deb-src https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty main main restricted universe multiverse</span></span><br><span class="line"><span class="comment">#deb https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-updates main restricted universe multiverse</span></span><br><span class="line"><span class="comment">## deb-src https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-updates main restricted universe multiverse</span></span><br><span class="line"><span class="comment">#deb https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-backports main restricted universe multiverse</span></span><br><span class="line"><span class="comment">## deb-src https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-backports main restricted universe multiverse</span></span><br><span class="line"><span class="comment">#deb https://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-security main restricted universe multiverse</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">###备用;</span></span><br><span class="line">deb http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty main multiverse restricted universe</span><br><span class="line">deb http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-backports main multiverse restricted universe</span><br><span class="line">deb http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-proposed main multiverse restricted universe</span><br><span class="line">deb http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-security main multiverse restricted universe</span><br><span class="line">deb http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-updates main multiverse restricted universe</span><br><span class="line"><span class="comment">#deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty main multiverse restricted universe</span></span><br><span class="line"><span class="comment">#deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-backports main multiverse restricted universe</span></span><br><span class="line"><span class="comment">#deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-proposed main multiverse restricted universe</span></span><br><span class="line"><span class="comment">#deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-security main multiverse restricted universe</span></span><br><span class="line"><span class="comment">#deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ trusty-updates main multiverse restricted universe</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/09/06/docker/2019-09-06-飞腾-aarch64-install-docker/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+        
+    
+          <!-- ligang-hide 分类-->
+            
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-协议格式-解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1913,141 +2062,6 @@
 
         
     
-          <!-- ligang-hide 分类-->
-            
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2018/10/31/alogr/Multiply-Strings/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Rocky_Ansi">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/person.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rocky_Ansi Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/31/alogr/Multiply-Strings/" itemprop="url">Multiply Strings</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-31T19:26:03+08:00">
-                2018-10-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Given two numbers represented as strings, return multiplication of the numbers as a string.</p>
-<p>Note: The numbers can be arbitrarily large and are non-negative.</p>
-<p>Note:</p>
-<ul>
-<li>The length of both num1 and num2 is &lt; 110.</li>
-<li>Both num1 and num2 contain only digits 0-9.</li>
-<li>Both num1 and num2 do not contain any leading zero, except the number 0 itself.</li>
-<li>You must not use any built-in BigInteger library or convert the inputs to integer directly.</li>
-</ul>
-<p><br><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/31/alogr/Multiply-Strings/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-        
-    
   </section>
 
   
@@ -2103,7 +2117,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">109</span>
+                  <span class="site-state-item-count">110</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

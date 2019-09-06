@@ -308,6 +308,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2017/08/16/software/vim配置ctags-taglist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/16/software/vim配置ctags-taglist/" itemprop="url">vim配置ctags + taglist</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-16T19:11:57+08:00">
+                2017-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vim篇/" itemprop="url" rel="index">
+                    <span itemprop="name">Vim篇</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li>基于CentOS Linux release 7.1.1503 (Core) </li>
+</ul>
+<h4 id="安装-ctags"><a href="#安装-ctags" class="headerlink" title="安装 ctags"></a>安装 ctags</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ctags</span><br></pre></td></tr></table></figure>
+<h4 id="安装taglist"><a href="#安装taglist" class="headerlink" title="安装taglist"></a>安装<a href="https://sourceforge.net/projects/vim-taglist/files/vim-taglist/" target="_blank" rel="noopener">taglist</a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">taglist</span><br><span class="line">├── doc</span><br><span class="line">│   └── taglist.txt</span><br><span class="line">└── plugin</span><br><span class="line">    └── taglist.vim</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"> sudo cp taglist/doc/taglist.txt /usr/share/vim/vim74/doc/</span><br><span class="line"> sudo cp taglist/plugin/taglist.vim  /usr/share/vim/vim74/plugin/</span><br></pre></td></tr></table></figure>
+<h4 id="配置-vimrc"><a href="#配置-vimrc" class="headerlink" title="配置 .vimrc"></a>配置 <code>.vimrc</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&quot; 设置忽略大小写;</span><br><span class="line">set ignorecase</span><br><span class="line">&quot; 设置tab 4空格;</span><br><span class="line">set tabstop=4</span><br><span class="line">set softtabstop=4</span><br><span class="line">set shiftwidth=4</span><br><span class="line"></span><br><span class="line">set expandtab</span><br><span class="line"></span><br><span class="line">&quot;对齐风格</span><br><span class="line">set cino=g0,:0</span><br><span class="line"></span><br><span class="line">&quot;设置行号</span><br><span class="line">set number</span><br><span class="line"></span><br><span class="line">&quot;共享粘贴板;</span><br><span class="line">set mouse=a</span><br><span class="line"></span><br><span class="line">&quot;自动缩进 与C语言峰哥;</span><br><span class="line">set autoindent</span><br><span class="line">set cindent</span><br><span class="line"></span><br><span class="line">&quot; 设置ctags 往上查找;</span><br><span class="line">set tags=tags;/</span><br><span class="line"></span><br><span class="line">let Tlist_Auto_Open=1  &quot;自动打开</span><br><span class="line">let Tlist_Show_One_File=1  &quot;只显示当前文件的tags</span><br><span class="line">let Tlist_WinWidth=40      &quot;设置taglist宽度</span><br><span class="line">let Tlist_Exit_OnlyWindow=1 &quot;taglist窗口是最后一个窗口</span><br><span class="line">let Tlist_Use_Left_Window=1 &quot;在Vim窗口右侧显示taglist窗口;</span><br></pre></td></tr></table></figure>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">## 重新生成tags文件</span><br><span class="line">ctags -R *   </span><br><span class="line">vim src/main.c  ## 即可显示taglist窗口;</span><br></pre></td></tr></table></figure>
+<h4 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h4><ul>
+<li><p><code>help tags</code></p>
+<ul>
+<li><code>ctrl+]</code>   打开并跳转到函数定义处</li>
+<li><code>ctrl+t</code> 返回到上一个标签处</li>
+<li><code>g+]</code>    在当前窗口下显示tag索引信息</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+        
+    
+          <!-- ligang-hide 分类-->
+            
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2017/08/16/software/Window-DevDocs/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1794,135 +1953,6 @@
 
         
     
-          <!-- ligang-hide 分类-->
-            
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2017/07/09/kali/NetCat学习介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Rocky_Ansi">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/person.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rocky_Ansi Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/09/kali/NetCat学习介绍/" itemprop="url">Netcat 网络攻击 以及 应用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T19:34:12+08:00">
-                2017-07-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h4 id="1-用Netcat进行黑客攻击第1部分：基础知识"><a href="#1-用Netcat进行黑客攻击第1部分：基础知识" class="headerlink" title="1.用Netcat进行黑客攻击第1部分：基础知识"></a>1.用Netcat进行黑客攻击第1部分：基础知识</h4><p>Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如： </p>
-<blockquote>
-<p>   Banner抓取  原始连接  Web服务器交互 </p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/09/kali/NetCat学习介绍/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-        
-    
   </section>
 
   
@@ -1978,7 +2008,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">109</span>
+                  <span class="site-state-item-count">110</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
