@@ -4,16 +4,16 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/09/06/docker/2019-09-06-%E9%A3%9E%E8%85%BE-aarch64-install-docker/</loc>
-    <lastmod>2019-09-06T11:19:58.290Z</lastmod>
+    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
+    <lastmod>2019-09-09T11:41:40.035Z</lastmod>
     <data>
         <display>
-        <title>飞腾 aarch64安装Docker</title>
-        <pubTime>2019-09-06T11:18:29.000Z</pubTime>
+        <title>git command</title>
+        <pubTime>2019-08-25T14:10:37.000Z</pubTime>
         
         <tag>Linux</tag>
          
-        <tag>Software</tag>
+        <tag>Git</tag>
          
          
            
@@ -26,16 +26,16 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
-    <lastmod>2019-09-05T11:39:06.733Z</lastmod>
+    <loc>http://www.gangzai.online/2019/09/06/docker/2019-09-06-%E9%A3%9E%E8%85%BE-aarch64-install-docker/</loc>
+    <lastmod>2019-09-06T11:19:58.290Z</lastmod>
     <data>
         <display>
-        <title>git command</title>
-        <pubTime>2019-08-25T14:10:37.000Z</pubTime>
+        <title>飞腾 aarch64安装Docker</title>
+        <pubTime>2019-09-06T11:18:29.000Z</pubTime>
         
         <tag>Linux</tag>
          
-        <tag>Git</tag>
+        <tag>Software</tag>
          
          
            
@@ -895,9 +895,9 @@
         
         <tag>Commands</tag>
          
-        <tag>Software</tag>
-         
         <tag>Python</tag>
+         
+        <tag>Software</tag>
          
          
            
