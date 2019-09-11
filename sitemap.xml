@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.gangzai.online/resources/index.html</loc>
+    
+    <lastmod>2019-09-11T12:16:40.984Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
     
-    <lastmod>2019-09-09T11:41:40.035Z</lastmod>
+    <lastmod>2019-09-11T12:13:37.042Z</lastmod>
     
   </url>
   
@@ -61,13 +68,6 @@
     <loc>http://www.gangzai.online/2019/04/18/docker/Docker/</loc>
     
     <lastmod>2019-08-17T01:00:55.418Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/resources/index.html</loc>
-    
-    <lastmod>2019-08-16T11:57:34.412Z</lastmod>
     
   </url>
   
