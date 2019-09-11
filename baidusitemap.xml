@@ -3,6 +3,28 @@
 
 
     
+  <url>
+    <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
+    <lastmod>2019-09-11T13:15:31.330Z</lastmod>
+    <data>
+        <display>
+        <title>safe-rm</title>
+        <pubTime>2019-09-11T13:10:50.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Commands</tag>
+         
+         
+           
+             
+              <breadCrumb title="命令篇" url="http://www.gangzai.online/categories/%E5%91%BD%E4%BB%A4%E7%AF%87/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
@@ -895,9 +917,9 @@
         
         <tag>Commands</tag>
          
-        <tag>Software</tag>
-         
         <tag>Python</tag>
+         
+        <tag>Software</tag>
          
          
            
@@ -936,11 +958,11 @@
         <title>Pg Time && Linux 系统时间</title>
         <pubTime>2018-11-23T12:27:32.000Z</pubTime>
         
-        <tag>Postgresql</tag>
-         
         <tag>Linux</tag>
          
         <tag>Commands</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -957,9 +979,9 @@
         <title>Multiply Strings</title>
         <pubTime>2018-10-31T11:26:03.000Z</pubTime>
         
-        <tag>C/C++</tag>
-         
         <tag>Algorithm</tag>
+         
+        <tag>C/C++</tag>
          
         <tag>LeetCode</tag>
          
@@ -1714,11 +1736,11 @@
         <title>MacBook 破解Wifi</title>
         <pubTime>2017-09-23T11:24:26.000Z</pubTime>
         
-        <tag>Mac</tag>
-         
         <tag>渗透</tag>
          
         <tag>Kali</tag>
+         
+        <tag>Mac</tag>
          
          
            

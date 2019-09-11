@@ -79,7 +79,7 @@
 
 
 
-  <meta name="keywords" content="Rokcy_Ansi, vagabond1132@gmail.com, Linux, Postgresql" />
+  <meta name="keywords" content="Linux,Commands," />
 
 
 
@@ -90,16 +90,18 @@
 
 
 
-<meta name="description" content="vagabond1132@gmail.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Rocky_Ansi Blog">
-<meta property="og:url" content="http://www.gangzai.online/archives/2018/07/index.html">
+<meta name="description" content="声明 alias rm=’safe-rm.sh’ 主要用于放置rm误删除操作. 建立隐藏文件夹[按日期建立]用于保存删除文件">
+<meta name="keywords" content="Linux,Commands">
+<meta property="og:type" content="article">
+<meta property="og:title" content="safe-rm">
+<meta property="og:url" content="http://www.gangzai.online/2019/09/11/code/safe-rm/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="vagabond1132@gmail.com">
+<meta property="og:description" content="声明 alias rm=’safe-rm.sh’ 主要用于放置rm误删除操作. 建立隐藏文件夹[按日期建立]用于保存删除文件">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-11T13:15:31.330Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Rocky_Ansi Blog">
-<meta name="twitter:description" content="vagabond1132@gmail.com">
+<meta name="twitter:title" content="safe-rm">
+<meta name="twitter:description" content="声明 alias rm=’safe-rm.sh’ 主要用于放置rm误删除操作. 建立隐藏文件夹[按日期建立]用于保存删除文件">
 
 
 
@@ -133,7 +135,7 @@
 
 
 
-  <title>归档 | Rocky_Ansi Blog</title>
+  <title>safe-rm | Rocky_Ansi Blog</title>
   
 
 
@@ -154,7 +156,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -292,73 +294,203 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
-
-      <span class="archive-page-counter">
-        
-        
-         
-          
-        很好! 目前共计 111 篇日志。 继续努力。
-      </span>
-
-      
-
-        
-        
-        
-
-        
-          
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2018">2018</h1>
-          </div>
-        
-        
-
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/11/code/safe-rm/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/07/17/software/Centos7-bash-安装powerline/" itemprop="url">
-              
-                <span itemprop="name">Centos7 bash 安装powerline</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">safe-rm</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-17T19:14:06+08:00"
-              content="2018-07-17" >
-          07-17
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-11T21:10:50+08:00">
+                2019-09-11
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/命令篇/" itemprop="url" rel="index">
+                    <span itemprop="name">命令篇</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
+      
 
+      
+        <p>声明 alias rm=’safe-rm.sh’</p>
+<p>主要用于放置rm误删除操作. 建立隐藏文件夹[按日期建立]用于保存删除文件</p>
+<a id="more"></a>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line"><span class="meta">#</span> 安全的rm脚本</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dir=$(date "+%y_%m_%d")</span><br><span class="line"><span class="meta">#</span>dir="/Users/rocky/.usertrash/$dir"</span><br><span class="line">dir="/Users/rocky/.Trash/$dir"</span><br><span class="line"><span class="meta">#</span>echo $dir</span><br><span class="line">if [ ! -d $dir ];then</span><br><span class="line">    mkdir -p $dir</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">is_f=false</span><br><span class="line">args=""</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function f_remove() &#123;</span><br><span class="line">    for i in $&#123;args&#125;; do</span><br><span class="line">        if [ -d "$i" -o -f "$i" ];then</span><br><span class="line">            name=`basename $i`</span><br><span class="line">            if [ -d "$dir/$name" -o -f "$dir/$name" ];then</span><br><span class="line">                new_name="$dir/$&#123;name&#125;_$(date '+%T')"</span><br><span class="line">                mv $i $new_name &amp;&amp; echo "$i deleted,you can see in $new_name"</span><br><span class="line">            else</span><br><span class="line">                mv $i $dir &amp;&amp; echo "$i deleted,you can see in $dir/$i"</span><br><span class="line">            fi</span><br><span class="line">        else</span><br><span class="line">            echo "参数错误"</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function remove() &#123;</span><br><span class="line">    for j in $&#123;args&#125;; do</span><br><span class="line">        if [ -d "$j" -o -f "$j" ];then</span><br><span class="line">            name=`basename $j`</span><br><span class="line">            #read -p "Remove $name?[y/n]" bool   ## 是否开启删除提醒功能;l</span><br><span class="line">            #if [ $bool == "n" ];then</span><br><span class="line">            #     exit</span><br><span class="line">            #elif [ $bool == "y" ];then</span><br><span class="line">                if [ -d "$dir/$name" -o -f "$dir/$name" ];then</span><br><span class="line">                    new_name="$dir/$&#123;name&#125;_$(date '+%T')"</span><br><span class="line">                    mv $j $new_name &amp;&amp; echo "$j deleted,you can see in $new_name"</span><br><span class="line">                else</span><br><span class="line">                    mv $j $dir &amp;&amp; echo "$j deleted,you can see in $dir/$j"</span><br><span class="line">                fi</span><br><span class="line">            #fi</span><br><span class="line">        else</span><br><span class="line">            echo "参数错误"</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">while [ "$1" ]; do</span><br><span class="line">    case "$1" in</span><br><span class="line">        -fr|-rf)</span><br><span class="line">            is_f=true</span><br><span class="line">            shift</span><br><span class="line">            ;;</span><br><span class="line">        -i)</span><br><span class="line">            is_f=false</span><br><span class="line">            shift</span><br><span class="line">            ;;</span><br><span class="line">        *)</span><br><span class="line">            args="$1 $args"</span><br><span class="line">            shift</span><br><span class="line">            ;;</span><br><span class="line">    esac</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if [[ $is_f = true ]];then</span><br><span class="line">    f_remove</span><br><span class="line">else</span><br><span class="line">    remove</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+      
     </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Commands/" rel="tag"># Commands</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/06/docker/2019-09-06-飞腾-aarch64-install-docker/" rel="next" title="飞腾 aarch64安装Docker">
+                <i class="fa fa-chevron-left"></i> 飞腾 aarch64安装Docker
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -366,6 +498,10 @@
 
 
           
+
+
+  
+
 
 
         </div>
@@ -660,6 +796,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
