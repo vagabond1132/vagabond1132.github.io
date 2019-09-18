@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux,Commands," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Curl一个功能非常强大的命令行工具，支持HTTP、FTP等协议。本文以访问gangzai.online为示例，供大家学习使用。">
+<meta name="keywords" content="Linux,Commands">
+<meta property="og:type" content="article">
+<meta property="og:title" content="curl详细说明以及示例">
+<meta property="og:url" content="http://www.gangzai.online/2017/11/13/commands/curl详细说明以及示例/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="Curl一个功能非常强大的命令行工具，支持HTTP、FTP等协议。本文以访问gangzai.online为示例，供大家学习使用。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.gangzai.online/img/shell/curl_from.png">
+<meta property="og:updated_time" content="2018-12-05T11:05:35.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="curl详细说明以及示例">
+<meta name="twitter:description" content="Curl一个功能非常强大的命令行工具，支持HTTP、FTP等协议。本文以访问gangzai.online为示例，供大家学习使用。">
+<meta name="twitter:image" content="http://www.gangzai.online/img/shell/curl_from.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>curl详细说明以及示例 | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2017/11/13/commands/curl详细说明以及示例/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">curl详细说明以及示例</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-13T21:06:40+08:00">
+                2017-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/命令/" itemprop="url" rel="index">
+                    <span itemprop="name">命令</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Curl一个功能非常强大的命令行工具，支持HTTP、FTP等协议。本文以访问<a href="">gangzai.online</a>为示例，供大家学习使用。</p>
+<a id="more"></a>
+<p><br></p>
+<h3 id="http-url-port"><a href="#http-url-port" class="headerlink" title="http://url:port"></a><a href="http://url:port" target="_blank" rel="noopener">http://url:port</a></h3><h4 id="Http"><a href="#Http" class="headerlink" title="Http"></a>Http</h4><p>​    HTTP协议用于从web服务器上读取数据，它是基于TCP/IP协议上的一个简单的协议。该协议同时也能够让你通过使用一些不同的方法向服务器提交数据。</p>
+<p>​    HTTP协议是向服务器发送的要进行一个特殊操作的ACSII文本，随后在要求的内容发送给客户端之前，服务器会向客户端发送几行回应的数据。</p>
+<p>​    客户端CURL向服务器发送一项请求，请求通常包括方法（比如GET、POST、HEAD等等）、一些请求的头、有时还有请求正文。接到请求后，服务器返回状态行（表明访回是否顺利）、回应头和内容正文。正文是客户要求的数据，通常是一些HTML资源、图片。</p>
+<p>curl  -v , -verbose  会显示curl向服务器发送的命令和其他的一些信息. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ curl -verbose gangzai.online</span><br><span class="line"></span><br><span class="line">* Connected to gangzai.online (151.101.1.147) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; User-Agent: curl/7.35.0</span><br><span class="line">&gt; Host: gangzai.online</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt; </span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="Url"><a href="#Url" class="headerlink" title="Url"></a>Url</h4><p>​    URL（统一资源定位符）用来描述Internet上一个资源详细地址的规范，大家可能看到过很多次这样的地址，比如www.baidu.com，www.dachengge.com，j定义这个规范最权威的标准是RFC 3986。</p>
+<p><br></p>
+<h4 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h4><p>​    每一个CURL支持的协议都是运行在特定的端口上，通常情况下不用端口的问题，除非进行网站的测试，而使用不同的端口，这是可以使用不同的端口，使用的方法是，在网站域名后面家一个端口号，用冒号隔开，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://dachengge.com:80/</span><br></pre></td></tr></table></figure>
+<p>如果使用代理服务器时，也可以指定代理服务器的端口号:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –proxy http://abc.com:80 http:dachengge.com/</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="使用账号和密码"><a href="#使用账号和密码" class="headerlink" title="使用账号和密码"></a>使用账号和密码</h4><p>​    有时有些服务需要HTTP认证，当访问这些网站时需要提供账号和密码，这是你需要在URL里面提供账号密码，或者单独提供:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CURL http://user:password@example.com/</span><br><span class="line">CURL -u user:password http://example.com/</span><br></pre></td></tr></table></figure>
+<p><img src="/img/shell/curl_from.png" alt="curl_username"></p>
+<p><br></p>
+<h3 id="Cookies"><a href="#Cookies" class="headerlink" title="Cookies"></a><strong>Cookies</strong></h3><p>浏览器通过使用Cookie来记录客户端的状态，并向服务器发送。Cookies是键=》值对应的形式，服务器向客户端发送cookies的到期时间和其他一些属性。</p>
+<p>很多应用使用Cookies连接服务器，并进行一系列操作，完成一个会话。CURL要是完成这样的操作，就必须保存Cookies。</p>
+<p><br></p>
+<h4 id="cookies选项"><a href="#cookies选项" class="headerlink" title="cookies选项"></a>cookies选项</h4><p>最简单发送Cookies的方法就是向服务器发送请求的同时加上这些数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –cookie “name=Daniel” http://www.dachengge.com</span><br></pre></td></tr></table></figure>
+<p>Cookies像其他HTTP头一样发送，这对于CURL记录这头非常有用，使用–dump-header记，将HEADER和Cookies存在文件里：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –dump-header headers_and_cookies www.dachengge.com</span><br></pre></td></tr></table></figure>
+<p>如果只记录下Cookies，使用–cookie-jar：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –cookie-jar cookieFile http://www.dachengge.com</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="自动更新和追踪cookies"><a href="#自动更新和追踪cookies" class="headerlink" title="自动更新和追踪cookies"></a>自动更新和追踪cookies</h4><p>如果让curl自动保存新的cookie，且提交请求时再带上新的cookie时，可以将–cookie 和–cookie-jar 指向同一个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl  –include –cookie “cook.txt” –cookie-jar “cook.txt” http://dachengge.com</span><br><span class="line">curl  –include –cookie “cook.txt” –cookie-jar “cook.txt” http://abc.dachengge.com</span><br></pre></td></tr></table></figure>
+<p>即每行指令中都读取和写入相同的cookie文件，系统会自动更新cookie。</p>
+<p><br></p>
+<h4 id="使用变量保存cookies"><a href="#使用变量保存cookies" class="headerlink" title="使用变量保存cookies"></a>使用变量保存cookies</h4><p>上一节讲的使用–cookie和–cookie-jar是利用文件来保存和读取cookie，由于文件操作比较费资源，下面将讨论不使用文件，而是使用变量来保存和读取cookie:</p>
+<p>当输入：curl www.baidu.com –head， 大家会看到百度首页的头信息，里面有很多set-cookies，即设置cookie变量。首先将目标网页的头保存，然后用grep查找cookie。。。</p>
+<p><br></p>
+<h3 id="HTML-表单"><a href="#HTML-表单" class="headerlink" title="HTML 表单"></a>HTML 表单</h3><h4 id="使用GET方法的表单"><a href="#使用GET方法的表单" class="headerlink" title="使用GET方法的表单"></a>使用GET方法的表单</h4><p>HTML中使用GET方法提交数据的页面是这样的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method=”GET” action=”junk.cgi”&gt;</span><br><span class="line">	&lt;input type=text name=”birthyear”&gt;</span><br><span class="line">	&lt;input type=submit name=press value=”OK”&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+<p>​    如果对浏览器熟悉的话，上面的代码就会显示成，一个文本框和一个OK按钮。这是填入1905，然后点击“OK“，浏览器就会生成一个新的URL地址，URL会将”junk.cgi?birthyear=1905&amp;press=OK“添加到之前的URL地址后面。如果之前表单页面地址是 “www.hotmail.com/when/birth.html”，在表单上填写1905，点击OK按钮后，随之打开的页面会变成    “www.hotmail.com/when/junk.cgi?birthyear=1905&amp;press=OK”。要使用CURL程序用GET方法提交数据，直接将数据放在ACTION指向的页面（以前面的表单为例）:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://www.hotmail.com/junk.cgi?birthyear=1905&amp;press=OK&quot;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h4 id="使用POST方法的表单"><a href="#使用POST方法的表单" class="headerlink" title="使用POST方法的表单"></a>使用POST方法的表单</h4><p>GET方法将所有的输入域名称和值都放在URL地址里面，如果能通过值来做某些页面的书签（例如www.abc.com/index.php?id=18保存成书签可以直接访问），GET通常是个好办法，但是如果输入的数据是保密的或者有大量的数据要输入时，会产生一个非常长的URL地址。下面是一个使用POST方法的表单:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method=”POST” action=”junk.cgi”&gt;</span><br><span class="line">	&lt;input type=text name=”birthyear”&gt;</span><br><span class="line">	&lt;input type=submit name=press value=” OK “&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+<p>CURL命令使用POST方法提交和上面相同的数据，就会使这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –data &quot;birthyear=1905&amp;press=%20OK%20&quot;  http://www.example.com/when.cgi</span><br></pre></td></tr></table></figure>
+<p>注意，OK前面和后面的%20是空格，使用了urlencode编码，POST方法的Content-Type通常是application/x-www-form-urlencoded。通过POST方法向服务器发送的数据必须被编码，新版本的CURL使用–data-urlencode编码，前面的空格变成%20就是这个道理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –data-urlencode &quot;name=I am Daniel&quot; http://www.example.com</span><br></pre></td></tr></table></figure>
+<p>如果在一个命令行里面多次使用–data参数，CURL会将所有–data后面的数据使用&amp;拼接起来。</p>
+<p><br></p>
+<h4 id="文件上传提交"><a href="#文件上传提交" class="headerlink" title="文件上传提交"></a>文件上传提交</h4><p>在1995年，他们定义另外一种HTTP提交数据的方法，这种方法在RFC 1867中有描述。这种方法设计得能更好地支持文件上传，假设文件上传的表是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method=”POST” enctype=’multipart/form-data’ action=”upload.cgi”&gt;</span><br><span class="line">	&lt;input type=file name=upload&gt;</span><br><span class="line">	&lt;input type=submit name=press value=”OK”&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+<p>从encType是上可以看出，将要发送的数据类型是multipart/form-data，即<strong>文件类型</strong> 。通过CURL向服务器传递数据的命令如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl –form upload=@localfilename –form press=OK   [URL]</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="络访问注意事项"><a href="#络访问注意事项" class="headerlink" title="络访问注意事项"></a>络访问注意事项</h3><p>为了使CURL访问网页时跟浏览器访问的一样，就必须注意下面的事项：</p>
+<ul>
+<li>使用–trace-ascii把所有的细节记录下来，分析和研究。</li>
+<li>确定检查和使用Cookie，使用–cookie读取，使用–cookie-jar写入cookie。</li>
+<li>使用user-agent仿冒浏览器。</li>
+<li>使用referer让服务器觉得是合法的访问请求。</li>
+<li>使用POST时，要按照文本域的顺序提交。</li>
+</ul>
+<p><br></p>
+<h3 id="参数-示例"><a href="#参数-示例" class="headerlink" title="参数 示例"></a>参数 示例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line">-F/--form &lt;name=content&gt; 模拟http表单提交数据</span><br><span class="line">-v/--verbose 小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">-x  ip:port 指定使用的http代理，例如：curl -x 192.168.1.1:8080 www.jbxue.com</span><br><span class="line">-D head.txt  将服务器的返回的header保存为文件，头部的cookie也可被保存，例如：curl -D header.txt www.jbxue.com  </span><br><span class="line">	如果希望从本地文件中获取表单数据，则在文件名前加@ ，例如：curl -d @data.xml http://www.jbxue.com</span><br><span class="line">	若希望从标准输入获取则用 curl -d &quot;name=username&amp;passwd=pwd&quot; http://www.jbxue.com</span><br><span class="line">-X/--request method 用户定义的HTTP请求方法名如 curl -X GET www.baidu.com</span><br><span class="line">-k/--insecure 允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt; 指定输出文件名称</span><br><span class="line">--retry &lt;num&gt; 指定重试次数</span><br><span class="line">-e/--referer &lt;URL&gt; 指定引用地址</span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line">-O:按照服务器上的文件名，自动存在本地</span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line">-T/--upload-file &lt;file&gt; 上传文件</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="断点续传"><a href="#断点续传" class="headerlink" title="断点续传"></a>断点续传</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 # 当文件在下载完成之前结束该进程</span><br><span class="line">2 $ curl -O http://www.gnu.org/software/gettext/manual/gettext.html</span><br><span class="line">3 ##############             20.1%</span><br><span class="line">4 </span><br><span class="line">5 # 通过添加-C选项继续对该文件进行下载，已经下载过的文件不会被重新下载</span><br><span class="line">6 curl -C - -O http://www.gnu.org/software/gettext/manual/gettext.html</span><br><span class="line">7 ###############            21.1%</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="上传带Ftp服务器"><a href="#上传带Ftp服务器" class="headerlink" title="上传带Ftp服务器"></a>上传带Ftp服务器</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 将myfile.txt文件上传到服务器</span><br><span class="line">curl -u ftpuser:ftppass -T myfile.txt ftp://ftp.testserver.com</span><br><span class="line"></span><br><span class="line"># 同时上传多个文件</span><br><span class="line">curl -u ftpuser:ftppass -T &quot;&#123;file1,file2&#125;&quot; ftp://ftp.testserver.com</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="I-i-区别"><a href="#I-i-区别" class="headerlink" title="I/i 区别"></a>I/i 区别</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">显示 HTTP request头信息</span><br><span class="line">curl -i www.baidu.com</span><br><span class="line"></span><br><span class="line">显示 HTTP response头信息</span><br><span class="line">curl -I www.baidu.com</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Commands/" rel="tag"># Commands</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/12/yunwei/rdp-远程连接Linux/" rel="next" title="rdp_远程连接Linux">
+                <i class="fa fa-chevron-left"></i> rdp_远程连接Linux
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/01/commands/Mac-Homebrew-软件包管理器/" rel="prev" title="Mac_Homebrew 软件包管理器">
+                Mac_Homebrew 软件包管理器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#http-url-port"><span class="nav-number">1.</span> <span class="nav-text">http://url:port</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Http"><span class="nav-number">1.1.</span> <span class="nav-text">Http</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Url"><span class="nav-number">1.2.</span> <span class="nav-text">Url</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#端口"><span class="nav-number">1.3.</span> <span class="nav-text">端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用账号和密码"><span class="nav-number">1.4.</span> <span class="nav-text">使用账号和密码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookies"><span class="nav-number">2.</span> <span class="nav-text">Cookies</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cookies选项"><span class="nav-number">2.1.</span> <span class="nav-text">cookies选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自动更新和追踪cookies"><span class="nav-number">2.2.</span> <span class="nav-text">自动更新和追踪cookies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用变量保存cookies"><span class="nav-number">2.3.</span> <span class="nav-text">使用变量保存cookies</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTML-表单"><span class="nav-number">3.</span> <span class="nav-text">HTML 表单</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用GET方法的表单"><span class="nav-number">3.1.</span> <span class="nav-text">使用GET方法的表单</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用POST方法的表单"><span class="nav-number">3.2.</span> <span class="nav-text">使用POST方法的表单</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件上传提交"><span class="nav-number">3.3.</span> <span class="nav-text">文件上传提交</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#络访问注意事项"><span class="nav-number">4.</span> <span class="nav-text">络访问注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数-示例"><span class="nav-number">5.</span> <span class="nav-text">参数 示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#断点续传"><span class="nav-number">5.0.1.</span> <span class="nav-text">断点续传</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#上传带Ftp服务器"><span class="nav-number">5.0.2.</span> <span class="nav-text">上传带Ftp服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#I-i-区别"><span class="nav-number">5.0.3.</span> <span class="nav-text">I/i 区别</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>

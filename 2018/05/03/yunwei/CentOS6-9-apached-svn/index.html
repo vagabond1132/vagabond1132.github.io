@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux,Centos," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="【环境】Centos6.4 X86_64 minimum，iptables,selinux已关闭，所需软件包采取yum安装方式 【SVN客户端软件】TortoiseSVN">
+<meta name="keywords" content="Linux,Centos">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS6.9  apached + svn">
+<meta property="og:url" content="http://www.gangzai.online/2018/05/03/yunwei/CentOS6-9-apached-svn/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="【环境】Centos6.4 X86_64 minimum，iptables,selinux已关闭，所需软件包采取yum安装方式 【SVN客户端软件】TortoiseSVN">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-19T16:15:08.375Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS6.9  apached + svn">
+<meta name="twitter:description" content="【环境】Centos6.4 X86_64 minimum，iptables,selinux已关闭，所需软件包采取yum安装方式 【SVN客户端软件】TortoiseSVN">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>CentOS6.9  apached + svn | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2018/05/03/yunwei/CentOS6-9-apached-svn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS6.9  apached + svn</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-03T21:56:55+08:00">
+                2018-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>【环境】Centos6.4 X86_64 minimum，iptables,selinux已关闭，所需软件包采取yum安装方式</p>
+<p>【SVN客户端软件】TortoiseSVN</p>
+<a id="more"></a>
+<p><br></p>
+<h3 id="不得不说的svn客户端的4种访问方式"><a href="#不得不说的svn客户端的4种访问方式" class="headerlink" title="不得不说的svn客户端的4种访问方式"></a>不得不说的svn客户端的4种访问方式</h3><p>​    先说说apache+svn，安装subversion包之后能用客户端访问了，但是不能从网页访问，于是考虑到集成apache和svn，提供更亲和的网页访问方式，但是配置完网页访问后傻眼了，一个简陋的版本库页面，只能浏览和下载不能上传，看来客户端访问还是主流</p>
+<p>​    但是转念一想客户端也有版本库浏览器，同时还能上传下载，那要apache+svn干什么，直到我看到同事误把我写的服务器使用说明文档里的网页访问地址<a href="http://serverIP/svn/test粘贴到TortoiseSVN客户端的url里，居然也访问成功了，我才意识到apache+svn和单独的subversion是两种完全不同的访问方式" target="_blank" rel="noopener">http://serverIP/svn/test粘贴到TortoiseSVN客户端的url里，居然也访问成功了，我才意识到apache+svn和单独的subversion是两种完全不同的访问方式</a></p>
+<p>​    原来以为apache+svn必须在subversion启动的条件下同时启动apache，并且保持subversion和apache配置完全一致才行，弄明白了之后才发现完全不是这么回事</p>
+<p>​    实际上apache+svn是通过http协议80端口访问版本库，subversion是通过svn协议的3690端口访问版本库，这两种方式互不干涉，可以只启动80，不启动3690，也可以只启3690，不启80，还可以同时启动80和3690，甚至这两种方式的版本库根目录都可以不同的，用户名和密码也可以不同，apache+svn用的是htpasswd的用户名和密码，subversion用的是svnserve.conf指定的passwd文件里的用户名和密码，说白了apache+svn和单独的svn服务是两种完全不同svn服务类型</p>
+<p>OK，做个总结：</p>
+<p>实际上TortoiseSVN支持总共4种访问方式</p>
+<ul>
+<li><p>svn也就是独立的subversion服务，通过3690端口访问</p>
+</li>
+<li><p>http也就是apache+svn，通过80端口访问</p>
+</li>
+<li><p>https也就是apache+svn+ssl，通过443端口访问</p>
+</li>
+<li><p>svn+ssh也就是ssh+svn，这种稍微特殊，借用ssh隧道访问svn版本库，通过22端口访问，本文不涉及这种访问方式，有兴趣的话大家可以自己去查相关资料</p>
+</li>
+</ul>
+<p>​    【注】windows有个visualsvn好像是直接集成的apache和svn，不知道visualsvn是否有网页上传功能呢。因为一般在linux上部署svn性能更好，安全稳定性更高，所以就没研究windows的svn，大家有兴趣的话可以自己安装个visualsvn试试</p>
+<p><br></p>
+<h3 id="配置SVN服务"><a href="#配置SVN服务" class="headerlink" title="配置SVN服务"></a>配置SVN服务</h3><h4 id="安装svn"><a href="#安装svn" class="headerlink" title="安装svn"></a>安装svn</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install subversion</span><br></pre></td></tr></table></figure>
+<h4 id="创建版本库"><a href="#创建版本库" class="headerlink" title="创建版本库"></a>创建版本库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /svn/svnrepos	 ##建立版本库路径</span><br><span class="line">svnadmin create /svn/svnrepos   ##建立svnrepos svn库</span><br></pre></td></tr></table></figure>
+<h4 id="目录-以及文件配置"><a href="#目录-以及文件配置" class="headerlink" title="目录 以及文件配置"></a>目录 以及文件配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">[root@svn svnrepos]# tree -L 2</span><br><span class="line">.</span><br><span class="line">├── conf</span><br><span class="line">│   ├── passwd</span><br><span class="line">│   └── svnserve.conf</span><br><span class="line">├── dav</span><br><span class="line">│   └── activities.d</span><br><span class="line">├── db</span><br><span class="line">│   ├── current</span><br><span class="line">│   ├── format</span><br><span class="line">│   ├── fsfs.conf</span><br><span class="line">│   ├── fs-type</span><br><span class="line">│   ├── min-unpacked-rev</span><br><span class="line">│   ├── rep-cache.db</span><br><span class="line">│   ├── revprops</span><br><span class="line">│   ├── revs</span><br><span class="line">│   ├── transactions</span><br><span class="line">│   ├── txn-current</span><br><span class="line">│   ├── txn-current-lock</span><br><span class="line">│   ├── txn-protorevs</span><br><span class="line">│   ├── uuid</span><br><span class="line">│   └── write-lock</span><br><span class="line">├── format</span><br><span class="line">├── hooks</span><br><span class="line">│   ├── post-commit.tmpl</span><br><span class="line">│   ├── post-lock.tmpl</span><br><span class="line">│   ├── post-revprop-change.tmpl</span><br><span class="line">│   ├── post-unlock.tmpl</span><br><span class="line">│   ├── pre-commit.tmpl</span><br><span class="line">│   ├── pre-lock.tmpl</span><br><span class="line">│   ├── pre-revprop-change.tmpl</span><br><span class="line">│   ├── pre-unlock.tmpl</span><br><span class="line">│   └── start-commit.tmpl</span><br><span class="line">├── locks</span><br><span class="line">│   ├── db.lock</span><br><span class="line">│   └── db-logs.lock</span><br><span class="line">└── README.txt</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p><code>svnserve.conf</code>配置项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[general]</span><br><span class="line">anon-access = none     #匿名用户无任何权限，如果想匿名用户可读，设置为read即可，默认read</span><br><span class="line">auth-access = write    #认证通过的用户可读可写</span><br><span class="line">password-db = /svn/svnrepos/etc/passwd    #用户名密码文件存放位置</span><br><span class="line">authz-db = /svn/svnrepos/etc/authz        #库权限配置文件存放位置</span><br><span class="line">realm = Unimation           #认证域名，相同认证域名的库的密码缓存可以在多个版本库之间共享</span><br></pre></td></tr></table></figure>
+<p>【注】默认每个库都有一个<code>svnserve.conf</code>, 如果所有库共用一个<code>svnserve.conf</code>，可以在启动svn服务的时候指定添加<code>--config-file=filename</code>, svn服务启动的时候将不会再去读取默认配置文件，而会读取指定<code>svnserve.conf</code></p>
+</li>
+<li><p><code>passwd</code> 配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[users]</span><br><span class="line">harry = harryssecret         #定义库的用户和密码，格式为username = passwd</span><br><span class="line">sally = sallyssecret</span><br><span class="line">tom = tomssecret</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>authz</code>配置项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[groups]                     #定义组和成员</span><br><span class="line">devteam = harry,sally        #格式为groupname = member1,member2</span><br><span class="line"></span><br><span class="line">[svnrepos:/]                    #定义test1库根目录的访问权限</span><br><span class="line">* = r                        #所有用户可读</span><br><span class="line">@devteam = rw                #开发组成员读写，注意组名前面要加@</span><br><span class="line">[svnrepos:/tomproject]          #定义test1下tomproject文件夹的权限</span><br><span class="line">tom = rw                     #tom读写</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启停svn服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">svnserve -d -r /svn/svnrepos</span><br><span class="line">#    -d               以守护进程的方式运行svn服务</span><br><span class="line">#    -r               指定版本库根目录</span><br><span class="line">#    --listen-port    指定监听端口，默认端口3690</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>此时即可通过 <a href="">svn://ip/svn/svnrepos</a>访问</p>
+</li>
+</ol>
+<p>【注】同时运行多个库是和svn服务启动的时候的版本库根目录(-r 参数)有直接关系的，在版本库目录底下建多个库，启动的时候就可以把这些库一并启动起来，登陆时只需要指定不同的库名即可。</p>
+<h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><p>删除整库是没有<code>svnadmin remove</code>这种命令， 直接<code>rm -rf</code>删除整个库文件夹即可.</p>
+<p><br></p>
+<h3 id="配置apache-svn"><a href="#配置apache-svn" class="headerlink" title="配置apache + svn"></a>配置apache + svn</h3><h4 id="准备相关库以及程序包"><a href="#准备相关库以及程序包" class="headerlink" title="准备相关库以及程序包"></a>准备相关库以及程序包</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install httpd httpd-devel mod_dav_svn subversion mod_ssl</span><br><span class="line">yum install openssl-devel</span><br></pre></td></tr></table></figure>
+<p><a href="https://pan.baidu.com/s/10dkIOl4WkrBppWTLbAIwBA" target="_blank" rel="noopener">apr-1.6.3.tar.gz</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#tar –zvxf apr-1.4.2.tar.gz</span><br><span class="line">#cd apr-1.4.2</span><br><span class="line">#./configure   安装不指定路径时 默认安装到/usr/local/apr</span><br><span class="line">#make</span><br><span class="line">#make install</span><br></pre></td></tr></table></figure>
+<p><a href="https://pan.baidu.com/s/1xQW-1CRWyXZSDcAOpMJ01A" target="_blank" rel="noopener">apr-util-1.6.1.tar.gz</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#tar –zxvf apr-util-1.3.10.tar.gz</span><br><span class="line">#cd apr-util-1.3.10</span><br><span class="line">#./configure --with-apr=/usr/local/apr</span><br><span class="line">#make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p><a href="https://pan.baidu.com/s/1zV-T2qOCoTsrY76W3Cve_A" target="_blank" rel="noopener">httpd-2.4.33.tar.bz2</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#tar zxvf httpd-2.2.22.tar.gz</span><br><span class="line">#cd httpd-2.2.22</span><br><span class="line">#./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr/bin/apr-1-config  --with-apr-util=/usr/local/apr/bin/apu-1-config --enable-modules=so --enable-dav --enable-maintainer-mode--enable-rewrite</span><br><span class="line">#make</span><br><span class="line">#make install</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">报错:</span><br><span class="line">	  mod_so can not be built as a shared DSO</span><br></pre></td></tr></table></figure>
+<p><strong>使用–enable-modules=all即可，编译安装成功。如：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr/bin/apr-1-config  --with-apr-util=/usr/local/apr/bin/apu-1-config --enable-modules=so --enable-dav --enable-maintainer-mode--enable-rewrite --enable-modules=all</span><br></pre></td></tr></table></figure>
+<p>####apached 依赖库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">apachectl -t -D DUMP_MODULES|grep svn       #查看apache是否已经加载了dav_svn_module和authz_svn_module</span><br><span class="line"> </span><br><span class="line">一般yum安装的apache模块都会在启动时自动加载，如果尚未加载，在http.conf文件中添加如下内容后重启httpd服务即可</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">sed -i &apos;/Options Indexes/s/Indexes/-Indexes/&apos; /etc/httpd/conf/httpd.conf</span><br><span class="line">#其中&quot;-&quot;表示不允许列目录</span><br></pre></td></tr></table></figure>
+<h4 id="httpd-conf"><a href="#httpd-conf" class="headerlink" title="httpd.conf"></a><code>httpd.conf</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#vim /etc/httpd/conf/httpd.conf</span><br><span class="line">LoadModule dav_svn_module modules/mod_dav_svn.so</span><br><span class="line">LoadModule authz_svn_module modules/mod_authz_svn.so</span><br><span class="line"> </span><br><span class="line">此外，鉴于svn需要列出文件夹内容，建议把apache的默认列目录功能关闭，防止svn以外的目录被列出结构，提升安全性</span><br></pre></td></tr></table></figure>
+<h4 id="httpd-conf-中-location配置"><a href="#httpd-conf-中-location配置" class="headerlink" title="httpd.conf 中 location配置"></a>httpd.conf 中 location配置</h4><p>配置一:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#vim /etc/httpd/conf/httpd.conf</span><br><span class="line">&lt;Location /svn&gt;</span><br><span class="line">    DAV svn                        #使用svn模块</span><br><span class="line">    SVNParentPath /svn/svnrepos    #svn版本库根目录</span><br><span class="line">    AuthType Basic                 #认证类型：基本身份认证</span><br><span class="line">    AuthName &quot;SVN&quot;                 #认证名称</span><br><span class="line">    AuthUserFile /svn/svnrepos/etc/.htpasswd        #指定用户名密码文件路径</span><br><span class="line">    AuthzSVNAccessFile /svn/svnrepos/etc/authz      #指定authz文件路径</span><br><span class="line">    Require valid-user             #有效用户可以访问</span><br><span class="line">&lt;/Location&gt;</span><br></pre></td></tr></table></figure>
+<p>配置二:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">##存在异常;</span><br><span class="line">&lt;Location /svn&gt;</span><br><span class="line">   DAV svn</span><br><span class="line">   SVNParentPath /svn</span><br><span class="line"></span><br><span class="line">   AuthType Basic</span><br><span class="line">   AuthName &quot;UnimationTech&quot;</span><br><span class="line">   AuthUserFile /svn/svnrepos/etc/.htpasswd</span><br><span class="line">   AuthzSVNAccessFile /svn/svnrepos/etc/authz</span><br><span class="line"></span><br><span class="line">   # Limit write permission to list of valid users.</span><br><span class="line">   #&lt;LimitExcept GET PROPFIND OPTIONS REPORT&gt;</span><br><span class="line">      # Require SSL connection for password protection.</span><br><span class="line">      # SSLRequireSSL</span><br><span class="line">	 Require valid-user    -- 在其中时 svn 客户端下载将不会进行用户名验证</span><br><span class="line">   #&lt;/LimitExcept&gt;</span><br><span class="line">&lt;/Location&gt;</span><br></pre></td></tr></table></figure>
+<p>【注】\<location\>和\<directiony\>的区别，\<location\>是虚拟目录，用\<location\>可以隐藏真实路径，而\<directory\>是直接使用真实路径</directory\></location\></location\></directiony\></location\></p>
+<h4 id="htpasswd密码文件"><a href="#htpasswd密码文件" class="headerlink" title="htpasswd密码文件"></a>htpasswd密码文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">htpasswd -bc /svn/svnrepos/etc/.htpasswd root 123</span><br><span class="line">htpasswd -b /svn/svnrepos/etc/.htpasswd lg 123</span><br><span class="line">htpasswd -b /svn/svnrepos/etc/.htpasswd scb 123</span><br></pre></td></tr></table></figure>
+<h4 id="权限修改"><a href="#权限修改" class="headerlink" title="权限修改"></a>权限修改</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 /svn/svnrepos/etc/.htpasswd        #修改权限提升安全性</span><br><span class="line">chown -R apache.apache /svn                  #最后别忘了修改版本库目录权限</span><br><span class="line">service httpd restart                        #重启服务</span><br><span class="line">chmod -R 700 /svn                            #权限</span><br></pre></td></tr></table></figure>
+<h4 id="authz"><a href="#authz" class="headerlink" title="authz"></a>authz</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[groups]</span><br><span class="line">super_user = root</span><br><span class="line">manage_user =  wyh, cgq, lgl</span><br><span class="line">FA = lg, scb</span><br><span class="line">Special = ml, lhjn</span><br><span class="line">Service = hjw, zj</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[svnrepos:/]</span><br><span class="line">@super_user = rw</span><br><span class="line">@manage_user = rw</span><br><span class="line">@FA = rw</span><br><span class="line">* = r</span><br><span class="line"></span><br><span class="line">[svnrepos:/FA]</span><br><span class="line">@super_user = rw</span><br><span class="line">@manage_user = rw</span><br><span class="line">@FA = rw</span><br><span class="line">* = </span><br><span class="line"></span><br><span class="line">[svnrepos:/Market_Department]</span><br><span class="line">@super_user = rw</span><br><span class="line">@manage_user = rw</span><br><span class="line">@Service = rw</span><br><span class="line">* = </span><br><span class="line"></span><br><span class="line">[svnrepos:/Services_Department]</span><br><span class="line">@super_user = rw</span><br><span class="line">@manage_user = rw</span><br><span class="line">@Service = rw</span><br><span class="line">* = </span><br><span class="line"></span><br><span class="line">[svnrepos:/Shared_Dir]</span><br><span class="line">@super_user = rw</span><br><span class="line">* = r</span><br><span class="line"></span><br><span class="line">[svnrepos:/Special_robot]</span><br><span class="line">@super_user = rw</span><br><span class="line">@manage_user = rw</span><br><span class="line">@Special = rw</span><br><span class="line">* =</span><br></pre></td></tr></table></figure>
+<p>【参考】</p>
+<p><a href="https://gangzai.online/2018/03/11/yunwei/Linux-SVN%E9%83%A8%E7%BD%B2/" target="_blank" rel="noopener">Linux-SVN部署</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Centos/" rel="tag"># Centos</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/23/yunwei/Linux运行级别/" rel="next" title="Linux运行级别">
+                <i class="fa fa-chevron-left"></i> Linux运行级别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/13/commands/dd/" rel="prev" title="dd常用参数">
+                dd常用参数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#不得不说的svn客户端的4种访问方式"><span class="nav-number">1.</span> <span class="nav-text">不得不说的svn客户端的4种访问方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置SVN服务"><span class="nav-number">2.</span> <span class="nav-text">配置SVN服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装svn"><span class="nav-number">2.1.</span> <span class="nav-text">安装svn</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建版本库"><span class="nav-number">2.2.</span> <span class="nav-text">创建版本库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目录-以及文件配置"><span class="nav-number">2.3.</span> <span class="nav-text">目录 以及文件配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#删除"><span class="nav-number">2.3.1.</span> <span class="nav-text">删除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置apache-svn"><span class="nav-number">3.</span> <span class="nav-text">配置apache + svn</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#准备相关库以及程序包"><span class="nav-number">3.1.</span> <span class="nav-text">准备相关库以及程序包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#httpd-conf"><span class="nav-number">3.2.</span> <span class="nav-text">httpd.conf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#httpd-conf-中-location配置"><span class="nav-number">3.3.</span> <span class="nav-text">httpd.conf 中 location配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#htpasswd密码文件"><span class="nav-number">3.4.</span> <span class="nav-text">htpasswd密码文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#权限修改"><span class="nav-number">3.5.</span> <span class="nav-text">权限修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#authz"><span class="nav-number">3.6.</span> <span class="nav-text">authz</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>
