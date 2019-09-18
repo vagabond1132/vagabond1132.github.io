@@ -3,31 +3,33 @@
 
 
     
-    
   <url>
-    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
-    <lastmod>2019-09-18T11:08:01.834Z</lastmod>
+    <loc>http://www.gangzai.online/2017/08/26/database/tcp-ip-connect-SSL-off/</loc>
+    <lastmod>2019-09-18T12:20:04.670Z</lastmod>
     <data>
         <display>
-        <title>Debug size_t</title>
-        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
+        <title>Tcp/ip无法连接到Postgresql 数据库，SSL关闭状态</title>
+        <pubTime>2017-08-26T10:52:47.000Z</pubTime>
         
-        <tag>C/C++</tag>
+        <tag>Postgresql</tag>
          
          
            
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
         </display>
     </data>
     </url>
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/</loc>
-    <lastmod>2019-09-18T11:07:38.795Z</lastmod>
+    <loc>http://www.gangzai.online/2018/09/13/database/Postgresql%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%87%8D%E8%BD%BD/</loc>
+    <lastmod>2019-09-18T12:19:58.701Z</lastmod>
     <data>
         <display>
-        <title>Postgresql max_wal_size与Xlog file</title>
-        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
+        <title>PostgresSql操作符重载</title>
+        <pubTime>2018-09-13T15:27:54.000Z</pubTime>
         
         <tag>Database</tag>
          
@@ -35,18 +37,21 @@
          
          
            
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
         </display>
     </data>
     </url>
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    <lastmod>2019-09-18T10:58:27.478Z</lastmod>
+    <loc>http://www.gangzai.online/2018/08/22/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%BA%90%E7%A0%81%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0/</loc>
+    <lastmod>2019-09-18T12:19:50.222Z</lastmod>
     <data>
         <display>
-        <title>Postgresql Wal</title>
-        <pubTime>2019-07-19T12:27:32.000Z</pubTime>
+        <title>Postgresql扩展Sql-源码添加系统函数</title>
+        <pubTime>2018-08-22T10:52:18.000Z</pubTime>
         
         <tag>Database</tag>
          
@@ -54,6 +59,234 @@
          
          
            
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/08/30/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/</loc>
+    <lastmod>2019-09-18T12:19:44.413Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql扩展Sql-添加插件</title>
+        <pubTime>2018-08-30T11:46:55.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/09/29/database/Postgresql%E6%89%A9%E5%B1%95Sql-hook/</loc>
+    <lastmod>2019-09-18T12:19:39.038Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql扩展Sql-hook</title>
+        <pubTime>2018-09-29T13:03:38.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/09/18/database/Postgresql%E6%89%A9%E5%B1%95SQL%E4%B8%8E%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/</loc>
+    <lastmod>2019-09-18T12:19:33.012Z</lastmod>
+    <data>
+        <display>
+        <title>postgresql扩展SQL与存储过程</title>
+        <pubTime>2018-09-18T11:04:50.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/10/06/database/Postgresql%E5%BC%80%E5%8F%91-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E8%A1%A8/</loc>
+    <lastmod>2019-09-18T12:19:22.757Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql开发-添加系统表</title>
+        <pubTime>2018-10-06T13:15:54.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/09/01/database/Postgresql-%E5%90%8E%E5%8F%B0%E8%BF%9B%E7%A8%8B/</loc>
+    <lastmod>2019-09-18T12:19:17.419Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql-后台进程</title>
+        <pubTime>2018-09-01T02:07:57.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/07/15/database/Postgresql-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2019-09-18T12:19:10.229Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql 入门学习</title>
+        <pubTime>2017-07-15T10:23:52.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/08/23/database/PostgreSql%E6%89%A9%E5%B1%95Sql-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%B1%E4%BA%AB%E5%BA%93-C%E5%87%BD%E6%95%B0/</loc>
+    <lastmod>2019-09-18T12:19:04.733Z</lastmod>
+    <data>
+        <display>
+        <title>PostgreSql扩展Sql-动态加载共享库(C函数)</title>
+        <pubTime>2018-08-23T11:13:40.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/10/09/database/PostgreSql-page/</loc>
+    <lastmod>2019-09-18T12:18:54.235Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql开发 Page</title>
+        <pubTime>2018-10-09T12:13:41.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/11/23/database/Pg-Time-Linux-%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4/</loc>
+    <lastmod>2019-09-18T12:18:49.107Z</lastmod>
+    <data>
+        <display>
+        <title>Pg Time && Linux 系统时间</title>
+        <pubTime>2018-11-23T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+        <tag>Linux</tag>
+         
+        <tag>Commands</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+             
+              <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Database/Debug/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <lastmod>2019-09-18T12:18:14.310Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Arch process</title>
+        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
         </display>
     </data>
     </url>
@@ -61,7 +294,7 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    <lastmod>2019-09-18T07:29:58.000Z</lastmod>
+    <lastmod>2019-09-18T12:18:02.450Z</lastmod>
     <data>
         <display>
         <title>Postgresql Guc</title>
@@ -73,6 +306,9 @@
          
          
            
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
         </display>
     </data>
     </url>
@@ -80,7 +316,7 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-09-12T08:18:59.000Z</lastmod>
+    <lastmod>2019-09-18T12:17:56.042Z</lastmod>
     <data>
         <display>
         <title>Postgresql rman</title>
@@ -92,6 +328,31 @@
          
          
            
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
+    <lastmod>2019-09-18T12:17:51.330Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Wal</title>
+        <pubTime>2019-07-19T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
         </display>
     </data>
     </url>
@@ -99,7 +360,7 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
-    <lastmod>2019-09-11T13:17:49.007Z</lastmod>
+    <lastmod>2019-09-18T12:17:42.874Z</lastmod>
     <data>
         <display>
         <title>safe-rm</title>
@@ -118,6 +379,49 @@
     </data>
     </url>
 
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/</loc>
+    <lastmod>2019-09-18T12:17:42.011Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql max_wal_size与Xlog file</title>
+        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2019-09-18T12:16:25.768Z</lastmod>
+    <data>
+        <display>
+        <title>Debug size_t</title>
+        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
+        
+        <tag>C/C++</tag>
+         
+         
+           
+             
+              <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Debug/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
@@ -158,27 +462,6 @@
              
               <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-08-30T07:26:50.000Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Arch process</title>
-        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-        <tag>数据库</tag>
-         
-         
-           
         </display>
     </data>
     </url>
@@ -245,25 +528,6 @@
              
               <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/10/09/database/PostgreSql-page/</loc>
-    <lastmod>2019-07-29T10:46:06.202Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql开发 Page</title>
-        <pubTime>2018-10-09T12:13:41.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
         </display>
     </data>
     </url>
@@ -987,27 +1251,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2018/11/23/database/Pg-Time-Linux-%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4/</loc>
-    <lastmod>2018-11-24T05:20:43.067Z</lastmod>
-    <data>
-        <display>
-        <title>Pg Time && Linux 系统时间</title>
-        <pubTime>2018-11-23T12:27:32.000Z</pubTime>
-        
-        <tag>Postgresql</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Commands</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2018/10/31/alogr/Multiply-Strings/</loc>
     <lastmod>2018-11-21T12:13:18.728Z</lastmod>
     <data>
@@ -1060,9 +1303,9 @@
         
         <tag>Linux</tag>
          
-        <tag>GDB</tag>
-         
         <tag>调试</tag>
+         
+        <tag>GDB</tag>
          
          
            
@@ -1406,194 +1649,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2017/08/26/database/tcp-ip-connect-SSL-off/</loc>
-    <lastmod>2018-11-19T16:11:49.491Z</lastmod>
-    <data>
-        <display>
-        <title>Tcp/ip无法连接到Postgresql 数据库，SSL关闭状态</title>
-        <pubTime>2017-08-26T10:52:47.000Z</pubTime>
-        
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/09/13/database/Postgresql%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%87%8D%E8%BD%BD/</loc>
-    <lastmod>2018-11-19T16:11:42.804Z</lastmod>
-    <data>
-        <display>
-        <title>PostgresSql操作符重载</title>
-        <pubTime>2018-09-13T15:27:54.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/08/22/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%BA%90%E7%A0%81%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0/</loc>
-    <lastmod>2018-11-19T16:11:35.961Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql扩展Sql-源码添加系统函数</title>
-        <pubTime>2018-08-22T10:52:18.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/08/30/database/Postgresql%E6%89%A9%E5%B1%95Sql-%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6/</loc>
-    <lastmod>2018-11-19T16:11:29.211Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql扩展Sql-添加插件</title>
-        <pubTime>2018-08-30T11:46:55.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/09/29/database/Postgresql%E6%89%A9%E5%B1%95Sql-hook/</loc>
-    <lastmod>2018-11-19T16:11:23.187Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql扩展Sql-hook</title>
-        <pubTime>2018-09-29T13:03:38.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/09/18/database/Postgresql%E6%89%A9%E5%B1%95SQL%E4%B8%8E%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/</loc>
-    <lastmod>2018-11-19T16:11:16.362Z</lastmod>
-    <data>
-        <display>
-        <title>postgresql扩展SQL与存储过程</title>
-        <pubTime>2018-09-18T11:04:50.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/09/01/database/Postgresql-%E5%90%8E%E5%8F%B0%E8%BF%9B%E7%A8%8B/</loc>
-    <lastmod>2018-11-19T16:11:10.235Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql-后台进程</title>
-        <pubTime>2018-09-01T02:07:57.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/07/15/database/Postgresql-%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2018-11-19T16:11:05.642Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql 入门学习</title>
-        <pubTime>2017-07-15T10:23:52.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/08/23/database/PostgreSql%E6%89%A9%E5%B1%95Sql-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E5%85%B1%E4%BA%AB%E5%BA%93-C%E5%87%BD%E6%95%B0/</loc>
-    <lastmod>2018-11-19T16:10:57.994Z</lastmod>
-    <data>
-        <display>
-        <title>PostgreSql扩展Sql-动态加载共享库(C函数)</title>
-        <pubTime>2018-08-23T11:13:40.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/10/06/database/Postgresql%E5%BC%80%E5%8F%91-%E6%B7%BB%E5%8A%A0%E7%B3%BB%E7%BB%9F%E8%A1%A8/</loc>
-    <lastmod>2018-11-19T16:10:51.306Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql开发-添加系统表</title>
-        <pubTime>2018-10-06T13:15:54.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2018/10/28/rebuild/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/</loc>
     <lastmod>2018-11-19T16:07:38.003Z</lastmod>
     <data>
@@ -1772,9 +1827,9 @@
         <title>MacBook 破解Wifi</title>
         <pubTime>2017-09-23T11:24:26.000Z</pubTime>
         
-        <tag>Mac</tag>
-         
         <tag>渗透</tag>
+         
+        <tag>Mac</tag>
          
         <tag>Kali</tag>
          
