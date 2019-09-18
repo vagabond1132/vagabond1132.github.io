@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/</loc>
+    
+    <lastmod>2019-09-18T10:58:41.230Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
+    
+    <lastmod>2019-09-18T10:58:27.478Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    
+    <lastmod>2019-09-18T07:29:58.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    
+    <lastmod>2019-09-12T08:18:59.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
     
     <lastmod>2019-09-11T13:17:49.007Z</lastmod>
@@ -26,27 +54,6 @@
     <loc>http://www.gangzai.online/2019/09/06/docker/2019-09-06-%E9%A3%9E%E8%85%BE-aarch64-install-docker/</loc>
     
     <lastmod>2019-09-06T11:19:58.290Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    
-    <lastmod>2019-08-30T07:33:09.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    
-    <lastmod>2019-08-30T07:30:26.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    
-    <lastmod>2019-08-30T07:28:29.000Z</lastmod>
     
   </url>
   
