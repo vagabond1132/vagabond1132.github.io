@@ -4,14 +4,16 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
-    <lastmod>2019-09-18T10:59:42.738Z</lastmod>
+    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/</loc>
+    <lastmod>2019-09-18T11:07:38.795Z</lastmod>
     <data>
         <display>
-        <title>Debug size_t</title>
-        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
+        <title>Postgresql max_wal_size与Xlog file</title>
+        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
         
-        <tag>C/C++</tag>
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
          
          
            
@@ -21,16 +23,14 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/</loc>
-    <lastmod>2019-09-18T10:58:41.230Z</lastmod>
+    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2019-09-18T10:59:42.738Z</lastmod>
     <data>
         <display>
-        <title>Postgresql max_wal_size 与 XLOG file</title>
-        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
+        <title>Debug size_t</title>
+        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
         
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
+        <tag>C/C++</tag>
          
          
            
