@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /tags/ 
+Allow: /transfer/ 
+Disallow: /vendors/
+Disallow: /js/
+Disallow: /css/
+Disallow: /fonts/
+Disallow: /vendors/
+Disallow: /fancybox/
+Sitemap: http://www.gangzai.online/sitemap.xml
+Sitemap: http://www.gangzai.obline/baidusitemap.xml

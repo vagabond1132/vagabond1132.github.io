@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Database,Postgresql," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文章基于Postgresql 9.5 Page数据页结构 tablepce、table、toast、index数据文件位置 hexpdump解析数据文件">
+<meta name="keywords" content="Database,Postgresql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postgresql开发 Page">
+<meta property="og:url" content="http://www.gangzai.online/2018/10/09/database/PostgreSql-page/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="本文章基于Postgresql 9.5 Page数据页结构 tablepce、table、toast、index数据文件位置 hexpdump解析数据文件">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.gangzai.online/img/postgresql/pg_smgr_manager.png">
+<meta property="og:image" content="http://www.gangzai.online/img/postgresql/table_page.png">
+<meta property="og:image" content="http://www.gangzai.online/img/postgresql/postgresql-page.png">
+<meta property="og:image" content="http://www.gangzai.online/img/postgresql/postgres-wal-fsync-disk.png">
+<meta property="og:image" content="http://www.gangzai.online/img/postgresql/postgre-dirty_page_write.png">
+<meta property="og:updated_time" content="2019-07-29T10:46:06.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Postgresql开发 Page">
+<meta name="twitter:description" content="本文章基于Postgresql 9.5 Page数据页结构 tablepce、table、toast、index数据文件位置 hexpdump解析数据文件">
+<meta name="twitter:image" content="http://www.gangzai.online/img/postgresql/pg_smgr_manager.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>Postgresql开发 Page | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2018/10/09/database/PostgreSql-page/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Postgresql开发 Page</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-09T20:13:41+08:00">
+                2018-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>本文章基于Postgresql 9.5</li>
+<li>Page数据页结构</li>
+<li>tablepce、table、toast、index数据文件位置</li>
+<li>hexpdump解析数据文件</li>
+</ul>
+<p><br><br><a id="more"></a></p>
+<h5 id="Page结构"><a href="#Page结构" class="headerlink" title="Page结构"></a>Page结构</h5><p>PG数据表存储在N个数据文件中，每个数据文件有N个Page(大小默认为8K，可在编译安装时指定)组成，Page为Pg最小存取单元。</p>
+<p><img src="/img/postgresql/pg_smgr_manager.png" alt="普通数据表存储结构"></p>
+<p><img src="/img/postgresql/table_page.png" alt=""></p>
+<p><img src="/img/postgresql/postgresql-page.png" alt="数据页"></p>
+<p>数据页8Kb = 8 * 1024 Byte， 其中分为五部分:</p>
+<ul>
+<li>PageHeaderData:  24字节长，包含关于页面的一般信息，包括空闲空间指针。24Byte;</li>
+<li>ItemIdData:    一个记录(偏移量，长度)对的数组，指向实际项。 4Byte;</li>
+<li>Free Space:    为分配的空间(空闲空间)<ul>
+<li>新itemIdData指针从头部开始分配</li>
+<li>新数据Items从结尾开始分配</li>
+</ul>
+</li>
+<li>Items   实际的项本身 – 实际结构取决于表包含的内容，表和序列都是用<code>HeapTupleHeaderData</code>结构, 索引需要不同对待。</li>
+<li>Special Space   索引访问模式相关的数据。不同的索引访问方式存放不同的数据。在普通表中为空。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* include/stotage/bufpage.h</span></span><br><span class="line"><span class="comment"> * disk page organization</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * space management information generic to any page</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *		pd_lsn		- identifies xlog record for last change to this page.</span></span><br><span class="line"><span class="comment"> *		pd_checksum - page checksum, if set.</span></span><br><span class="line"><span class="comment"> *		pd_flags	- flag bits.</span></span><br><span class="line"><span class="comment"> *		pd_lower	- offset to start of free space.</span></span><br><span class="line"><span class="comment"> *		pd_upper	- offset to end of free space.</span></span><br><span class="line"><span class="comment"> *		pd_special	- offset to start of special space.</span></span><br><span class="line"><span class="comment"> *		pd_pagesize_version - size in bytes and page layout version number.</span></span><br><span class="line"><span class="comment"> *		pd_prune_xid - oldest XID among potentially prunable tuples on page.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint32		xlogid;			<span class="comment">/* high bits */</span>   <span class="comment">//4Byte</span></span><br><span class="line">	uint32		xrecoff;		<span class="comment">/* low bits */</span>    <span class="comment">//4Byte</span></span><br><span class="line">&#125; PageXLogRecPtr;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">PageHeaderData</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="comment">/* XXX LSN is member of *any* block, not only page-organized ones */</span></span><br><span class="line">	PageXLogRecPtr pd_lsn;		<span class="comment">/* LSN: next byte after last byte of xlog </span></span><br><span class="line"><span class="comment">								 * record for last change to this page */</span> <span class="comment">// 8Byte</span></span><br><span class="line">	uint16		pd_checksum;	<span class="comment">/* checksum */</span>                              <span class="comment">//2Byte</span></span><br><span class="line">	uint16		pd_flags;		<span class="comment">/* flag bits, see below */</span>                 <span class="comment">//2Byte</span></span><br><span class="line">	LocationIndex pd_lower;		<span class="comment">/* offset to start of free space */</span>         <span class="comment">//2Byte</span></span><br><span class="line">	LocationIndex pd_upper;		<span class="comment">/* offset to end of free space */</span>           <span class="comment">//2Byte</span></span><br><span class="line">	LocationIndex pd_special;	<span class="comment">/* offset to start of special space */</span>      <span class="comment">//2Byte</span></span><br><span class="line">	uint16		pd_pagesize_version;                                        <span class="comment">//2Byte</span></span><br><span class="line">	TransactionId pd_prune_xid; <span class="comment">/* oldest prunable XID, or zero if none */</span>  <span class="comment">//4Byte</span></span><br><span class="line">	ItemIdData	pd_linp[FLEXIBLE_ARRAY_MEMBER]; <span class="comment">/* line pointer array */</span></span><br><span class="line">&#125; PageHeaderData;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>pg_lsn：记录最后一次对page修改的xlog记录id。</li>
+<li>pg_checksum：页面的校验和，主要是通过函数pg_checksum_block函数生成的，0也是有效地，参数为PageHeaderData和BLCKSZ(page’s size)。当校验和验证失败，即认为当前页面无效。        </li>
+<li><p>pg_flags：page的flags，具体值为，可以叠加:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PD_HAS_FREE_LINES   0x0001      <span class="comment">/* are there any unused line pointers? */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PD_PAGE_FULL        0x0002      <span class="comment">/* not enough free space for new</span></span></span><br><span class="line"><span class="meta"><span class="comment">                                          * tuple? */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PD_ALL_VISIBLE      0x0004      <span class="comment">/* all tuples on page are visible to</span></span></span><br><span class="line"><span class="meta"><span class="comment">                                          * everyone */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PD_VALID_FLAG_BITS  0x0007      <span class="comment">/* OR of all valid pd_flags bits */</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pg_lower和pg_upper：最后一个项指针的位置和最新的tuple位置。主要进行查找空闲位置，进行插入工作。</p>
+</li>
+<li>pg_special：page预留的位置，可以存储索引等信息。</li>
+<li><p>pg_pagesize_version：page大小以及当前版本。page大小可以通过configure进行设置。version的意思是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Page layout version number 0 is for pre-7.3 Postgres releases.</span></span><br><span class="line"><span class="comment"> * Releases 7.3 and 7.4 use 1, denoting a new HeapTupleHeader layout.</span></span><br><span class="line"><span class="comment"> * Release 8.0 uses 2; it changed the HeapTupleHeader layout again.</span></span><br><span class="line"><span class="comment"> * Release 8.1 uses 3; it redefined HeapTupleHeader infomask bits.</span></span><br><span class="line"><span class="comment"> * Release 8.3 uses 4; it changed the HeapTupleHeader layout again, and</span></span><br><span class="line"><span class="comment"> *		added the pd_flags field (by stealing some bits from pd_tli),</span></span><br><span class="line"><span class="comment"> *		as well as adding the pd_prune_xid field (which enlarges the header).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * As of Release 9.3, the checksum version must also be considered when</span></span><br><span class="line"><span class="comment"> * handling pages.</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pg_prune_xid: 一般是最后一次删除或者更新的xid;</p>
+</li>
+<li>pg_linp  项指针;</li>
+</ul>
+<p>ItemIdData指向指针:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">ItemIdData</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">unsigned</span>	 lp_off:<span class="number">15</span>,		<span class="comment">/* offset to tuple (from start of page) */</span>  <span class="comment">//指向Items;</span></span><br><span class="line">				lp_flags:<span class="number">2</span>,		<span class="comment">/* state of item pointer, see below */</span></span><br><span class="line">				lp_len:<span class="number">15</span>;		<span class="comment">/* byte length of tuple */</span> </span><br><span class="line">&#125; ItemIdData;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> ItemIdData *ItemId;</span><br></pre></td></tr></table></figure>
+<p>表与序列的结构<code>HeapTupleHeaderData</code></p>
+<ul>
+<li>Tuple 头部信息</li>
+<li>实际数据信息</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">HeapTupleFields</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	TransactionId t_xmin;		<span class="comment">/* inserting xact ID */</span></span><br><span class="line">	TransactionId t_xmax;		<span class="comment">/* deleting or locking xact ID */</span></span><br><span class="line">	<span class="keyword">union</span></span><br><span class="line">	&#123;</span><br><span class="line">		CommandId	t_cid;		<span class="comment">/* inserting or deleting command ID, or both */</span></span><br><span class="line">		TransactionId t_xvac;	<span class="comment">/* old-style VACUUM FULL xact ID */</span></span><br><span class="line">	&#125;			t_field3;</span><br><span class="line">&#125; HeapTupleFields;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">DatumTupleFields</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	int32		datum_len_;		<span class="comment">/* varlena header (do not touch directly!) */</span></span><br><span class="line">	int32		datum_typmod;	<span class="comment">/* -1, or identifier of a record type */</span></span><br><span class="line">	Oid			datum_typeid;	<span class="comment">/* composite type OID, or RECORDOID */</span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Note: field ordering is chosen with thought that Oid might someday</span></span><br><span class="line"><span class="comment">	 * widen to 64 bits.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">&#125; DatumTupleFields;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">BlockIdData</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	uint16		bi_hi;</span><br><span class="line">	uint16		bi_lo;</span><br><span class="line">&#125; BlockIdData;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">ItemPointerData</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	BlockIdData ip_blkid;</span><br><span class="line">	OffsetNumber ip_posid;   <span class="comment">// uint16</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">HeapTupleHeaderData</span>  </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">union</span></span><br><span class="line">	&#123;</span><br><span class="line">		HeapTupleFields t_heap;</span><br><span class="line">		DatumTupleFields t_datum;</span><br><span class="line">	&#125;		t_choice;</span><br><span class="line">	ItemPointerData t_ctid;		<span class="comment">/* current TID of this or newer tuple (or a</span></span><br><span class="line"><span class="comment">								 * speculative insertion token) */</span></span><br><span class="line">	<span class="comment">/* Fields below here must match MinimalTupleData! */</span></span><br><span class="line">	uint16		t_infomask2;	<span class="comment">/* number of attributes + various flags */</span> <span class="comment">//2Byte</span></span><br><span class="line">	uint16		t_infomask;		<span class="comment">/* various flag bits, see below */</span>         <span class="comment">//2Byte</span></span><br><span class="line">	uint8		t_hoff;			<span class="comment">/* sizeof header incl. bitmap, padding */</span> <span class="comment">//1Byte</span></span><br><span class="line">	<span class="comment">/* ^ - 23 bytes - ^ */</span></span><br><span class="line">	bits8		t_bits[FLEXIBLE_ARRAY_MEMBER];	<span class="comment">/* bitmap of NULLs */</span></span><br><span class="line">	<span class="comment">/* MORE DATA FOLLOWS AT END OF STRUCT */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>Rel结构体展开 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Field           Type            Length  Offset  Description</span><br><span class="line">t_xmin          TransactionId   <span class="number">4</span> bytes <span class="number">0</span>       insert XID stamp</span><br><span class="line">t_xmax          TransactionId   <span class="number">4</span> bytes <span class="number">4</span>       <span class="keyword">delete</span> XID stamp</span><br><span class="line">t_cid           CommandId       <span class="number">4</span> bytes <span class="number">8</span>       insert <span class="keyword">and</span>/<span class="function"><span class="keyword">or</span> <span class="keyword">delete</span> CID <span class="title">stamp</span> <span class="params">(overlays with t_xvac)</span></span></span><br><span class="line"><span class="function">t_xvac          TransactionId   4 bytes 8       XID <span class="keyword">for</span> VACUUM operation moving a row version</span></span><br><span class="line"><span class="function">t_ctid          ItemPointerData 6 bytes 12      current TID of <span class="keyword">this</span> <span class="keyword">or</span> newer row version</span></span><br><span class="line">t_infomask2     uint16          2 bytes 18      number of attributes, plus various flag bits</span><br><span class="line">t_infomask      uint16          <span class="number">2</span> bytes <span class="number">20</span>      various flag bits</span><br><span class="line">t_hoff          uint8           <span class="number">1</span> byte  <span class="number">22</span>      offset to user data</span><br><span class="line"><span class="comment">//注意：t_cid和t_xvac为联合体，共用存储空间</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>xmin 和 xmax 是插入，删除，更新操作时的事务ID，插入时会在xmin内写入当前事务ID，删除时在xmax写入当前事务ID，更新是进行删除后再插入。</li>
+<li>t_cid  是指一个事务内的命令ID, 每个事务都从0开始。</li>
+<li>t_ctid 物理ID。</li>
+<li><p>t_infomask2 取值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * information stored in t_infomask2:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_NATTS_MASK			0x07FF	<span class="comment">/* 11 bits for number of attributes */</span></span></span><br><span class="line"><span class="comment">/* bits 0x1800 are available */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_KEYS_UPDATED		0x2000	<span class="comment">/* tuple was updated and key cols</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * modified, or tuple deleted */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_HOT_UPDATED		0x4000	<span class="comment">/* tuple was HOT-updated */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_ONLY_TUPLE			0x8000	<span class="comment">/* this is heap-only tuple */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP2_XACT_MASK			0xE000	<span class="comment">/* visibility-related bits */</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>t_infomask 取值:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * information stored in t_infomask:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_HASNULL			0x0001	<span class="comment">/* has null attribute(s) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_HASVARWIDTH		0x0002	<span class="comment">/* has variable-width attribute(s) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_HASEXTERNAL		0x0004	<span class="comment">/* has external stored attribute(s) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_HASOID				0x0008	<span class="comment">/* has an object-id field */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_KEYSHR_LOCK	0x0010	<span class="comment">/* xmax is a key-shared locker */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_COMBOCID			0x0020	<span class="comment">/* t_cid is a combo cid */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_EXCL_LOCK		0x0040	<span class="comment">/* xmax is exclusive locker */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_LOCK_ONLY		0x0080	<span class="comment">/* xmax, if valid, is only a locker */</span></span></span><br><span class="line"></span><br><span class="line"> <span class="comment">/* xmax is a shared locker */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_SHR_LOCK	(HEAP_XMAX_EXCL_LOCK | HEAP_XMAX_KEYSHR_LOCK)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_LOCK_MASK	(HEAP_XMAX_SHR_LOCK | HEAP_XMAX_EXCL_LOCK | \</span></span><br><span class="line">						 HEAP_XMAX_KEYSHR_LOCK)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMIN_COMMITTED		0x0100	<span class="comment">/* t_xmin committed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMIN_INVALID		0x0200	<span class="comment">/* t_xmin invalid/aborted */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMIN_FROZEN		(HEAP_XMIN_COMMITTED|HEAP_XMIN_INVALID)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_COMMITTED		0x0400	<span class="comment">/* t_xmax committed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_INVALID		0x0800	<span class="comment">/* t_xmax invalid/aborted */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XMAX_IS_MULTI		0x1000	<span class="comment">/* t_xmax is a MultiXactId */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_UPDATED			0x2000	<span class="comment">/* this is UPDATEd version of row */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_MOVED_OFF			0x4000	<span class="comment">/* moved to another place by pre-9.0</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * VACUUM FULL; kept for binary</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * upgrade support */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_MOVED_IN			0x8000	<span class="comment">/* moved from another place by pre-9.0</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * VACUUM FULL; kept for binary</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * upgrade support */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_MOVED (HEAP_MOVED_OFF | HEAP_MOVED_IN)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HEAP_XACT_MASK			0xFFF0	<span class="comment">/* visibility-related bits */</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>t_hoff： HeapTupleHeaderData长度，如果有OID会增加4，受字节对齐影响，会增加8</p>
+</li>
+<li>t_bits： 指向实际具体数据。</li>
+</ul>
+<p><br></p>
+<h5 id="tablespace-位置"><a href="#tablespace-位置" class="headerlink" title="tablespace 位置"></a><code>tablespace</code> 位置</h5><p>查看数据文件首先知道数据文件存放于表空间下，首先需要知道表空间OId</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select oid, datname from pg_database ;</span><br><span class="line">  oid  |  datname  </span><br><span class="line"><span class="comment">-------+-----------</span></span><br><span class="line">     1 | template1</span><br><span class="line"> 13356 | template0</span><br><span class="line"> 13361 | highgo</span><br><span class="line"> 16384 | Postgres</span><br></pre></td></tr></table></figure>
+<p>其次表空间分为系统表空间与用户自定义表空间。</p>
+<p>PG系统表空间默认有两个:pg_default 和 pg_global</p>
+<p>pg_default 的文件存放在PGDATA/base目录下</p>
+<p>pg_global 的文件存放在PGDATA/global目录下。</p>
+<p>用户自定义的表空间在PGDATA/pg_tblspc存在一个软连接，指向实际的存放目录 <code>create tablespace 指定的location</code> 软连接以表空间OID命名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# create tablespace test owner Postgres LOCATION &apos;/home/Postgres/db&apos;;</span><br><span class="line">Postgres=# select oid, * from pg_tablespace ;</span><br><span class="line">oid  |  spcname   | spcowner | spcacl | spcoptions </span><br><span class="line">-------+------------+----------+--------+------------</span><br><span class="line">  1663 | pg_default |       10 |        | </span><br><span class="line">  1664 | pg_global  |       10 |        |   </span><br><span class="line"> 16389 | test       |       10 |        |</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell$ /home/Postgres/dbtest/pg_tblspc</span><br><span class="line">0 lrwxrwxrwx. 1 Postgres Postgres 15 Oct  7 10:28 16389 -&gt; /home/Postgres/db</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="table-位置"><a href="#table-位置" class="headerlink" title="table 位置"></a><code>table</code> 位置</h5><p>pg中每个表都是一个文件，文件以filenode命名。filenode的值可以从<code>pg_class</code>的<code>relfilenode</code>字段获取。<br>当表大小超过1G的时候，表文件会被分割,第一个文件的名字是filenode，第二个则是filenode.1 依次后推，<br>表文件大小限额1G是PG默认值，该值可以通过编译–with-segsize来改变。</p>
+<p><strong>方法一</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select relname, relfilenode,  relnamespace from pg_class where relname = 'pagetest';</span><br><span class="line"> relname  | relfilenode | relnamespace </span><br><span class="line"><span class="comment">----------+-------------+--------------</span></span><br><span class="line"> pagetest |       16406 |         2200</span><br></pre></td></tr></table></figure>
+<p><strong>方法二</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select pg_relation_filepath(&apos;pagetest&apos;);</span><br><span class="line">-[ RECORD 1 ]--------+-----------------</span><br><span class="line">pg_relation_filepath | base/16384/16406</span><br></pre></td></tr></table></figure>
+<p>在表空间目录下, 通常与表Filenode相关的还有两个文件， filenode_fsm 和 filenode_vm .<br>fsm 文件为 free space map.  用于跟踪表文件中的空闲空间。<br>vm  文件为 visibility map.  用于跟踪哪些page包含对所有事务都可见的tuple。</p>
+<p><br></p>
+<h5 id="index-位置"><a href="#index-位置" class="headerlink" title="index  位置"></a><code>index</code>  位置</h5><p>在Pagetest表上创建索引</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# create index ON pagetest using brin ( id );</span><br></pre></td></tr></table></figure>
+<p>查看索引存放文件位置:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select pg_relation_filepath('pagetest_id_idx');</span><br><span class="line"> pg_relation_filepath </span><br><span class="line"><span class="comment">----------------------</span></span><br><span class="line"> base/16384/16409</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="Pageinspect查看Page内容"><a href="#Pageinspect查看Page内容" class="headerlink" title="Pageinspect查看Page内容"></a><strong>Pageinspect查看Page内容</strong></h5><p><strong>安装</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd $PGSRC/contrib/pageinspect</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p><strong>简单使用</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create extension pageinspect ;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h6 id="Table"><a href="#Table" class="headerlink" title="Table"></a><code>Table</code></h6><p><strong>查看raw_page 十六进制内容:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\x     # Expanded display is on.</span><br><span class="line"></span><br><span class="line">select * from get_raw_page('pagetest', 0);</span><br></pre></td></tr></table></figure>
+<p><strong>header &amp; items;</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select * from page_header(get_raw_page(&apos;pagetest&apos;,0));  </span><br><span class="line">    lsn    | checksum | flags | lower | upper | special | pagesize | version | prune_xid </span><br><span class="line">-----------+----------+-------+-------+-------+---------+----------+---------+-----------</span><br><span class="line"> 0/185E030 |        0 |     0 |    40 |  8032 |    8192 |     8192 |       4 |         0</span><br><span class="line">(1 row)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Postgres=# select * from heap_page_items(get_raw_page(&apos;pagetest&apos;,0));</span><br><span class="line"> lp | lp_off | lp_flags | lp_len | t_xmin | t_xmax | t_field3 | t_ctid | t_infomask2 | t_infomask | t_hoff | t_bits | t_oid </span><br><span class="line">----+--------+----------+--------+--------+--------+----------+--------+-------------+------------+--------+--------+-------</span><br><span class="line">  1 |   8152 |        1 |     39 |   1842 |      0 |        0 | (0,1)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  2 |   8112 |        1 |     39 |   1843 |      0 |        0 | (0,2)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  3 |   8072 |        1 |     39 |   1844 |      0 |        0 | (0,3)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  4 |   8032 |        1 |     39 |   1845 |      0 |        0 | (0,4)  |           3 |       2306 |     24 |        |      </span><br><span class="line">(4 rows)</span><br></pre></td></tr></table></figure>
+<p><strong><code>update：</code> page_items 变化</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select * from heap_page_items(get_raw_page('pagetest', 0));</span><br><span class="line"> lp | lp_off | lp_flags | lp_len | t_xmin | t_xmax | t_field3 | t_ctid | t_infomask2 | t_infomask | t_hoff | t_bits | t_oid </span><br><span class="line"><span class="comment">----+--------+----------+--------+--------+--------+----------+--------+-------------+------------+--------+--------+-------</span></span><br><span class="line">  1 |   8152 |        1 |     39 |   1842 |      0 |        0 | (0,1)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  2 |   8112 |        1 |     39 |   1843 |      0 |        0 | (0,2)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  3 |   8072 |        1 |     39 |   1844 |      0 |        0 | (0,3)  |           3 |       2306 |     24 |        |      </span><br><span class="line">  4 |   8032 |        1 |     39 |   1845 |   1846 |        0 | (0,5)  |       16387 |        258 |     24 |        |      </span><br><span class="line">  5 |   7992 |        1 |     39 |   1846 |      0 |        0 | (0,5)  |       32771 |      10242 |     24 |        |</span><br></pre></td></tr></table></figure>
+<p>第4条记录  t_xmax 被修改为 1846 , t_xmax 只有被delete的时候才会被标记， 而第五条记录发现t_xmin被修改为1846，说明是同一事务进行操作，说明进行的操作为update;</p>
+<p><strong><code>insert</code> page_header变化</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select * from page_header(get_raw_page('pagetest',0));</span><br><span class="line">    lsn    | <span class="keyword">checksum</span> | flags | <span class="keyword">lower</span> | <span class="keyword">upper</span> | special | pagesize | <span class="keyword">version</span> | prune_xid </span><br><span class="line"><span class="comment">-----------+----------+-------+-------+-------+---------+----------+---------+-----------</span></span><br><span class="line"> <span class="number">0</span>/<span class="number">18603</span>F0 |        <span class="number">0</span> |     <span class="number">0</span> |    <span class="number">48</span> |  <span class="number">7952</span> |    <span class="number">8192</span> |     <span class="number">8192</span> |       <span class="number">4</span> |      <span class="number">1846</span></span><br><span class="line">(<span class="number">1</span> <span class="keyword">row</span>)</span><br></pre></td></tr></table></figure>
+<p>进行insert操作<code>insert into pagetest values ( 7, &#39;7&#39;, &#39;g&#39; );</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">    lsn    | <span class="keyword">checksum</span> | flags | <span class="keyword">lower</span> | <span class="keyword">upper</span> | special | pagesize | <span class="keyword">version</span> | prune_xid </span><br><span class="line"><span class="comment">-----------+----------+-------+-------+-------+---------+----------+---------+-----------</span></span><br><span class="line"> <span class="number">0</span>/<span class="number">1860460</span> |        <span class="number">0</span> |     <span class="number">0</span> |    <span class="number">52</span> |  <span class="number">7912</span> |    <span class="number">8192</span> |     <span class="number">8192</span> |       <span class="number">4</span> |      <span class="number">1846</span></span><br></pre></td></tr></table></figure>
+<p>比较发现 lsn, lower, upper 三项发生了变化。<br>lsn   记录最后一次对page修改的xlog记录id<br>lower 每次从前向后申请 4Byte字节<br>upper 每次从后向前从Free Space申请39字节，因为字节对齐 申请40Byte;</p>
+<p><br></p>
+<h6 id="index"><a href="#index" class="headerlink" title="index"></a><code>index</code></h6><p>查看索引类型:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# \d pagetest</span><br><span class="line">          Table "public.pagetest"</span><br><span class="line"> Column |         Type          | Modifiers </span><br><span class="line"><span class="comment">--------+-----------------------+-----------</span></span><br><span class="line"> id     | integer               | </span><br><span class="line"> c1     | character(8)          | </span><br><span class="line"> c2     | character varying(16) | </span><br><span class="line">Indexes:</span><br><span class="line">    "pagetest_id_idx" brin (id)</span><br></pre></td></tr></table></figure>
+<p>查看Page Header;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# SELECT * from  page_header(get_raw_page('pagetest_id_idx', 0));</span><br><span class="line">    lsn    | <span class="keyword">checksum</span> | flags | <span class="keyword">lower</span> | <span class="keyword">upper</span> | special | pagesize | <span class="keyword">version</span> | prune_xid </span><br><span class="line"><span class="comment">-----------+----------+-------+-------+-------+---------+----------+---------+-----------</span></span><br><span class="line"> <span class="number">0</span>/<span class="number">1872</span>A90 |        <span class="number">0</span> |     <span class="number">0</span> |    <span class="number">24</span> |  <span class="number">8184</span> |    <span class="number">8184</span> |     <span class="number">8192</span> |       <span class="number">4</span> |         <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>根据pageinspect提供相关索引进行查看信息:<br>不同类型索引使用的存储结构不同; 常见索引如下:</p>
+<ul>
+<li>brin    </li>
+<li>btree   </li>
+<li>gin     </li>
+<li>gist    </li>
+<li>hash    </li>
+<li>spgist</li>
+</ul>
+<p><br></p>
+<h5 id="hexdump-解析数据文件"><a href="#hexdump-解析数据文件" class="headerlink" title="hexdump 解析数据文件"></a>hexdump 解析数据文件</h5><p>可以对照pageinspesct 进行信息对照。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell$ hexdump -C <span class="number">16406</span> -s <span class="number">0</span> -n <span class="number">8</span></span><br><span class="line"><span class="number">00000000</span>  <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> / <span class="number">30</span> e0 <span class="number">85</span> <span class="number">01</span>                           |....<span class="number">0</span>...|</span><br><span class="line"><span class="number">00000008</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>前4Byte是TimeLineID   0x00000000</li>
+<li>后4Byte是 0x0185e030   </li>
+</ul>
+<p>组合 0/185e030   </p>
+<p>ItemIdData:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">Postgres$</span> hexdump -C 16406 -s 24 -n 4</span><br><span class="line">00000018  d8 9f 4e 00                                       |..N.|</span><br><span class="line">0000001c</span><br><span class="line"></span><br><span class="line"><span class="meta">Postgres$</span> echo $(( 0x9fd8 &amp; ~(1 &lt;&lt; 15) ))  ## 取低15位，指向Items;-实际项;</span><br><span class="line">8152</span><br><span class="line"></span><br><span class="line"><span class="meta">Postgres$</span> echo $(( 0x004e &gt;&gt; 1 ))     ## 取高15位； 得到lp_len (Tuple元组 length)</span><br><span class="line">39</span><br></pre></td></tr></table></figure>
+<p>第一个Tuple偏移8152Byte;</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexdump -C 16406 -s 8152 -n 39</span><br></pre></td></tr></table></figure>
+<p>itemidData-&gt;lp_len = 39;</p>
+<p>t_hoff = 24; ==&gt; <code>hexdump -C 16406 -s 8152+22 -n 1</code></p>
+<p>第一条Tuple元组信息 size = 39 - 24 = 15;</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">Postgres$</span> hexdump -C 16406 -s 8152+t_hoff -n (itemidData-&gt;lp_len - t_hoff)</span><br><span class="line">01 00 00 00 13 31 20 20  20 20 20 20 20 05 61     |.....1       .a|</span><br><span class="line"></span><br><span class="line">回顾我们的表结构：</span><br><span class="line">create table pagetest (id int,c1 char(8),c2 varchar(16));</span><br><span class="line">第1个字段为int，第2个字段为定长字符，第3个字段为变长字符。</span><br><span class="line">相应的数据：</span><br><span class="line">id=\x00000001，数字1</span><br><span class="line">c1=\x133120202020202020，字符串，无需高低位变换，第1个字节\x13为标志位，后面是字符'1'+7个空格 ascii-&gt;hex;</span><br><span class="line">c2=\x0561，字符串，第1个字节\x05为标志位，后面是字符'a'</span><br></pre></td></tr></table></figure>
+<p>那么第二条，则是, 因为实际数据申请，从文件向前申请。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexdump -C 16406 -s 8152+t_hoff-itemidData-&gt;lp_len -n 15</span><br><span class="line">==&gt;</span><br><span class="line">hexdump -C 16406 -s 8137 -n 15 </span><br><span class="line">00 00 00 13 32 20 20 20  20 20 20 20 05 62 00     |....2       .b.|</span><br></pre></td></tr></table></figure>
+<p><strong>补充:</strong></p>
+<p>Tuple中变长字段尤其需要注意，因为其保存大尺寸数据，很容易超过Page大小，Postgresql不允许一行数据跨Page存储。因此引入TOAST机制来处理。采用压缩 + 切片的方法将大数据分割成小数据，变成多行保存在对用的toast表中，并对它们进行索引。所以从文件角度来看，一行大数据可能被分割存在于多个数据文件中。(普通表与toast表分别对应的文件)。</p>
+<p>查看Pagetest普通表与它的toast表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# select oid, relname, relnamespace, relfilenode, reltablespace, relpages, reltuples, reltoastrelid, relkind from pg_class where relname = 'pagetest';</span><br><span class="line">  oid  | relname  | relnamespace | relfilenode | reltablespace | relpages | reltuples | reltoastrelid | relkind </span><br><span class="line"><span class="comment">-------+----------+--------------+-------------+---------------+----------+-----------+---------------+---------</span></span><br><span class="line"> 16406 | pagetest |         2200 |       16406 |             0 |        1 |         6 |             0 | r</span><br></pre></td></tr></table></figure>
+<p>所有的toast表都在模式(schema)pg_toast下，查看toast表结构和数据:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">\d+  pg_toast.pg_toast_2606</span><br><span class="line">TOAST table "pg_toast.pg_toast_2606"</span><br><span class="line">   Column   |  Type   | Storage </span><br><span class="line"><span class="comment">------------+---------+---------</span></span><br><span class="line"> chunk_id   | oid     | plain</span><br><span class="line"> chunk_seq  | integer | plain</span><br><span class="line"> chunk_data | bytea   | plain</span><br><span class="line"></span><br><span class="line">Invalid command \. Try \? for help.</span><br></pre></td></tr></table></figure>
+<ul>
+<li>chunk_id  具有同样的chunk_id值得所有行组成原表的toast字段的一行数据。</li>
+<li>chunk_seq 表示该行切片数据在完整数据中的顺序。</li>
+<li>chunk_data 实际存储的切片数据。</li>
+</ul>
+<p>一张普通的表最多对应一张toast表，但是每个字段根据不同的数据类型具有不同的toast策略。修改toast策略，不会影响已有的数据存放方式。</p>
+<ul>
+<li>plain：不压缩，不切片。不会触发toast机制。</li>
+<li>extended：优先压缩，后切片。</li>
+<li>external：不压缩，只切片。用空间换时间的策略，提高操作效率。</li>
+<li>main：尽量不切片。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Postgres=# \d+ pagetest</span><br><span class="line">                              Table "public.pagetest"</span><br><span class="line"> Column |         Type          | Modifiers | Storage  | Stats target | Description </span><br><span class="line"><span class="comment">--------+-----------------------+-----------+----------+--------------+-------------</span></span><br><span class="line"> id     | integer               |           | plain    |              | </span><br><span class="line"> c1     | character(8)          |           | extended |              | </span><br><span class="line"> c2     | character varying(16) |           | extended |              | </span><br><span class="line">Indexes:</span><br><span class="line">    "pagetest_id_idx" brin (id)</span><br><span class="line">Replica Identity: FULL</span><br></pre></td></tr></table></figure>
+<p>当将要保存到表的一行数据超过一个阈值(BLOCK/4 ~ 2KB)时，会触发toast机制，如果产生切片则保存到对应的toast表中。</p>
+<p><br></p>
+<h5 id="Pageinit"><a href="#Pageinit" class="headerlink" title="Pageinit"></a>Pageinit</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// include/pg_config.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BLCKSZ 8192</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">PageInit(Page page, Size pageSize, Size specialSize) <span class="comment">//rocky_pageinit;</span></span><br><span class="line">&#123;</span><br><span class="line">	PageHeader	p = (PageHeader) page;</span><br><span class="line"></span><br><span class="line">	specialSize = MAXALIGN(specialSize);</span><br><span class="line"></span><br><span class="line">	Assert(pageSize == BLCKSZ);</span><br><span class="line">	Assert(pageSize &gt; specialSize + SizeOfPageHeaderData);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Make sure all fields of page are zero, as well as unused space</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	MemSet(p, <span class="number">0</span>, pageSize);</span><br><span class="line"></span><br><span class="line">	p-&gt;pd_lower = SizeOfPageHeaderData;</span><br><span class="line">	p-&gt;pd_upper = pageSize - specialSize;</span><br><span class="line">	p-&gt;pd_special = pageSize - specialSize;</span><br><span class="line">	PageSetPageSizeAndVersion(page, pageSize, PG_PAGE_LAYOUT_VERSION);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h5 id="数据更新"><a href="#数据更新" class="headerlink" title="数据更新"></a><strong>数据更新</strong></h5><p>数据更新的最终结果就是把变更的内容持久化到硬盘上。一次事务可能涉及多个page的改变。如果直接刷盘会产生多次随机写，付出的代价相对较高。所以在涉及层面采用写缓冲，异步和WAL来解决性能上的问题,并且WAL机制也保证了事务的持久性和数据的完整性，还使得在线备份和时间回复(PITR)称为可能。</p>
+<p><br></p>
+<h6 id="事务过程"><a href="#事务过程" class="headerlink" title="事务过程"></a><strong>事务过程</strong></h6><p>存储引擎在执行更新类操作时，首先开启事务，然后将变更后的内容记入Wal buffer, 并更新shared buffer中的page，最后提交事务，相应客户端。<br>shared buffer中的page发生更新后被标记为dirty page，之后由其他进程完成磁盘回写。<br>事务提交可以设置是否等待WAL记录被写入磁盘。控制参数为synchronous_commit。<br>设置off时对性能有一定提升,程序将不会等待本次WAL记录写入到磁盘，而直接影响客户端。</p>
+<p><br></p>
+<h6 id="WAL写入磁盘"><a href="#WAL写入磁盘" class="headerlink" title="WAL写入磁盘"></a>WAL写入磁盘</h6><p>默认情况下，WAL是在事务提交时写入磁盘。以保证提交的事务不会因为宕机而丢失。当synchronous_commit设置为off时，WAL写入磁盘的过程由Wal write进程异步完成，这种情况下宕机存在丢失最近提交的事务风险。但不会影响数据库的一致性。</p>
+<p><img src="/img/postgresql/postgres-wal-fsync-disk.png" alt=""></p>
+<p><br></p>
+<h6 id="Dirty-Page回写磁盘"><a href="#Dirty-Page回写磁盘" class="headerlink" title="Dirty Page回写磁盘"></a>Dirty Page回写磁盘</h6><p>一般情况下，每隔一段时间writer进程就会扫描shared buffer, 将Dirty Page刷入操作系统的Page Cache，并记录处理过的Dirty Page,之后由系统内核处理page cache刷入磁盘，当空闲内存低于阈值 或 脏页驻留时间超过阈值时，触发回写磁盘。</p>
+<p>另一种情况是由checkpointer进程定义执行checkpoint,强制当前处理过的dirty page回写磁盘，保证数据持久化，为事务前滚提供参照点。默认情况下(full_page_write = on), checkpoint发生后，在page第一次写的时候会将整个page写入WAL，以保证宕机或者备份拷贝时，产生的partial wirte page可以保证被正确的完整的page覆盖来修复。</p>
+<p><img src="/img/postgresql/postgre-dirty_page_write.png" alt=""></p>
+<p><br></p>
+<h6 id="空间回收"><a href="#空间回收" class="headerlink" title="空间回收"></a>空间回收</h6><p>在PostgreSQL中，delete和一些的update(例如，涉及到索引字段的更新)会使表和索引中的旧行(tuple)被废弃掉。这些废弃的tuple称之为dead tuple，他们仍然占用空间，称为一种资源浪费。</p>
+<p>PostgreSQL的VACUUM机制就是用来回收这些dead tuple空间的，用来回收利用。 </p>
+<ul>
+<li><p>Full Vacuum</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VACUUM FULL VERBOSE;</span><br><span class="line">VACUUM FULL t_user_info;</span><br><span class="line"><span class="keyword">ANALYZE</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Lazy Vacuum</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VACUUM t_user_info;</span><br><span class="line">VACUUM <span class="keyword">ANALYZE</span> t_user_info;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><br></p>
+<h5 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h5><p><a href="http://www.postgres.cn/docs/10/storage-page-layout.html" target="_blank" rel="noopener">Postgresql 10 数据库文件布局</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Database/" rel="tag"># Database</a>
+          
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/06/database/Postgresql开发-添加系统表/" rel="next" title="Postgresql开发-添加系统表">
+                <i class="fa fa-chevron-left"></i> Postgresql开发-添加系统表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/28/rebuild/二进制文件分析/" rel="prev" title="二进制文件分析">
+                二进制文件分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Page结构"><span class="nav-number">1.</span> <span class="nav-text">Page结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tablespace-位置"><span class="nav-number">2.</span> <span class="nav-text">tablespace 位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#table-位置"><span class="nav-number">3.</span> <span class="nav-text">table 位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#index-位置"><span class="nav-number">4.</span> <span class="nav-text">index  位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Pageinspect查看Page内容"><span class="nav-number">5.</span> <span class="nav-text">Pageinspect查看Page内容</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Table"><span class="nav-number">5.1.</span> <span class="nav-text">Table</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#index"><span class="nav-number">5.2.</span> <span class="nav-text">index</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#hexdump-解析数据文件"><span class="nav-number">6.</span> <span class="nav-text">hexdump 解析数据文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Pageinit"><span class="nav-number">7.</span> <span class="nav-text">Pageinit</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据更新"><span class="nav-number">8.</span> <span class="nav-text">数据更新</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#事务过程"><span class="nav-number">8.1.</span> <span class="nav-text">事务过程</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#WAL写入磁盘"><span class="nav-number">8.2.</span> <span class="nav-text">WAL写入磁盘</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Dirty-Page回写磁盘"><span class="nav-number">8.3.</span> <span class="nav-text">Dirty Page回写磁盘</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#空间回收"><span class="nav-number">8.4.</span> <span class="nav-text">空间回收</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#补充"><span class="nav-number">9.</span> <span class="nav-text">补充</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>

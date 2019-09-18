@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Database,Postgresql," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
+<meta name="keywords" content="Database,Postgresql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postgresql max_wal_size 与 XLOG file">
+<meta property="og:url" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+<meta property="og:updated_time" content="2019-09-18T10:58:41.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Postgresql max_wal_size 与 XLOG file">
+<meta name="twitter:description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
+<meta name="twitter:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>Postgresql max_wal_size 与 XLOG file | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Postgresql max_wal_size 与 XLOG file</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-18T20:27:32+08:00">
+                2019-09-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 <strong>因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。</strong>Pg只是在需要时候, 例如脏页较多或者一定时间间隔后, 才将数据写回磁盘。</p>
+<h4 id="checkpoint-触发条件"><a href="#checkpoint-触发条件" class="headerlink" title="checkpoint 触发条件"></a>checkpoint 触发条件</h4><ul>
+<li><p>CheckPointSegments</p>
+</li>
+<li><p>WAL log的数目. 由<code>checkpoint_completion_target</code> 与 <code>max_wal_size</code> 计算;</p>
+</li>
+<li><p>checkpoint_timeout</p>
+<ul>
+<li>系统自动执行checkpoint之间的最大时间间隔。系统默认值是5分钟。</li>
+</ul>
+</li>
+<li><p>checkpoint_completion_target</p>
+<ul>
+<li>该参数表示checkpoint的完成时间占两次checkpoint时间间隔的比例，系统默认值是0.5,也就是说每个checkpoint需要在checkpoints间隔时间的50%内完成。</li>
+</ul>
+</li>
+<li><p>checkpoint_warning</p>
+<ul>
+<li>系统默认值是30秒，如果checkpoints的实际发生间隔小于该参数，将会在server log中写入写入一条相关信息。可以通过设置为0禁用。</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>    
+<h4 id="max-wal-size-与-wal-segment-file"><a href="#max-wal-size-与-wal-segment-file" class="headerlink" title="max_wal_size 与 wal segment file"></a>max_wal_size 与 wal segment file</h4><p>xlog.c 默认值. 判断wal file size; 根据以下参数计算;</p>
+<p>max_wal_size = 1GB<br>min_wal_size = 80MB</p>
+<ol>
+<li><p>GUC参数最大值. 最小值设置;</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (newval-&gt;realval &lt; conf-&gt;min || newval-&gt;realval &gt; conf-&gt;max)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>checkpoint_completion_target</code> 在检查点期间用于清空脏缓冲区的时间，作为检查点间隔的一部分</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&#123;<span class="string">"checkpoint_completion_target"</span>, PGC_SIGHUP, WAL_CHECKPOINTS,</span><br><span class="line">		gettext_noop(<span class="string">"Time spent flushing dirty buffers during checkpoint, as fraction of checkpoint interval."</span>),</span><br><span class="line">		<span class="literal">NULL</span></span><br><span class="line">	&#125;,</span><br><span class="line">	&amp;CheckPointCompletionTarget,</span><br><span class="line">	<span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">1.0</span>,</span><br><span class="line">	<span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p><code>checkpoint_completion_target</code> 默认取值范围 (0, 1);</p>
+</li>
+<li><p>max_wal_size</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&#123;<span class="string">"max_wal_size"</span>, PGC_SIGHUP, WAL_CHECKPOINTS,</span><br><span class="line">		gettext_noop(<span class="string">"Sets the WAL size that triggers a checkpoint."</span>),</span><br><span class="line">		<span class="literal">NULL</span>,</span><br><span class="line">		GUC_UNIT_MB</span><br><span class="line">	&#125;,</span><br><span class="line">	&amp;max_wal_size_mb,</span><br><span class="line">	<span class="number">64</span> * (XLOG_SEG_SIZE / (<span class="number">1024</span> * <span class="number">1024</span>)), <span class="number">2</span>, MAX_KILOBYTES,</span><br><span class="line">	<span class="literal">NULL</span>, assign_max_wal_size, <span class="literal">NULL</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p><code>man_wal_size</code>:</p>
+<p>​    boot_val: <code>64 * (XLOG_SEG_SIZE / (1024 * 1024))</code></p>
+<p>​    最小值:  <code>2</code></p>
+<p>​    最大值:  <code>MAX_KILOBYTES</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SIZEOF_SIZE_T &gt; 4 &amp;&amp; SIZEOF_LONG &gt; 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_KILOBYTES	INT_MAX</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_KILOBYTES	(INT_MAX / 1024)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p><code>max_wal_size</code>:</p>
+<p>assign_hook:<code>assign_max_wal_size</code></p>
+</li>
+<li><p>checkpoint 涉及最大段数: 计算方式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Max distance from last checkpoint, before triggering a new xlog-based</span></span><br><span class="line"><span class="comment"> * checkpoint.</span></span><br><span class="line"><span class="comment"> *    触发新的xlog检查点之前, 距离上一个检查点的最大距离; wal file size;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">int</span>			CheckPointSegments;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">assign_max_wal_size(<span class="keyword">int</span> newval, <span class="keyword">void</span> *extra)</span><br><span class="line">&#123;</span><br><span class="line">	max_wal_size_mb = newval;</span><br><span class="line">	CalculateCheckpointSegments();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">CalculateCheckpointSegments(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">double</span>		target;</span><br><span class="line">	<span class="comment">//CheckPointCompletionTarget 默认取值0.5 取值范围(0, 1);</span></span><br><span class="line">	target = (<span class="keyword">double</span>) ConvertToXSegs(max_wal_size_mb) / (<span class="number">2.0</span> + CheckPointCompletionTarget);</span><br><span class="line"></span><br><span class="line">	CheckPointSegments = (<span class="keyword">int</span>) target;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (CheckPointSegments &lt; <span class="number">1</span>)</span><br><span class="line">		CheckPointSegments = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Convert min_wal_size_mb and max wal_size_mb to equivalent segment count */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ConvertToXSegs(x)	\</span></span><br><span class="line">	(x / (XLOG_SEG_SIZE / (<span class="number">1024</span> * <span class="number">1024</span>)))</span><br></pre></td></tr></table></figure>
+<p>计算得知 <code>CheckPointSegments</code> 取值范围 (1, max_wal_size_mb * (1/3 - 1/2));</p>
+</li>
+<li><p>关于 wal file size 以及 段文件替换</p>
+<p><code>XLogFileInit</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">max_segno = logsegno + CheckPointSegments;</span><br><span class="line"><span class="keyword">if</span> (!InstallXLogFileSegment(&amp;installed_segno, tmppath,</span><br><span class="line">							*use_existent, max_segno,</span><br><span class="line">							use_lock))</span><br></pre></td></tr></table></figure>
+<p><code>InstallXLogFileSegment</code> </p>
+<p><em>Install a new XLOG segment file as a current or future log segment.</em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Find a free slot to put it in */</span></span><br><span class="line"><span class="keyword">while</span> (stat(path, &amp;stat_buf) == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> ((*segno) &gt;= max_segno)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">/* Failed to find a free slot within specified range */</span></span><br><span class="line">		<span class="keyword">if</span> (use_lock)</span><br><span class="line">			LWLockRelease(ControlFileLock);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	(*segno)++;</span><br><span class="line">	XLogFilePath(path, ThisTimeLineID, *segno);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="移除XLOG"><a href="#移除XLOG" class="headerlink" title="移除XLOG"></a>移除XLOG</h4><p>经常在做恢复的时候发现有的xlog file无法找到. 被覆盖使用. 那么</p>
+<p>xlog文件什么时候删除?</p>
+<p>删除多少，保留多少xlog文件?</p>
+<p>都有哪些xlog文件需要保留?</p>
+<ol>
+<li><p>需要首先估算两次checkpoint之间的xlog量。 计算最大的日志文件号 从而回收不需要的文件，并且进行重命名，提供即将使用的;</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Update the estimate of distance between checkpoints.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The estimate is used to calculate the number of WAL segments to keep</span></span><br><span class="line"><span class="comment"> * preallocated, see XLOGFileSlop().</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">UpdateCheckPointDistanceEstimate(uint64 nbytes)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * To estimate the number of segments consumed between checkpoints, keep a</span></span><br><span class="line"><span class="comment">	 * moving average of the amount of WAL generated in previous checkpoint</span></span><br><span class="line"><span class="comment">	 * cycles. However, if the load is bursty, with quiet periods and busy</span></span><br><span class="line"><span class="comment">	 * periods, we want to cater for the peak load. So instead of a plain</span></span><br><span class="line"><span class="comment">	 * moving average, let the average decline slowly if the previous cycle</span></span><br><span class="line"><span class="comment">	 * used less WAL than estimated, but bump it up immediately if it used</span></span><br><span class="line"><span class="comment">	 * more.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * When checkpoints are triggered by max_wal_size, this should converge to</span></span><br><span class="line"><span class="comment">	 * CheckpointSegments * XLOG_SEG_SIZE,</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * Note: This doesn't pay any attention to what caused the checkpoint.</span></span><br><span class="line"><span class="comment">	 * Checkpoints triggered manually with CHECKPOINT command, or by e.g.</span></span><br><span class="line"><span class="comment">	 * starting a base backup, are counted the same as those created</span></span><br><span class="line"><span class="comment">	 * automatically. The slow-decline will largely mask them out, if they are</span></span><br><span class="line"><span class="comment">	 * not frequent. If they are frequent, it seems reasonable to count them</span></span><br><span class="line"><span class="comment">	 * in as any others; if you issue a manual checkpoint every 5 minutes and</span></span><br><span class="line"><span class="comment">	 * never let a timed checkpoint happen, it makes sense to base the</span></span><br><span class="line"><span class="comment">	 * preallocation on that 5 minute interval rather than whatever</span></span><br><span class="line"><span class="comment">	 * checkpoint_timeout is set to.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	PrevCheckPointDistance = nbytes;</span><br><span class="line">	<span class="keyword">if</span> (CheckPointDistanceEstimate &lt; nbytes) <span class="comment">//更新估算量;</span></span><br><span class="line">		CheckPointDistanceEstimate = nbytes;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		CheckPointDistanceEstimate =</span><br><span class="line">			(<span class="number">0.90</span> * CheckPointDistanceEstimate + <span class="number">0.10</span> * (<span class="keyword">double</span>) nbytes); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>计算上一次checkpoint时所在的文件段号:   根据KeepLogSeg 确定保留的logSegNo</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Compute a segment number from an XLogRecPtr.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * For XLByteToSeg, do the computation at face value.  For XLByteToPrevSeg,</span></span><br><span class="line"><span class="comment"> * a boundary byte is taken to be in the previous segment.  This is suitable</span></span><br><span class="line"><span class="comment"> * for deciding which segment to write given a pointer to a record end,</span></span><br><span class="line"><span class="comment"> * for example.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> XLByteToSeg(xlrp, logSegNo) \</span></span><br><span class="line">	logSegNo = (xlrp) / XLogSegSize</span><br><span class="line"></span><br><span class="line">#define XLByteToPrevSeg(xlrp, logSegNo) \</span><br><span class="line">	logSegNo = ((xlrp) - <span class="number">1</span>) / XLogSegSize</span><br></pre></td></tr></table></figure>
+<p><code>KeepLogSeg</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Retreat *logSegNo to the last segment that we need to retain because of</span></span><br><span class="line"><span class="comment"> * either wal_keep_segments or replication slots.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This is calculated by subtracting wal_keep_segments from the given xlog</span></span><br><span class="line"><span class="comment"> * location, recptr and by making sure that that result is below the</span></span><br><span class="line"><span class="comment"> * requirement of replication slots.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo)</span><br><span class="line">&#123;</span><br><span class="line">	XLogSegNo	segno;</span><br><span class="line">	XLogRecPtr	keep;</span><br><span class="line"></span><br><span class="line">	XLByteToSeg(recptr, segno);</span><br><span class="line">	keep = XLogGetReplicationSlotMinimumLSN();  <span class="comment">//获取备机请求的lSN; 防止备机某些请求, 但删除了LOGSEG;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* compute limit for wal_keep_segments first */</span></span><br><span class="line">	<span class="keyword">if</span> (wal_keep_segments &gt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">/* avoid underflow, don't go below 1 */</span></span><br><span class="line">		<span class="keyword">if</span> (segno &lt;= wal_keep_segments)</span><br><span class="line">			segno = <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			segno = segno - wal_keep_segments;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* then check whether slots limit removal further */</span></span><br><span class="line">	<span class="keyword">if</span> (max_replication_slots &gt; <span class="number">0</span> &amp;&amp; keep != InvalidXLogRecPtr)</span><br><span class="line">	&#123;</span><br><span class="line">		XLogSegNo	slotSegNo;</span><br><span class="line"></span><br><span class="line">		XLByteToSeg(keep, slotSegNo); <span class="comment">//获取备机请求的LSN所在LogSegNo;</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (slotSegNo &lt;= <span class="number">0</span>)</span><br><span class="line">			segno = <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (slotSegNo &lt; segno)</span><br><span class="line">			segno = slotSegNo;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* don't delete WAL segments newer than the calculated segment */</span></span><br><span class="line">	<span class="keyword">if</span> (segno &lt; *logSegNo)</span><br><span class="line">		*logSegNo = segno;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="2019-09-20-Postgresql-Wal file - wal size.assets/1568796985953.png" alt="1568796985953"></p>
+</li>
+</ol>
+<ol>
+<li><p><code>RemoveXlogFile</code> 利用得到的logsegno, 回收之前的wal file; </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">XLogSegNo	endlogSegNo;</span><br><span class="line">XLogSegNo	recycleSegNo;</span><br><span class="line">   </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Initialize info about where to try to recycle to.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">XLByteToSeg(endptr, endlogSegNo);  <span class="comment">//获取保留的文件段号;</span></span><br><span class="line"><span class="keyword">if</span> (PriorRedoPtr == InvalidXLogRecPtr)</span><br><span class="line">	recycleSegNo = endlogSegNo + <span class="number">10</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	recycleSegNo = XLOGfileslop(PriorRedoPtr);</span><br><span class="line">   </span><br><span class="line"><span class="built_in">snprintf</span>(path, MAXPGPATH, XLOGDIR <span class="string">"/%s"</span>, segname);</span><br><span class="line">   </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Before deleting the file, see if it can be recycled as a future log</span></span><br><span class="line"><span class="comment"> * segment. Only recycle normal files, pg_standby for example can create</span></span><br><span class="line"><span class="comment"> * symbolic links pointing to a separate archive directory.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">if</span> (endlogSegNo &lt;= recycleSegNo &amp;&amp;</span><br><span class="line">	lstat(path, &amp;statbuf) == <span class="number">0</span> &amp;&amp; S_ISREG(statbuf.st_mode) &amp;&amp;</span><br><span class="line">	InstallXLogFileSegment(&amp;endlogSegNo, path,</span><br><span class="line">						   <span class="literal">true</span>, recycleSegNo, <span class="literal">true</span>)) <span class="comment">//进行walfile的安装;</span></span><br><span class="line">&#123;</span><br><span class="line">	ereport(DEBUG2,</span><br><span class="line">			(errmsg(<span class="string">"recycled write-ahead log file \"%s\""</span>,</span><br><span class="line">					segname)));</span><br><span class="line">	CheckpointStats.ckpt_segs_recycled++;</span><br><span class="line">	<span class="comment">/* Needn't recheck that slot on future iterations */</span></span><br><span class="line">	endlogSegNo++;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br><span class="line">....</span><br><span class="line">       </span><br><span class="line">    XLogArchiveCleanup(segname);</span><br></pre></td></tr></table></figure>
+<p>关于回收<code>recycleSegNo</code>值;</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * At a checkpoint, how many WAL segments to recycle as preallocated future</span></span><br><span class="line"><span class="comment"> * XLOG segments? Returns the highest segment that should be preallocated.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> XLogSegNo</span><br><span class="line">XLOGfileslop(XLogRecPtr PriorRedoPtr)</span><br><span class="line">&#123;</span><br><span class="line">	XLogSegNo	minSegNo;</span><br><span class="line">	XLogSegNo	maxSegNo;</span><br><span class="line">	<span class="keyword">double</span>		distance;</span><br><span class="line">	XLogSegNo	recycleSegNo;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Calculate the segment numbers that min_wal_size_mb and max_wal_size_mb</span></span><br><span class="line"><span class="comment">	 * correspond to. Always recycle enough segments to meet the minimum, and</span></span><br><span class="line"><span class="comment">	 * remove enough segments to stay below the maximum.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	minSegNo = PriorRedoPtr / XLOG_SEG_SIZE + ConvertToXSegs(min_wal_size_mb) - <span class="number">1</span>;</span><br><span class="line">	maxSegNo = PriorRedoPtr / XLOG_SEG_SIZE + ConvertToXSegs(max_wal_size_mb) - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Between those limits, recycle enough segments to get us through to the</span></span><br><span class="line"><span class="comment">	 * estimated end of next checkpoint.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * To estimate where the next checkpoint will finish, assume that the</span></span><br><span class="line"><span class="comment">	 * system runs steadily consuming CheckPointDistanceEstimate bytes between</span></span><br><span class="line"><span class="comment">	 * every checkpoint.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * The reason this calculation is done from the prior checkpoint, not the</span></span><br><span class="line"><span class="comment">	 * one that just finished, is that this behaves better if some checkpoint</span></span><br><span class="line"><span class="comment">	 * cycles are abnormally short, like if you perform a manual checkpoint</span></span><br><span class="line"><span class="comment">	 * right after a timed one. The manual checkpoint will make almost a full</span></span><br><span class="line"><span class="comment">	 * cycle's worth of WAL segments available for recycling, because the</span></span><br><span class="line"><span class="comment">	 * segments from the prior's prior, fully-sized checkpoint cycle are no</span></span><br><span class="line"><span class="comment">	 * longer needed. However, the next checkpoint will make only few segments</span></span><br><span class="line"><span class="comment">	 * available for recycling, the ones generated between the timed</span></span><br><span class="line"><span class="comment">	 * checkpoint and the manual one right after that. If at the manual</span></span><br><span class="line"><span class="comment">	 * checkpoint we only retained enough segments to get us to the next timed</span></span><br><span class="line"><span class="comment">	 * one, and removed the rest, then at the next checkpoint we would not</span></span><br><span class="line"><span class="comment">	 * have enough segments around for recycling, to get us to the checkpoint</span></span><br><span class="line"><span class="comment">	 * after that. Basing the calculations on the distance from the prior redo</span></span><br><span class="line"><span class="comment">	 * pointer largely fixes that problem.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">    <span class="comment">//CheckPointCompletionTarget 默认取值 0.5 取值范围 (0, 1);</span></span><br><span class="line">    <span class="comment">//CheckPointDistanceEstimate 两次xlog之间的评估量;</span></span><br><span class="line">	distance = (<span class="number">2.0</span> + CheckPointCompletionTarget) * CheckPointDistanceEstimate;</span><br><span class="line">	<span class="comment">/* add 10% for good measure. */</span></span><br><span class="line">	distance *= <span class="number">1.10</span>;</span><br><span class="line"></span><br><span class="line">	recycleSegNo = (XLogSegNo) <span class="built_in">ceil</span>(((<span class="keyword">double</span>) PriorRedoPtr + distance) / XLOG_SEG_SIZE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (recycleSegNo &lt; minSegNo)</span><br><span class="line">		recycleSegNo = minSegNo;</span><br><span class="line">	<span class="keyword">if</span> (recycleSegNo &gt; maxSegNo)</span><br><span class="line">		recycleSegNo = maxSegNo;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> recycleSegNo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><a href="http://mysql.taobao.org/monthly/2017/04/04/" target="_blank" rel="noopener">http://mysql.taobao.org/monthly/2017/04/04/</a></p>
+<p><a href="https://www.kancloud.cn/taobaomysql/monthly/67086" target="_blank" rel="noopener">https://www.kancloud.cn/taobaomysql/monthly/67086</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Database/" rel="tag"># Database</a>
+          
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/16/Debug/2019-09-17-size_t问题/" rel="next" title="Debug size_t">
+                <i class="fa fa-chevron-left"></i> Debug size_t
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#checkpoint-触发条件"><span class="nav-number">1.</span> <span class="nav-text">checkpoint 触发条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#max-wal-size-与-wal-segment-file"><span class="nav-number">2.</span> <span class="nav-text">max_wal_size 与 wal segment file</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移除XLOG"><span class="nav-number">3.</span> <span class="nav-text">移除XLOG</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>
