@@ -90,20 +90,20 @@
 
 
 
-<meta name="description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
+<meta name="description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
 <meta name="keywords" content="Database,Postgresql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Postgresql max_wal_size与Xlog file">
-<meta property="og:url" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/index.html">
+<meta property="og:url" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
+<meta property="og:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
-<meta property="og:updated_time" content="2019-09-18T12:17:42.011Z">
+<meta property="og:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+<meta property="og:updated_time" content="2019-09-20T04:11:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql max_wal_size与Xlog file">
-<meta name="twitter:description" content="Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏页较多或者">
-<meta name="twitter:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+<meta name="twitter:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
+<meta name="twitter:image" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
 
 
 
@@ -310,7 +310,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-20-Postgresql-CheckPoint/">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Rocky_Ansi">
@@ -399,11 +399,27 @@
       
 
       
-        <p>Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 <strong>因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。</strong>Pg只是在需要时候, 例如脏页较多或者一定时间间隔后, 才将数据写回磁盘。</p>
-<h4 id="checkpoint-触发条件"><a href="#checkpoint-触发条件" class="headerlink" title="checkpoint 触发条件"></a>checkpoint 触发条件</h4><ul>
+        <p>​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 <strong>因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。</strong>Pg只是在需要时候, 例如脏页较多或者一定时间间隔后, 才将数据写回磁盘。</p>
+<p>​    checkPoint会触发刷新xlog日志页到磁盘.</p>
+<p>​    checkPoint称之为检查点, 一般checkpoint会将某个时间之前的脏数据全部刷新到磁盘, 以实现数据的一致性与完整性。</p>
+<p><a href="">CheckPointer进程解析</a></p>
+<h4 id="CheckPoint触发条件"><a href="#CheckPoint触发条件" class="headerlink" title="CheckPoint触发条件"></a>CheckPoint触发条件</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * OR-able request flag bits for checkpoints.  The "cause" bits are used only</span></span><br><span class="line"><span class="comment"> * for logging purposes.  Note: the flags must be defined so that it's</span></span><br><span class="line"><span class="comment"> * sensible to OR together request flags arising from different requestors.</span></span><br><span class="line"><span class="comment"> *   OR-able 请求检查点的标志位</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* These directly affect the behavior of CreateCheckPoint and subsidiaries */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_IS_SHUTDOWN	0x0001	<span class="comment">/* Checkpoint is for shutdown */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_END_OF_RECOVERY	0x0002	<span class="comment">/* Like shutdown checkpoint, but</span></span></span><br><span class="line"><span class="meta"><span class="comment">											 * issued at end of WAL recovery */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_IMMEDIATE	0x0004	<span class="comment">/* Do it without delays */</span> <span class="comment">//finish the checkpoint ASAP, ignoring checkpoint_completion_target_parameter</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_FORCE		0x0008	<span class="comment">/* Force even if no activity */</span> <span class="comment">//force a checkpoint even if no XLOG activity has occurred  since the last one (implied by CHECKPOINT_IS_SHUTDOWN or CHECKPOINT_END_OF_RECOVERY)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_FLUSH_ALL	0x0010	<span class="comment">/* Flush all pages, including those</span></span></span><br><span class="line"><span class="meta"><span class="comment">										 * belonging to unlogged tables */</span></span></span><br><span class="line"><span class="comment">/* These are important to RequestCheckpoint */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_WAIT			0x0020	<span class="comment">/* Wait for completion */</span></span></span><br><span class="line"><span class="comment">/* These indicate the cause of a checkpoint request */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_CAUSE_XLOG	0x0040	<span class="comment">/* XLOG consumption */</span> <span class="comment">// checkpoint is requested due to xlog filling. (This affects logging, and in particular enables CheckPointWarning.) </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECKPOINT_CAUSE_TIME	0x0080	<span class="comment">/* Elapsed time */</span></span></span><br></pre></td></tr></table></figure>
+<p>以上几种情况分别对应:</p>
+<ol>
+<li>数据库shutdown操作</li>
+<li>数据库recovery完成</li>
+<li>管理员强制执行 checkpoint [CHECKPINT_FORCE]</li>
+<li>xlog日志量触发checkpoint阈值</li>
+<li>周期进行checkpoint [ Elapsed time &gt;= CHeckPointTimeOut ]</li>
+<li>需要刷新所有脏页 </li>
+</ol>
+<p>辅助性子进程checkpoint，会不断周期性检查以及xlog阈值是否达到.  而周期时间 与xlog日志量的阈值通过参数 <a href="#3">max_wal_size 与 checkpoint_completion_target</a>设置.</p>
+<a id="more"></a>    
+<h4 id="CheckPoint相关参数"><a href="#CheckPoint相关参数" class="headerlink" title="CheckPoint相关参数"></a>CheckPoint相关参数</h4><ul>
 <li><p>CheckPointSegments</p>
-</li>
-<li><p>WAL log的数目. 由<code>checkpoint_completion_target</code> 与 <code>max_wal_size</code> 计算;</p>
+<ul>
+<li>WAL File的数目. 由<code>checkpoint_completion_target</code> 与 <code>max_wal_size</code> 计算;</li>
+</ul>
 </li>
 <li><p>checkpoint_timeout</p>
 <ul>
@@ -421,8 +437,9 @@
 </ul>
 </li>
 </ul>
-<a id="more"></a>    
-<h4 id="max-wal-size-与-wal-segment-file"><a href="#max-wal-size-与-wal-segment-file" class="headerlink" title="max_wal_size 与 wal segment file"></a>max_wal_size 与 wal segment file</h4><p>xlog.c 默认值. 判断wal file size; 根据以下参数计算;</p>
+<h3 id="3">max_wal_size 与 wal segment file </h3>
+
+<p>xlog.c 默认值. 判断wal file size; 根据以下参数计算;</p>
 <p>max_wal_size = 1GB<br>min_wal_size = 80MB</p>
 <ol>
 <li><p>GUC参数最大值. 最小值设置;</p>
@@ -476,8 +493,6 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * At a checkpoint, how many WAL segments to recycle as preallocated future</span></span><br><span class="line"><span class="comment"> * XLOG segments? Returns the highest segment that should be preallocated.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> XLogSegNo</span><br><span class="line">XLOGfileslop(XLogRecPtr PriorRedoPtr)</span><br><span class="line">&#123;</span><br><span class="line">	XLogSegNo	minSegNo;</span><br><span class="line">	XLogSegNo	maxSegNo;</span><br><span class="line">	<span class="keyword">double</span>		distance;</span><br><span class="line">	XLogSegNo	recycleSegNo;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Calculate the segment numbers that min_wal_size_mb and max_wal_size_mb</span></span><br><span class="line"><span class="comment">	 * correspond to. Always recycle enough segments to meet the minimum, and</span></span><br><span class="line"><span class="comment">	 * remove enough segments to stay below the maximum.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	minSegNo = PriorRedoPtr / XLOG_SEG_SIZE + ConvertToXSegs(min_wal_size_mb) - <span class="number">1</span>;</span><br><span class="line">	maxSegNo = PriorRedoPtr / XLOG_SEG_SIZE + ConvertToXSegs(max_wal_size_mb) - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Between those limits, recycle enough segments to get us through to the</span></span><br><span class="line"><span class="comment">	 * estimated end of next checkpoint.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * To estimate where the next checkpoint will finish, assume that the</span></span><br><span class="line"><span class="comment">	 * system runs steadily consuming CheckPointDistanceEstimate bytes between</span></span><br><span class="line"><span class="comment">	 * every checkpoint.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * The reason this calculation is done from the prior checkpoint, not the</span></span><br><span class="line"><span class="comment">	 * one that just finished, is that this behaves better if some checkpoint</span></span><br><span class="line"><span class="comment">	 * cycles are abnormally short, like if you perform a manual checkpoint</span></span><br><span class="line"><span class="comment">	 * right after a timed one. The manual checkpoint will make almost a full</span></span><br><span class="line"><span class="comment">	 * cycle's worth of WAL segments available for recycling, because the</span></span><br><span class="line"><span class="comment">	 * segments from the prior's prior, fully-sized checkpoint cycle are no</span></span><br><span class="line"><span class="comment">	 * longer needed. However, the next checkpoint will make only few segments</span></span><br><span class="line"><span class="comment">	 * available for recycling, the ones generated between the timed</span></span><br><span class="line"><span class="comment">	 * checkpoint and the manual one right after that. If at the manual</span></span><br><span class="line"><span class="comment">	 * checkpoint we only retained enough segments to get us to the next timed</span></span><br><span class="line"><span class="comment">	 * one, and removed the rest, then at the next checkpoint we would not</span></span><br><span class="line"><span class="comment">	 * have enough segments around for recycling, to get us to the checkpoint</span></span><br><span class="line"><span class="comment">	 * after that. Basing the calculations on the distance from the prior redo</span></span><br><span class="line"><span class="comment">	 * pointer largely fixes that problem.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">    <span class="comment">//CheckPointCompletionTarget 默认取值 0.5 取值范围 (0, 1);</span></span><br><span class="line">    <span class="comment">//CheckPointDistanceEstimate 两次xlog之间的评估量;</span></span><br><span class="line">	distance = (<span class="number">2.0</span> + CheckPointCompletionTarget) * CheckPointDistanceEstimate;</span><br><span class="line">	<span class="comment">/* add 10% for good measure. */</span></span><br><span class="line">	distance *= <span class="number">1.10</span>;</span><br><span class="line"></span><br><span class="line">	recycleSegNo = (XLogSegNo) <span class="built_in">ceil</span>(((<span class="keyword">double</span>) PriorRedoPtr + distance) / XLOG_SEG_SIZE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (recycleSegNo &lt; minSegNo)</span><br><span class="line">		recycleSegNo = minSegNo;</span><br><span class="line">	<span class="keyword">if</span> (recycleSegNo &gt; maxSegNo)</span><br><span class="line">		recycleSegNo = maxSegNo;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> recycleSegNo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p><a href="http://mysql.taobao.org/monthly/2017/04/04/" target="_blank" rel="noopener">http://mysql.taobao.org/monthly/2017/04/04/</a></p>
-<p><a href="https://www.kancloud.cn/taobaomysql/monthly/67086" target="_blank" rel="noopener">https://www.kancloud.cn/taobaomysql/monthly/67086</a></p>
 
       
     </div>
@@ -548,6 +563,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/20/PostgreSQL/2019-09-20-Postgresql-CheckPoint进程解析/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -629,7 +648,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">113</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -722,7 +741,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#checkpoint-触发条件"><span class="nav-number">1.</span> <span class="nav-text">checkpoint 触发条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#max-wal-size-与-wal-segment-file"><span class="nav-number">2.</span> <span class="nav-text">max_wal_size 与 wal segment file</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移除XLOG"><span class="nav-number">3.</span> <span class="nav-text">移除XLOG</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#CheckPoint触发条件"><span class="nav-number">1.</span> <span class="nav-text">CheckPoint触发条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CheckPoint相关参数"><span class="nav-number">2.</span> <span class="nav-text">CheckPoint相关参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3"><span class="nav-number"></span> <span class="nav-text">max_wal_size 与 wal segment file </span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#移除XLOG"><span class="nav-number">1.</span> <span class="nav-text">移除XLOG</span></a></li></ol></div>
             
 
           </div>
