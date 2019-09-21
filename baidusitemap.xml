@@ -4,26 +4,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/09/21/Debug/2019-09-21-CNAME/</loc>
-    <lastmod>2019-09-21T03:39:55.795Z</lastmod>
-    <data>
-        <display>
-        <title>博客地址修改</title>
-        <pubTime>2019-09-21T12:27:32.000Z</pubTime>
-        
-        <tag>C/C++</tag>
-         
-         
-           
-             
-              <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Debug/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/</loc>
     <lastmod>2019-09-20T04:11:06.000Z</lastmod>
     <data>
@@ -1323,9 +1303,9 @@
         
         <tag>Linux</tag>
          
-        <tag>GDB</tag>
-         
         <tag>调试</tag>
+         
+        <tag>GDB</tag>
          
          
            
