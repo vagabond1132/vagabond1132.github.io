@@ -94,16 +94,16 @@
 <meta name="keywords" content="Database,Postgresql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Postgresql max_wal_size与Xlog file">
-<meta property="og:url" content="http://rocky_ansi.gitee.io/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/index.html">
+<meta property="og:url" content="http://rocky_ansi.gitee.io/vagabond1132_blog/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
 <meta property="og:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://rocky_ansi.gitee.io/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+<meta property="og:image" content="http://rocky_ansi.gitee.io/vagabond1132_blog/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
 <meta property="og:updated_time" content="2019-09-20T04:11:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql max_wal_size与Xlog file">
 <meta name="twitter:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
-<meta name="twitter:image" content="http://rocky_ansi.gitee.io/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
+<meta name="twitter:image" content="http://rocky_ansi.gitee.io/vagabond1132_blog/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/2019-09-20-Postgresql-Wal%20file%20-%20wal%20size.assets/1568796985953.png">
 
 
 
@@ -310,7 +310,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://rocky_ansi.gitee.io/vagabond1132_blog/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/">
+    <link itemprop="mainEntityOfPage" href="http://rocky_ansi.gitee.io/vagabond1132_blog/vagabond1132_blog/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Rocky_Ansi">
