@@ -98,14 +98,14 @@
 <meta property="og:site_name" content="Rocky_Ansi Blog">
 <meta property="og:description" content="归档信息文件 .backup archive_status文件夹 Postgresql arch process 进程解析">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566549837206.png?raw=true">
-<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566783010245.png?raw=true">
-<meta property="og:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566804346654.png?raw=true">
-<meta property="og:updated_time" content="2019-09-18T12:18:14.310Z">
+<meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566549837206.png">
+<meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566783010245.png">
+<meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566804346654.png">
+<meta property="og:updated_time" content="2019-09-23T01:23:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Arch process">
 <meta name="twitter:description" content="归档信息文件 .backup archive_status文件夹 Postgresql arch process 进程解析">
-<meta name="twitter:image" content="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566549837206.png?raw=true">
+<meta name="twitter:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566549837206.png">
 
 
 
@@ -409,12 +409,12 @@
 <a id="more"></a>
 <h4 id="归档文件"><a href="#归档文件" class="headerlink" title="归档文件"></a>归档文件</h4><p><strong>000000010000000000000002.000000D0.backup</strong></p>
 <p><code>do_pg_stop_backup()</code> 产生backup 信息文件</p>
-<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566549837206.png?raw=true" alt="1566549837206"></p>
+<p><img src="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566549837206.png" alt="1566549837206"></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BackupHistoryFilePath(path, tli, logSegNo, offset)	\</span></span><br><span class="line">	<span class="built_in">snprintf</span>(path, MAXPGPATH, XLOGDIR <span class="string">"/%08X%08X%08X.%08X.backup"</span>, tli, \</span><br><span class="line">			 (uint32) ((logSegNo) / XLogSegmentsPerXLogId), \</span><br><span class="line">			 (uint32) ((logSegNo) % XLogSegmentsPerXLogId), offset)</span><br></pre></td></tr></table></figure>
 <p>Start WAL Location:  offset;</p>
-<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566783010245.png?raw=true" alt="1566783010245"></p>
+<p><img src="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566783010245.png" alt="1566783010245"></p>
 <h4 id="archive-status作用"><a href="#archive-status作用" class="headerlink" title="archive_status作用"></a>archive_status作用</h4><p>用于标记文件拷贝情况.</p>
-<p><img src="https://github.com/vagabond1132/Picture/blob/master/2019-08-26-Postgresql-pgarch/1566804346654.png?raw=true" alt="1566804346654"></p>
+<p><img src="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-08-26-Postgresql-pgarch/1566804346654.png" alt="1566804346654"></p>
 <h4 id="postgres-archiver-process"><a href="#postgres-archiver-process" class="headerlink" title="postgres: archiver process"></a><code>postgres: archiver process</code></h4><h5 id="postmaster-c-PostmasterMain"><a href="#postmaster-c-PostmasterMain" class="headerlink" title="postmaster.c:PostmasterMain()"></a>postmaster.c:PostmasterMain()</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pqsignal_no_restart(SIGCHLD, reaper);</span><br></pre></td></tr></table></figure>
 <h5 id="postmaster-c-reaper"><a href="#postmaster-c-reaper" class="headerlink" title="postmaster.c:reaper()"></a>postmaster.c:reaper()</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * reaper -- signal handler to cleanup after a child process dies;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reaper</span><span class="params">(SIGNAL_ARGS)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//内部pgarch实现;</span></span><br><span class="line">	<span class="keyword">if</span> (pid == PgArchPID)</span><br><span class="line">    &#123;</span><br><span class="line">        PgArchPID = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (PgArchStartupAllowed())</span><br><span class="line">		   PgArchPID = pgarch_start();</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <h5 id="pgarch-c-pgarch-ArchiverCopyLoop"><a href="#pgarch-c-pgarch-ArchiverCopyLoop" class="headerlink" title="pgarch.c:pgarch_ArchiverCopyLoop()"></a>pgarch.c:pgarch_ArchiverCopyLoop()</h5><blockquote>

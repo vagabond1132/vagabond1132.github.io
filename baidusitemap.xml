@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/</loc>
-    <lastmod>2019-09-20T04:11:06.000Z</lastmod>
+    <lastmod>2019-09-23T01:29:32.000Z</lastmod>
     <data>
         <display>
         <title>Postgresql max_wal_size与Xlog file</title>
@@ -26,12 +26,100 @@
 
     
   <url>
+    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2019-09-23T01:24:13.000Z</lastmod>
+    <data>
+        <display>
+        <title>Linux tar 协议格式解析</title>
+        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>C/C++</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <lastmod>2019-09-23T01:23:22.000Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Arch process</title>
+        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    <lastmod>2019-09-23T01:22:11.000Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Guc</title>
+        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    <lastmod>2019-09-20T03:10:14.000Z</lastmod>
+    <lastmod>2019-09-23T01:21:36.000Z</lastmod>
     <data>
         <display>
         <title>Postgresql Wal</title>
         <pubTime>2019-07-19T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2019-09-23T01:18:33.000Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
         
         <tag>Database</tag>
          
@@ -315,72 +403,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-09-18T12:18:14.310Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Arch process</title>
-        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    <lastmod>2019-09-18T12:18:02.450Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Guc</title>
-        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-09-18T12:17:56.042Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
     <lastmod>2019-09-18T12:17:42.874Z</lastmod>
     <data>
@@ -456,28 +478,6 @@
         <tag>Linux</tag>
          
         <tag>Software</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2019-08-30T07:17:20.000Z</lastmod>
-    <data>
-        <display>
-        <title>Linux tar 协议格式解析</title>
-        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
-        
-        <tag>C/C++</tag>
-         
-        <tag>Linux</tag>
          
          
            
@@ -2030,9 +2030,9 @@
         <title>Linux setjmp & longjmp</title>
         <pubTime>2018-02-27T12:51:08.000Z</pubTime>
         
-        <tag>C/C++</tag>
-         
         <tag>Linux</tag>
+         
+        <tag>C/C++</tag>
          
          
            
