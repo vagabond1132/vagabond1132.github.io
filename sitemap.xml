@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
+    
+    <lastmod>2019-09-24T00:33:20.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/</loc>
     
     <lastmod>2019-09-23T13:51:30.887Z</lastmod>
@@ -131,13 +138,6 @@
     <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
     
     <lastmod>2019-09-18T12:17:42.874Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
-    
-    <lastmod>2019-09-18T12:16:25.768Z</lastmod>
     
   </url>
   
