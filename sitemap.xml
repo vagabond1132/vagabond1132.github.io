@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    
+    <lastmod>2019-12-28T15:31:09.928Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl/</loc>
+    
+    <lastmod>2019-12-28T15:31:08.865Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E6%AF%94%E8%BE%83-PG10&11/</loc>
     
-    <lastmod>2019-09-28T08:15:10.889Z</lastmod>
+    <lastmod>2019-09-29T07:39:01.000Z</lastmod>
     
   </url>
   
@@ -47,13 +61,6 @@
     <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
     
     <lastmod>2019-09-23T01:21:36.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    
-    <lastmod>2019-09-23T01:18:33.000Z</lastmod>
     
   </url>
   

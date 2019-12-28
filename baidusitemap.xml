@@ -4,8 +4,52 @@
 
     
   <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2019-12-28T15:31:09.928Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl/</loc>
+    <lastmod>2019-12-28T15:31:08.865Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql with-openssl 异常</title>
+        <pubTime>2019-12-28T15:29:00.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="数据库" url="http://www.gangzai.online/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E6%AF%94%E8%BE%83-PG10&11/</loc>
-    <lastmod>2019-09-28T08:15:10.889Z</lastmod>
+    <lastmod>2019-09-29T07:39:01.000Z</lastmod>
     <data>
         <display>
         <title>Postgresql11 存储过程</title>
@@ -140,28 +184,6 @@
         <display>
         <title>Postgresql Wal</title>
         <pubTime>2019-07-19T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-09-23T01:18:33.000Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
         
         <tag>Database</tag>
          
@@ -1325,9 +1347,9 @@
         
         <tag>Linux</tag>
          
-        <tag>调试</tag>
-         
         <tag>GDB</tag>
+         
+        <tag>调试</tag>
          
          
            
