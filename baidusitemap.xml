@@ -4,30 +4,8 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-12-28T15:31:09.928Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl/</loc>
-    <lastmod>2019-12-28T15:31:08.865Z</lastmod>
+    <lastmod>2019-12-28T15:34:22.994Z</lastmod>
     <data>
         <display>
         <title>Postgresql with-openssl 异常</title>
@@ -49,11 +27,33 @@
     
   <url>
     <loc>http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E6%AF%94%E8%BE%83-PG10&11/</loc>
-    <lastmod>2019-09-29T07:39:01.000Z</lastmod>
+    <lastmod>2019-12-28T15:32:29.599Z</lastmod>
     <data>
         <display>
-        <title>Postgresql11 存储过程</title>
+        <title>Postgresql-11 存储过程</title>
         <pubTime>2019-09-27T12:27:32.000Z</pubTime>
+        
+        <tag>Database</tag>
+         
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2019-12-28T15:31:09.928Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
         
         <tag>Database</tag>
          
@@ -119,9 +119,9 @@
         <title>Linux tar 协议格式解析</title>
         <pubTime>2019-08-28T11:58:05.000Z</pubTime>
         
-        <tag>C/C++</tag>
-         
         <tag>Linux</tag>
+         
+        <tag>C/C++</tag>
          
          
            
@@ -2074,9 +2074,9 @@
         <title>Linux setjmp & longjmp</title>
         <pubTime>2018-02-27T12:51:08.000Z</pubTime>
         
-        <tag>C/C++</tag>
-         
         <tag>Linux</tag>
+         
+        <tag>C/C++</tag>
          
          
            

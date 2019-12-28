@@ -90,18 +90,18 @@
 
 
 
-<meta name="description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题. 是因为openssl 版本不正常。 其中增删了某些接口函数. 本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
+<meta name="description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.是因为openssl 版本不正常。 其中增删了某些接口函数.本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
 <meta name="keywords" content="Database,Postgresql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Postgresql with-openssl 异常">
 <meta property="og:url" content="http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-编译-with-openssl/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题. 是因为openssl 版本不正常。 其中增删了某些接口函数. 本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
+<meta property="og:description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.是因为openssl 版本不正常。 其中增删了某些接口函数.本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-28T15:31:08.865Z">
+<meta property="og:updated_time" content="2019-12-28T15:34:22.994Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql with-openssl 异常">
-<meta name="twitter:description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题. 是因为openssl 版本不正常。 其中增删了某些接口函数. 本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
+<meta name="twitter:description" content="关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.是因为openssl 版本不正常。 其中增删了某些接口函数.本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错.   关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure">
 
 
 
@@ -397,23 +397,21 @@
       
 
       
-        <p>关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.</p>
-<p>是因为openssl 版本不正常。 其中增删了某些接口函数.</p>
-<p>本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错. </p>
+        <p>关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.<br>是因为openssl 版本不正常。 其中增删了某些接口函数.<br>本身使用OpenSSL 1.0.1e 11 Feb 2013  编译报错. </p>
 <blockquote>
 <p>关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure</p>
 </blockquote>
 <a id="more"></a>
+<p><br></p>
 <p>后升级openssl 版本为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenSSL 1.0.2k  26 Jan 2017</span><br></pre></td></tr></table></figure>
-<p>编译正常.</p>
-<p>openssh 下载地址为 <a href="https://ftp.openssl.org/source" target="_blank" rel="noopener">https://ftp.openssl.org/source</a></p>
-<p>其中openssl-1.0.2k 下载地址为 <a href="https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2k.tar.gz" target="_blank" rel="noopener">https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2k.tar.gz</a></p>
-<p>编译过程如报错:</p>
+<p>编译正常.<br>openssh 下载地址为 <a href="https://ftp.openssl.org/source" target="_blank" rel="noopener">https://ftp.openssl.org/source</a><br>其中openssl-1.0.2k 下载地址为 <a href="https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2k.tar.gz" target="_blank" rel="noopener">https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2k.tar.gz</a></p>
+<p><br></p>
+<h3 id="err-1"><a href="#err-1" class="headerlink" title="err 1:"></a>err 1:</h3><p>编译过程如报错:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cms.pod around line 457: Expected text after =item, not a number</span><br><span class="line">cms.pod around line 461: Expected text after =item, not a number</span><br><span class="line">cms.pod around line 465: Expected text after =item, not a number</span><br><span class="line">cms.pod around line 470: Expected text after =item, not a number</span><br><span class="line">cms.pod around line 474: Expected text after =item, not a number</span><br><span class="line">POD document had syntax errors at /usr/bin/pod2man line 69.</span><br><span class="line">make: *** [install_docs] Error 1</span><br></pre></td></tr></table></figure>
 <p>解决办法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -f /usr/bin/pod2man</span><br></pre></td></tr></table></figure>
-<p>openssl:报错:</p>
+<h3 id="err-2"><a href="#err-2" class="headerlink" title="err 2:"></a>err 2:</h3><p>openssl:报错:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl: error while loading shared libraries: libssl.so.1.1: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
 <p>解决办法:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/local/lib64/libssl.so<span class="number">.1</span><span class="number">.1</span> /usr/lib64/libssl.so<span class="number">.1</span><span class="number">.1</span></span><br><span class="line">ln -s /usr/local/lib64/libcrypto.so<span class="number">.1</span><span class="number">.1</span> /usr/lib64/libcrypto.so<span class="number">.1</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
@@ -478,8 +476,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/09/27/PostgreSQL/2019-09-27-Postgresql-存储过程比较-PG10&11/" rel="next" title="Postgresql11 存储过程">
-                <i class="fa fa-chevron-left"></i> Postgresql11 存储过程
+              <a href="/2019/09/27/PostgreSQL/2019-09-27-Postgresql-存储过程比较-PG10&11/" rel="next" title="Postgresql-11 存储过程">
+                <i class="fa fa-chevron-left"></i> Postgresql-11 存储过程
               </a>
             
           </div>
@@ -539,8 +537,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -646,6 +653,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#err-1"><span class="nav-number">1.</span> <span class="nav-text">err 1:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#err-2"><span class="nav-number">2.</span> <span class="nav-text">err 2:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
