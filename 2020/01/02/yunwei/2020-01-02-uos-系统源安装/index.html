@@ -90,19 +90,19 @@
 
 
 
-<meta name="description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源 发现官网网站https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;amp;d=1577936100389提供的信息并不准确.   还要一系列的操作步骤，然而最终发现 GG..  并不能进行安装..">
+<meta name="description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源  发现官网网站提供的信息并不准确.">
 <meta name="keywords" content="Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="uos 安装系统源">
 <meta property="og:url" content="http://www.gangzai.online/2020/01/02/yunwei/2020-01-02-uos-系统源安装/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源 发现官网网站https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;amp;d=1577936100389提供的信息并不准确.   还要一系列的操作步骤，然而最终发现 GG..  并不能进行安装..">
+<meta property="og:description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源  发现官网网站提供的信息并不准确.">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-02-uos-mips/1577936242521.png">
-<meta property="og:updated_time" content="2020-01-02T14:09:59.771Z">
+<meta property="og:updated_time" content="2020-01-02T14:17:11.127Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="uos 安装系统源">
-<meta name="twitter:description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源 发现官网网站https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;amp;d=1577936100389提供的信息并不准确.   还要一系列的操作步骤，然而最终发现 GG..  并不能进行安装..">
+<meta name="twitter:description" content="今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源  发现官网网站提供的信息并不准确.">
 <meta name="twitter:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-02-uos-mips/1577936242521.png">
 
 
@@ -399,12 +399,16 @@
       
 
       
-        <p>今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源</p>
-<p>发现官网网站<a href="https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;d=1577936100389" target="_blank" rel="noopener">https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;d=1577936100389</a>提供的信息并不准确. </p>
+        <blockquote>
+<p>今天在适配所谓UOS系统[deepin v20]， 发现并没有默认安装sshd.. 然后无奈之下只能安装uos版本镜像源</p>
+</blockquote>
+<p>发现<a href="https://doc.chinauos.com/production/details?id=aiQ9mG4BZZ8Zin8lUFAS&amp;d=1577936100389" target="_blank" rel="noopener">官网网站</a>提供的信息并不准确. </p>
+<a id="more"></a>
+<p><br></p>
 <p><img src="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-02-uos-mips/1577936242521.png" alt="1577936242521"></p>
 <p>还要一系列的操作步骤，然而最终发现</p>
 <p>GG..  并不能进行安装.. 而且镜像源失效..</p>
-<p>经过折腾成功失败的典型.</p>
+<p>成为折腾失败的典型.</p>
 <h3 id="解决"><a href="#解决" class="headerlink" title="解决:"></a>解决:</h3><p>因为deepin本身即debian的源，只是自己需要适配的cpu镜像架构不同。</p>
 <p>通过<a href="https://mirrors.ustc.edu.cn/help/index.html" target="_blank" rel="noopener">https://mirrors.ustc.edu.cn/help/index.html</a> 找到<a href="https://mirrors.ustc.edu.cn/debian/" target="_blank" rel="noopener">debian源</a> 这个镜像源本身存在适配amd64/i386/mips等等。</p>
 <p>更新自己的Linux /etc/apt/sources.list</p>
