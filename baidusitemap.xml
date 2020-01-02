@@ -4,6 +4,712 @@
 
     
   <url>
+    <loc>http://www.gangzai.online/2017/09/10/kernel/%E7%BC%96%E8%AF%91Linux%E5%86%85%E6%A0%B8/</loc>
+    <lastmod>2020-01-02T14:42:34.391Z</lastmod>
+    <data>
+        <display>
+        <title>编译Linux内核</title>
+        <pubTime>2017-09-10T01:41:02.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/09/08/kernel/%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97-hello-module%E4%BB%8B%E7%BB%8D/</loc>
+    <lastmod>2020-01-02T14:42:27.185Z</lastmod>
+    <data>
+        <display>
+        <title>内核模块hello_module介绍</title>
+        <pubTime>2017-09-08T01:15:09.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/12/06/kernel/Kernel-%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%B3%A8%E5%86%8C/</loc>
+    <lastmod>2020-01-02T14:42:16.695Z</lastmod>
+    <data>
+        <display>
+        <title>Kernel-设备驱动注册</title>
+        <pubTime>2017-12-06T01:51:13.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/01/18/kernel/Kernel-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
+    <lastmod>2020-01-02T14:42:10.572Z</lastmod>
+    <data>
+        <display>
+        <title>Kernel-基础知识</title>
+        <pubTime>2018-01-18T01:58:30.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/11/01/kernel/Kernel-%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%A7%84%E5%88%99/</loc>
+    <lastmod>2020-01-02T14:42:01.013Z</lastmod>
+    <data>
+        <display>
+        <title>Kernel-内核版本命令规则</title>
+        <pubTime>2017-11-01T01:43:55.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/12/25/kernel/Kernel-printk/</loc>
+    <lastmod>2020-01-02T14:41:49.282Z</lastmod>
+    <data>
+        <display>
+        <title>Kernel-printk</title>
+        <pubTime>2017-12-25T01:54:42.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/12/16/kernel/Kernel-module-param/</loc>
+    <lastmod>2020-01-02T14:41:42.677Z</lastmod>
+    <data>
+        <display>
+        <title>Kernel_module_param</title>
+        <pubTime>2017-12-16T01:54:18.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Arm</tag>
+         
+        <tag>Kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="http://www.gangzai.online/categories/Kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/10/28/rebuild/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2020-01-02T14:40:53.150Z</lastmod>
+    <data>
+        <display>
+        <title>二进制文件分析</title>
+        <pubTime>2018-10-28T13:20:11.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+         
+           
+             
+              <breadCrumb title="调试" url="http://www.gangzai.online/categories/%E8%B0%83%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/11/06/rebuild/Linux-%E8%B0%83%E8%AF%95/</loc>
+    <lastmod>2020-01-02T14:40:17.986Z</lastmod>
+    <data>
+        <display>
+        <title>Linux-调试</title>
+        <pubTime>2018-11-06T11:56:19.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Commands</tag>
+         
+         
+           
+             
+              <breadCrumb title="调试" url="http://www.gangzai.online/categories/%E8%B0%83%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/02/20/rebuild/GDB-%E8%B0%83%E8%AF%95/</loc>
+    <lastmod>2020-01-02T14:39:53.290Z</lastmod>
+    <data>
+        <display>
+        <title>GDB 调试</title>
+        <pubTime>2018-02-20T12:53:52.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>GDB</tag>
+         
+         
+           
+             
+              <breadCrumb title="调试" url="http://www.gangzai.online/categories/%E8%B0%83%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/08/16/software/vim%E9%85%8D%E7%BD%AEctags-taglist/</loc>
+    <lastmod>2020-01-02T14:39:07.279Z</lastmod>
+    <data>
+        <display>
+        <title>vim配置ctags + taglist</title>
+        <pubTime>2017-08-16T11:11:57.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Software</tag>
+         
+         
+           
+             
+              <breadCrumb title="Vim" url="http://www.gangzai.online/categories/Vim/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
+    <lastmod>2020-01-02T14:38:34.301Z</lastmod>
+    <data>
+        <display>
+        <title>git command</title>
+        <pubTime>2019-08-25T14:10:37.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Git</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/12/12/software/bPython-%E7%A9%BA%E6%A0%BC%E5%88%A0%E9%99%A4%E4%B8%80%E8%A1%8C/</loc>
+    <lastmod>2020-01-02T14:38:27.342Z</lastmod>
+    <data>
+        <display>
+        <title>bPython-空格删除一行</title>
+        <pubTime>2017-12-12T01:36:11.000Z</pubTime>
+        
+        <tag>Python</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/08/16/software/Window-DevDocs/</loc>
+    <lastmod>2020-01-02T14:38:21.516Z</lastmod>
+    <data>
+        <display>
+        <title>Window DevDocs</title>
+        <pubTime>2017-08-16T03:55:51.000Z</pubTime>
+        
+        <tag>Software</tag>
+         
+        <tag>Windows</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/10/28/software/Github-SSh-key%E4%BB%A5%E5%8F%8A%E5%A4%9A%E4%B8%AArsa%E9%85%8D%E7%BD%AE/</loc>
+    <lastmod>2020-01-02T14:38:13.843Z</lastmod>
+    <data>
+        <display>
+        <title>Github SSh key以及多个rsa配置</title>
+        <pubTime>2017-10-28T13:25:07.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Software</tag>
+         
+         
+           
+             
+              <breadCrumb title="命令" url="http://www.gangzai.online/categories/%E5%91%BD%E4%BB%A4/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/07/17/software/Centos7-bash-%E5%AE%89%E8%A3%85powerline/</loc>
+    <lastmod>2020-01-02T14:37:25.698Z</lastmod>
+    <data>
+        <display>
+        <title>Centos7 bash 安装powerline</title>
+        <pubTime>2018-07-17T11:14:06.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Software</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/12/04/software/CentOS-%E5%AE%89%E8%A3%85TheFuck/</loc>
+    <lastmod>2020-01-02T14:37:18.900Z</lastmod>
+    <data>
+        <display>
+        <title>CentOS 安装TheFuck</title>
+        <pubTime>2018-12-04T15:41:48.000Z</pubTime>
+        
+        <tag>Commands</tag>
+         
+        <tag>Software</tag>
+         
+        <tag>Python</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/12/05/software/Bash%E5%BF%AB%E6%8D%B7%E9%94%AE/</loc>
+    <lastmod>2020-01-02T14:37:10.432Z</lastmod>
+    <data>
+        <display>
+        <title>Bash快捷键</title>
+        <pubTime>2018-12-05T10:53:11.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Commands</tag>
+         
+         
+           
+             
+              <breadCrumb title="命令" url="http://www.gangzai.online/categories/%E5%91%BD%E4%BB%A4/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
+    <lastmod>2020-01-02T14:36:07.733Z</lastmod>
+    <data>
+        <display>
+        <title>safe-rm</title>
+        <pubTime>2019-09-11T13:10:50.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Commands</tag>
+         
+         
+           
+             
+              <breadCrumb title="命令" url="http://www.gangzai.online/categories/%E5%91%BD%E4%BB%A4/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/06/27/asm/Dosbox-%E6%95%99%E7%A8%8B/</loc>
+    <lastmod>2020-01-02T14:35:56.428Z</lastmod>
+    <data>
+        <display>
+        <title>Dosbox 教程</title>
+        <pubTime>2018-06-27T15:38:41.000Z</pubTime>
+        
+        <tag>Asm</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/07/15/arm-4412/%E8%AE%AF%E4%B8%BA-4412-%E5%BC%80%E5%8F%91%E6%9D%BF%E7%83%A7%E7%BA%B8%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2020-01-02T14:35:47.373Z</lastmod>
+    <data>
+        <display>
+        <title>讯为 4412 arm 开发板烧写系统</title>
+        <pubTime>2017-07-15T10:14:32.000Z</pubTime>
+        
+        <tag>Arm</tag>
+         
+         
+           
+             
+              <breadCrumb title="Arm" url="http://www.gangzai.online/categories/Arm/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/08/09/arm-4412/iTop-4412-%E7%A7%BB%E6%A4%8DQtE5-7/</loc>
+    <lastmod>2020-01-02T14:35:39.650Z</lastmod>
+    <data>
+        <display>
+        <title>iTop 4412 移植QtE5.7</title>
+        <pubTime>2017-08-09T02:11:58.000Z</pubTime>
+        
+        <tag>Arm</tag>
+         
+         
+           
+             
+              <breadCrumb title="Arm" url="http://www.gangzai.online/categories/Arm/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2018/10/31/alogr/Multiply-Strings/</loc>
+    <lastmod>2020-01-02T14:35:13.947Z</lastmod>
+    <data>
+        <display>
+        <title>Multiply Strings</title>
+        <pubTime>2018-10-31T11:26:03.000Z</pubTime>
+        
+        <tag>C/C++</tag>
+         
+        <tag>Algorithm</tag>
+         
+         
+           
+             
+              <breadCrumb title="LeetCode" url="http://www.gangzai.online/categories/LeetCode/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2017/10/25/alogr/%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86/</loc>
+    <lastmod>2020-01-02T14:34:36.824Z</lastmod>
+    <data>
+        <display>
+        <title>树的遍历</title>
+        <pubTime>2017-10-25T01:24:14.000Z</pubTime>
+        
+        <tag>Algorithm</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl/</loc>
+    <lastmod>2020-01-02T14:33:15.197Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql with-openssl 异常</title>
+        <pubTime>2019-12-28T15:29:00.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E6%AF%94%E8%BE%83-PG10&11/</loc>
+    <lastmod>2020-01-02T14:33:09.712Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql-11 存储过程</title>
+        <pubTime>2019-09-27T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/</loc>
+    <lastmod>2020-01-02T14:33:02.102Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql max_wal_size与Xlog file</title>
+        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2020-01-02T14:32:52.696Z</lastmod>
+    <data>
+        <display>
+        <title>Linux tar 协议格式解析</title>
+        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
+        
+        <tag>C/C++</tag>
+         
+        <tag>Linux</tag>
+         
+         
+           
+             
+              <breadCrumb title="工具" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
+    <lastmod>2020-01-02T14:32:40.449Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Arch process</title>
+        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
+    <lastmod>2020-01-02T14:32:33.747Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Guc</title>
+        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
+    <lastmod>2020-01-02T14:32:27.860Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql rman</title>
+        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
+    <lastmod>2020-01-02T14:32:22.415Z</lastmod>
+    <data>
+        <display>
+        <title>Postgresql Wal</title>
+        <pubTime>2019-07-19T12:27:32.000Z</pubTime>
+        
+        <tag>Postgresql</tag>
+         
+         
+           
+             
+              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2020-01-02T14:32:11.076Z</lastmod>
+    <data>
+        <display>
+        <title>Debug size_t</title>
+        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
+        
+        <tag>C/C++</tag>
+         
+         
+           
+             
+              <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Debug/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.gangzai.online/2020/01/02/commands/2020-01-02-uos-%E7%B3%BB%E7%BB%9F%E6%BA%90%E5%AE%89%E8%A3%85/</loc>
     <lastmod>2020-01-02T14:25:59.823Z</lastmod>
     <data>
@@ -23,202 +729,6 @@
     </url>
 
     
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/12/28/PostgreSQL/2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl/</loc>
-    <lastmod>2019-12-28T15:34:22.994Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql with-openssl 异常</title>
-        <pubTime>2019-12-28T15:29:00.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="数据库" url="http://www.gangzai.online/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/09/27/PostgreSQL/2019-09-27-Postgresql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E6%AF%94%E8%BE%83-PG10&11/</loc>
-    <lastmod>2019-12-28T15:32:29.599Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql-11 存储过程</title>
-        <pubTime>2019-09-27T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/15/PostgreSQL/2019-07-20-Postgresql-rman/</loc>
-    <lastmod>2019-12-28T15:31:09.928Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql rman</title>
-        <pubTime>2019-08-15T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/09/16/Debug/2019-09-17-size_t%E9%97%AE%E9%A2%98/</loc>
-    <lastmod>2019-09-24T00:33:20.000Z</lastmod>
-    <data>
-        <display>
-        <title>Debug size_t</title>
-        <pubTime>2019-09-16T12:27:32.000Z</pubTime>
-        
-        <tag>C/C++</tag>
-         
-         
-           
-             
-              <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Debug/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/</loc>
-    <lastmod>2019-09-23T13:51:30.887Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql max_wal_size与Xlog file</title>
-        <pubTime>2019-09-18T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/28/PostgreSQL/2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2019-09-23T01:24:13.000Z</lastmod>
-    <data>
-        <display>
-        <title>Linux tar 协议格式解析</title>
-        <pubTime>2019-08-28T11:58:05.000Z</pubTime>
-        
-        <tag>C/C++</tag>
-         
-        <tag>Linux</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/26/PostgreSQL/2019-08-26-Postgresql-pgarch/</loc>
-    <lastmod>2019-09-23T01:23:22.000Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Arch process</title>
-        <pubTime>2019-08-26T11:12:20.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/12/PostgreSQL/2019-08-12-Postgresql-GUC/</loc>
-    <lastmod>2019-09-23T01:22:11.000Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Guc</title>
-        <pubTime>2019-08-12T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/07/19/PostgreSQL/2019-07-19-Postgresql-WAL/</loc>
-    <lastmod>2019-09-23T01:21:36.000Z</lastmod>
-    <data>
-        <display>
-        <title>Postgresql Wal</title>
-        <pubTime>2019-07-19T12:27:32.000Z</pubTime>
-        
-        <tag>Database</tag>
-         
-        <tag>Postgresql</tag>
-         
-         
-           
-             
-              <breadCrumb title="Database" url="http://www.gangzai.online/categories/Database/"/>
-          
-        </display>
-    </data>
-    </url>
-
     
   <url>
     <loc>http://www.gangzai.online/2017/08/26/database/tcp-ip-connect-SSL-off/</loc>
@@ -248,9 +758,9 @@
         <title>PostgresSql操作符重载</title>
         <pubTime>2018-09-13T15:27:54.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -270,9 +780,9 @@
         <title>Postgresql扩展Sql-源码添加系统函数</title>
         <pubTime>2018-08-22T10:52:18.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -292,9 +802,9 @@
         <title>Postgresql扩展Sql-添加插件</title>
         <pubTime>2018-08-30T11:46:55.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -314,9 +824,9 @@
         <title>Postgresql扩展Sql-hook</title>
         <pubTime>2018-09-29T13:03:38.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -336,9 +846,9 @@
         <title>postgresql扩展SQL与存储过程</title>
         <pubTime>2018-09-18T11:04:50.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -358,9 +868,9 @@
         <title>Postgresql开发-添加系统表</title>
         <pubTime>2018-10-06T13:15:54.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -380,9 +890,9 @@
         <title>Postgresql-后台进程</title>
         <pubTime>2018-09-01T02:07:57.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -402,9 +912,9 @@
         <title>Postgresql 入门学习</title>
         <pubTime>2017-07-15T10:23:52.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -424,9 +934,9 @@
         <title>PostgreSql扩展Sql-动态加载共享库(C函数)</title>
         <pubTime>2018-08-23T11:13:40.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -446,9 +956,9 @@
         <title>Postgresql开发 Page</title>
         <pubTime>2018-10-09T12:13:41.000Z</pubTime>
         
-        <tag>Database</tag>
-         
         <tag>Postgresql</tag>
+         
+        <tag>Database</tag>
          
          
            
@@ -481,50 +991,6 @@
           
              
               <breadCrumb title="Debug" url="http://www.gangzai.online/categories/Database/Debug/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/09/11/code/safe-rm/</loc>
-    <lastmod>2019-09-18T12:17:42.874Z</lastmod>
-    <data>
-        <display>
-        <title>safe-rm</title>
-        <pubTime>2019-09-11T13:10:50.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Commands</tag>
-         
-         
-           
-             
-              <breadCrumb title="命令篇" url="http://www.gangzai.online/categories/%E5%91%BD%E4%BB%A4%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2019/08/25/software/git-command/</loc>
-    <lastmod>2019-09-11T12:13:37.042Z</lastmod>
-    <data>
-        <display>
-        <title>git command</title>
-        <pubTime>2019-08-25T14:10:37.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Git</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
           
         </display>
     </data>
@@ -591,28 +1057,6 @@
            
              
               <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/12/05/software/Bash%E5%BF%AB%E6%8D%B7%E9%94%AE/</loc>
-    <lastmod>2019-07-08T23:59:43.368Z</lastmod>
-    <data>
-        <display>
-        <title>Bash快捷键</title>
-        <pubTime>2018-12-05T10:53:11.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Commands</tag>
-         
-         
-           
-             
-              <breadCrumb title="Bash" url="http://www.gangzai.online/categories/Bash/"/>
           
         </display>
     </data>
@@ -1124,178 +1568,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2017/07/15/arm-4412/%E8%AE%AF%E4%B8%BA-4412-%E5%BC%80%E5%8F%91%E6%9D%BF%E7%83%A7%E7%BA%B8%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2018-12-05T10:58:30.561Z</lastmod>
-    <data>
-        <display>
-        <title>讯为 4412 arm 开发板烧写系统</title>
-        <pubTime>2017-07-15T10:14:32.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-         
-           
-             
-              <breadCrumb title="Arm" url="http://www.gangzai.online/categories/Arm/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/08/09/arm-4412/iTop-4412-%E7%A7%BB%E6%A4%8DQtE5-7/</loc>
-    <lastmod>2018-12-05T10:58:04.993Z</lastmod>
-    <data>
-        <display>
-        <title>iTop 4412 移植QtE5.7</title>
-        <pubTime>2017-08-09T02:11:58.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-         
-           
-             
-              <breadCrumb title="Arm" url="http://www.gangzai.online/categories/Arm/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/08/16/software/vim%E9%85%8D%E7%BD%AEctags-taglist/</loc>
-    <lastmod>2018-12-05T10:56:50.280Z</lastmod>
-    <data>
-        <display>
-        <title>vim配置ctags + taglist</title>
-        <pubTime>2017-08-16T11:11:57.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Software</tag>
-         
-         
-           
-             
-              <breadCrumb title="Vim篇" url="http://www.gangzai.online/categories/Vim%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/12/12/software/bPython-%E7%A9%BA%E6%A0%BC%E5%88%A0%E9%99%A4%E4%B8%80%E8%A1%8C/</loc>
-    <lastmod>2018-12-05T10:56:23.449Z</lastmod>
-    <data>
-        <display>
-        <title>bPython-空格删除一行</title>
-        <pubTime>2017-12-12T01:36:11.000Z</pubTime>
-        
-        <tag>Python</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/08/16/software/Window-DevDocs/</loc>
-    <lastmod>2018-12-05T10:56:08.545Z</lastmod>
-    <data>
-        <display>
-        <title>Window DevDocs</title>
-        <pubTime>2017-08-16T03:55:51.000Z</pubTime>
-        
-        <tag>Software</tag>
-         
-        <tag>Windows</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/10/28/software/Github-SSh-key%E4%BB%A5%E5%8F%8A%E5%A4%9A%E4%B8%AArsa%E9%85%8D%E7%BD%AE/</loc>
-    <lastmod>2018-12-05T10:56:01.856Z</lastmod>
-    <data>
-        <display>
-        <title>Github SSh key以及多个rsa配置</title>
-        <pubTime>2017-10-28T13:25:07.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Software</tag>
-         
-         
-           
-             
-              <breadCrumb title="Github" url="http://www.gangzai.online/categories/Github/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/07/17/software/Centos7-bash-%E5%AE%89%E8%A3%85powerline/</loc>
-    <lastmod>2018-12-05T10:55:46.152Z</lastmod>
-    <data>
-        <display>
-        <title>Centos7 bash 安装powerline</title>
-        <pubTime>2018-07-17T11:14:06.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Software</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/12/04/software/CentOS-%E5%AE%89%E8%A3%85TheFuck/</loc>
-    <lastmod>2018-12-05T10:55:21.232Z</lastmod>
-    <data>
-        <display>
-        <title>CentOS 安装TheFuck</title>
-        <pubTime>2018-12-04T15:41:48.000Z</pubTime>
-        
-        <tag>Commands</tag>
-         
-        <tag>Python</tag>
-         
-        <tag>Software</tag>
-         
-         
-           
-             
-              <breadCrumb title="工具篇" url="http://www.gangzai.online/categories/%E5%B7%A5%E5%85%B7%E7%AF%87/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2018/04/20/commands/Linux-%E7%BD%91%E5%8D%A1%E7%BB%91%E5%AE%9A/</loc>
     <lastmod>2018-11-27T13:35:53.804Z</lastmod>
     <data>
@@ -1314,69 +1586,6 @@
     </url>
 
     
-  <url>
-    <loc>http://www.gangzai.online/2018/10/31/alogr/Multiply-Strings/</loc>
-    <lastmod>2018-11-21T12:13:18.728Z</lastmod>
-    <data>
-        <display>
-        <title>Multiply Strings</title>
-        <pubTime>2018-10-31T11:26:03.000Z</pubTime>
-        
-        <tag>C/C++</tag>
-         
-        <tag>Algorithm</tag>
-         
-        <tag>LeetCode</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/11/06/rebuild/Linux-%E8%B0%83%E8%AF%95/</loc>
-    <lastmod>2018-11-20T10:56:57.292Z</lastmod>
-    <data>
-        <display>
-        <title>Linux-调试</title>
-        <pubTime>2018-11-06T11:56:19.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Commands</tag>
-         
-        <tag>调试</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/02/20/rebuild/GDB-%E8%B0%83%E8%AF%95/</loc>
-    <lastmod>2018-11-20T10:56:34.403Z</lastmod>
-    <data>
-        <display>
-        <title>GDB 调试</title>
-        <pubTime>2018-02-20T12:53:52.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>GDB</tag>
-         
-        <tag>调试</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
     
   <url>
     <loc>http://www.gangzai.online/2017/11/06/commands/xmanage-%E9%80%9A%E8%BF%87xdmcp%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5Ubuntu/</loc>
@@ -1406,130 +1615,6 @@
         <tag>Linux</tag>
          
         <tag>Centos</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/01/18/kernel/Kernel-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
-    <lastmod>2018-11-19T16:14:13.671Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel-基础知识</title>
-        <pubTime>2018-01-18T01:58:30.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/09/08/kernel/%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97-hello-module%E4%BB%8B%E7%BB%8D/</loc>
-    <lastmod>2018-11-19T16:14:00.399Z</lastmod>
-    <data>
-        <display>
-        <title>内核模块hello_module介绍</title>
-        <pubTime>2017-09-08T01:15:09.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/12/06/kernel/Kernel-%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%B3%A8%E5%86%8C/</loc>
-    <lastmod>2018-11-19T16:13:55.223Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel-设备驱动注册</title>
-        <pubTime>2017-12-06T01:51:13.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/11/01/kernel/Kernel-%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%A7%84%E5%88%99/</loc>
-    <lastmod>2018-11-19T16:13:44.727Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel-内核版本命令规则</title>
-        <pubTime>2017-11-01T01:43:55.000Z</pubTime>
-        
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/12/25/kernel/Kernel-printk/</loc>
-    <lastmod>2018-11-19T16:13:39.639Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel-printk</title>
-        <pubTime>2017-12-25T01:54:42.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/12/16/kernel/Kernel-module-param/</loc>
-    <lastmod>2018-11-19T16:13:34.934Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel_module_param</title>
-        <pubTime>2017-12-16T01:54:18.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
          
          
            
@@ -1704,23 +1789,6 @@
         <tag>Linux</tag>
          
         <tag>Shell</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2018/10/28/rebuild/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2018-11-19T16:07:38.003Z</lastmod>
-    <data>
-        <display>
-        <title>二进制文件分析</title>
-        <pubTime>2018-10-28T13:20:11.000Z</pubTime>
-        
-        <tag>Linux</tag>
          
          
            
@@ -2032,23 +2100,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2017/10/25/alogr/%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86/</loc>
-    <lastmod>2018-10-31T11:28:05.692Z</lastmod>
-    <data>
-        <display>
-        <title>树的遍历</title>
-        <pubTime>2017-10-25T01:24:14.000Z</pubTime>
-        
-        <tag>Algorithm</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2018/06/28/rebuild/Linux-%E5%85%B1%E4%BA%AB%E5%BA%93/</loc>
     <lastmod>2018-10-28T13:32:54.131Z</lastmod>
     <data>
@@ -2159,23 +2210,6 @@
 
     
   <url>
-    <loc>http://www.gangzai.online/2018/06/27/asm/Dosbox-%E6%95%99%E7%A8%8B/</loc>
-    <lastmod>2018-06-27T15:53:49.626Z</lastmod>
-    <data>
-        <display>
-        <title>Dosbox 教程</title>
-        <pubTime>2018-06-27T15:38:41.000Z</pubTime>
-        
-        <tag>Asm</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.gangzai.online/2017/09/27/commands/%E4%BF%AE%E6%94%B9%E5%9B%BA%E5%AE%9AIp-%E4%B8%8EDNS/</loc>
     <lastmod>2018-03-27T12:07:38.686Z</lastmod>
     <data>
@@ -2218,27 +2252,6 @@
         <pubTime>2018-03-06T14:41:05.000Z</pubTime>
         
         <tag>Centos</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.gangzai.online/2017/09/10/kernel/%E7%BC%96%E8%AF%91Linux%E5%86%85%E6%A0%B8/</loc>
-    <lastmod>2018-03-05T08:21:36.776Z</lastmod>
-    <data>
-        <display>
-        <title>编译Linux内核</title>
-        <pubTime>2017-09-10T01:41:02.000Z</pubTime>
-        
-        <tag>Arm</tag>
-         
-        <tag>Linux</tag>
-         
-        <tag>Kernel</tag>
          
          
            

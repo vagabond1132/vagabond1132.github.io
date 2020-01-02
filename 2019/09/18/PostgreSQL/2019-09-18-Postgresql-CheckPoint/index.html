@@ -79,7 +79,7 @@
 
 
 
-  <meta name="keywords" content="Database,Postgresql," />
+  <meta name="keywords" content="Postgresql," />
 
 
 
@@ -91,7 +91,7 @@
 
 
 <meta name="description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
-<meta name="keywords" content="Database,Postgresql">
+<meta name="keywords" content="Postgresql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Postgresql max_wal_size与Xlog file">
 <meta property="og:url" content="http://www.gangzai.online/2019/09/18/PostgreSQL/2019-09-18-Postgresql-CheckPoint/index.html">
@@ -99,7 +99,7 @@
 <meta property="og:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2019-09-18-Postgresql-CheckPoint/1568796985953.png">
-<meta property="og:updated_time" content="2019-09-23T13:51:30.887Z">
+<meta property="og:updated_time" content="2020-01-02T14:33:02.102Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql max_wal_size与Xlog file">
 <meta name="twitter:description" content="​    Pg后台进程在执行用户事务时, 发生的数据更改是先写入缓冲池中, 对应PG就是shared buffers, PG缓冲池一般设置为内存的1/4左右， 缓冲池里边的这些数据修改,在事务提交时，无需同步到磁盘。 因为在事务提交时,会先写入WAL日志, 有wal日志存在,就可以在异常情况下将数据恢复, 保障数据库安全。因此数据本身是否在提交时写入磁盘将没有那么重要。Pg只是在需要时候, 例如脏">
@@ -545,8 +545,6 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Database/" rel="tag"># Database</a>
-          
             <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
           
         </div>
@@ -665,7 +663,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -676,7 +674,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

