@@ -90,19 +90,19 @@
 
 
 
-<meta name="description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta name="description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker,​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重">
 <meta name="keywords" content="Postgresql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Postgresql Vacuum进程">
 <meta property="og:url" content="http://www.gangzai.online/2020/01/15/PostgreSQL/2020-01-14-Postgresql-vacuum/index.html">
 <meta property="og:site_name" content="Rocky_Ansi Blog">
-<meta property="og:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta property="og:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker,​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
-<meta property="og:updated_time" content="2020-01-15T10:41:39.279Z">
+<meta property="og:updated_time" content="2020-01-15T10:46:43.478Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Vacuum进程">
-<meta name="twitter:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta name="twitter:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker,​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重">
 <meta name="twitter:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
 
 
@@ -404,8 +404,7 @@
 <li>autovacuum launcher</li>
 <li>autovacuum worker</li>
 </ul>
-<p>其中autovaucuum launcher主要负责调度worker,</p>
-<p>​    autovacuum worker进程进行具体的自动清理工作。</p>
+<p>其中autovaucuum launcher主要负责调度worker,<br>​    autovacuum worker进程进行具体的自动清理工作。</p>
 <p>其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple.<br>好处:</p>
 <ul>
 <li>vacuum 进行扫描时，可以跳过page。</li>
@@ -511,9 +510,7 @@
 <li>更新pgstat统计信息.</li>
 </ul>
 </li>
-<li><p>VACOPT_ANALYZE: 调用analyze_rel函数</p>
-<p>……</p>
-</li>
+<li>VACOPT_ANALYZE: 调用analyze_rel函数<br>……</li>
 </ul>
 </li>
 </ul>

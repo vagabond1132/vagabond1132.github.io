@@ -405,8 +405,7 @@
 <li>autovacuum launcher</li>
 <li>autovacuum worker</li>
 </ul>
-<p>其中autovaucuum launcher主要负责调度worker,</p>
-<p>​    autovacuum worker进程进行具体的自动清理工作。</p>
+<p>其中autovaucuum launcher主要负责调度worker,<br>​    autovacuum worker进程进行具体的自动清理工作。</p>
 <p>其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple.<br>好处:</p>
 <ul>
 <li>vacuum 进行扫描时，可以跳过page。</li>
