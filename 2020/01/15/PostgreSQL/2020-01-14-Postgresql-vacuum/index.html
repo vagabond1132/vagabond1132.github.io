@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<!--ligang-google -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-1769421947670137",
+    enable_page_level_ads: true
+  });
+</script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/person.jpg?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/person.jpg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Postgresql," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta name="keywords" content="Postgresql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Postgresql Vacuum进程">
+<meta property="og:url" content="http://www.gangzai.online/2020/01/15/PostgreSQL/2020-01-14-Postgresql-vacuum/index.html">
+<meta property="og:site_name" content="Rocky_Ansi Blog">
+<meta property="og:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
+<meta property="og:updated_time" content="2020-01-15T09:59:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Postgresql Vacuum进程">
+<meta name="twitter:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
+<meta name="twitter:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>Postgresql Vacuum进程 | Rocky_Ansi Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rocky_Ansi Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">修己以清心为要,涉世以慎言为先!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resources">
+          <a href="/resources" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            资源导航
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-transfer">
+          <a href="/transfer" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            转载
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.gangzai.online/2020/01/15/PostgreSQL/2020-01-14-Postgresql-vacuum/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rocky_Ansi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/person.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rocky_Ansi Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Postgresql Vacuum进程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-15T20:27:32+08:00">
+                2020-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Database/" itemprop="url" rel="index">
+                    <span itemprop="name">Database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]</p>
+<ul>
+<li>autovacuum launcher</li>
+<li>autovacuum worker</li>
+</ul>
+<p>其中autovaucuum launcher主要负责调度worker,</p>
+<p>​    autovacuum worker进程进行具体的自动清理工作。</p>
+<p>其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple. </p>
+<p>好处:</p>
+<ul>
+<li><p>vacuum 进行扫描时，可以跳过page。</p>
+</li>
+<li><p>index-only sacn，可以减少tuple的可见性判断, 减少IO操作. 提高性能。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h3 id="autovacuum-launcher"><a href="#autovacuum-launcher" class="headerlink" title="autovacuum launcher"></a>autovacuum launcher</h3><p>​    …… 待更新…</p>
+<h3 id="autovacuum-worker"><a href="#autovacuum-worker" class="headerlink" title="autovacuum worker"></a>autovacuum worker</h3><p><code>src/backend/postmaster/autovacuum.c:AutoVacWorkerMain()</code>; </p>
+<p>函数工作流程如下:</p>
+<ul>
+<li><p>注册信号处理函数</p>
+</li>
+<li><p><code>BaseInit()</code></p>
+</li>
+<li><p>更新GUC参数配置</p>
+<ul>
+<li><code>zero_damaged_pages</code> 设置为 <code>false</code></li>
+<li><code>statement_timeout</code> 设置为 <code>0</code></li>
+<li><code>lock_timeout</code> 设置为 <code>0</code></li>
+<li><code>idle_in_transaction_session_timeout</code> 设置为 <code>0</code></li>
+<li><code>default_transaction_isolation</code> 设置为 <code>read committed</code>，尽可能的减少死锁与堵塞其他事务的可能性。</li>
+<li><code>synchronous_commit</code> 设置为 <code>local</code>， 允许我们不接受备库的影响,能够进行正常的清理任务。</li>
+</ul>
+</li>
+<li><p>获取共享内存AutoVacuumShmem中av_startingWorker，并更新 dbid 和 MyWorkerInfo-&gt;wi_proc;</p>
+</li>
+<li><p>重新唤醒autovacuum launch; </p>
+</li>
+<li><p>获取 提交的最新xid 和 MultiXactId</p>
+</li>
+<li><p>执行do_autovacuum清理函数: =&gt; 从pg_class遍历所有表，进行清理工作</p>
+<ul>
+<li><p>初始化上下文</p>
+</li>
+<li><p>更新统计信息</p>
+</li>
+<li><p>获取effective_multixact_freeze_max_age</p>
+</li>
+<li><p>设置<code>default_freeze_min_age， default_freeze_table_age， default_multixact_freeze_min_age， default_multixact_freeze_table_age</code></p>
+</li>
+<li><p>开始遍历pg_class表记录，进行相应的逻辑处理</p>
+<ul>
+<li><p>孤儿临时表， continue。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (classForm-&gt;relpersistence == RELPERSISTENCE_TEMP)</span><br><span class="line">	if (!isTempNamespaceInUse(classForm-&gt;relnamespace))</span><br><span class="line">		orphan_oids = lappend_oid(orphan_oids, relid);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查表 || [toase table] 是否需要vacuum &amp; analyzed &amp; multixact wraparound 过程如下:</p>
+<p><code>relation_needs_vacanalyze</code></p>
+<ul>
+<li><p>do_vacuum: 该表统计信息中标记为dead的tuple数量大于<code>vac_base_thresh + vac_scale_factor * reltuples</code>时。具体细节如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vactuples = tabentry-&gt;n_dead_tuples; <span class="comment">//pgstat统计信息</span></span><br><span class="line"></span><br><span class="line">vac_base_thresh = (relopts &amp;&amp; relopts-&gt;vacuum_threshold &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;vacuum_threshold</span><br><span class="line">    : autovacuum_vac_thresh;</span><br><span class="line"></span><br><span class="line">vac_scale_factor = (relopts &amp;&amp; relopts-&gt;vacuum_scale_factor &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;vacuum_scale_factor</span><br><span class="line">    : autovacuum_vac_scale;</span><br><span class="line"></span><br><span class="line">vacthresh = (float4) vac_base_thresh + vac_scale_factor * reltuples;</span><br><span class="line"></span><br><span class="line">*dovacuum = force_vacuum || (vactuples &gt; vacthresh);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>* do_analyze: 该表统计信息中上次analyze之后改变的元组数大于 `anl_base_thresh + anl_scale_factor * reltuples`时. 具体细节如下:
+
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">anltuples = tabentry-&gt;changes_since_analyze; <span class="comment">//pgstat统计信息</span></span><br><span class="line"></span><br><span class="line">anl_base_thresh = (relopts &amp;&amp; relopts-&gt;analyze_threshold &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_threshold</span><br><span class="line">    : autovacuum_anl_thresh;</span><br><span class="line">anl_scale_factor = (relopts &amp;&amp; relopts-&gt;analyze_scale_factor &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_scale_factor</span><br><span class="line">    : autovacuum_anl_scale;</span><br><span class="line"></span><br><span class="line">anlthresh = (float4) anl_base_thresh + anl_scale_factor * reltuples;</span><br><span class="line"></span><br><span class="line">*doanalyze = (anltuples &gt; anlthresh);</span><br></pre></td></tr></table></figure>
+
+
+
+* do_multixact_wraparound: 
+
+  如果wraparound置为true，则将会强制执行do_vacuum;;
+
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xidForceLimit = recentXid - freeze_max_age; </span><br><span class="line"><span class="keyword">if</span> (xidForceLimit &lt; FirstNormalTransactionId) </span><br><span class="line">    xidForceLimit -= FirstNormalTransactionId;</span><br><span class="line">force_vacuum = (TransactionIdIsNormal(classForm-&gt;relfrozenxid) &amp;&amp;</span><br><span class="line">               TransactionIdPrecedes(classForm-&gt;relfrozenxid,  xidForceLimit)); </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!force_vacuum)</span><br><span class="line">&#123;</span><br><span class="line">    multiForceLimit = recentMulti - multixact_freeze_max_age;</span><br><span class="line">    <span class="keyword">if</span> (multiForceLimit &lt; FirstMultiXactId)</span><br><span class="line">        multiForceLimit -= FirstMultiXactId;</span><br><span class="line">    force_vacuum = MultiXactIdIsValid(classForm-&gt;relminmxid) &amp;&amp;</span><br><span class="line">       MultiXactIdPrecedes(classForm-&gt;relminmxid, multiForceLimit); </span><br><span class="line">&#125;</span><br><span class="line">*wraparound = force_vacuum;</span><br></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><p>获取需要进行vacuum or analyze的对象，存至table_oids;并进行遍历</p>
+<ul>
+<li>加载最新的GUC参数</li>
+<li>并检查当前运行的worker个数, 检查是否有其他worker进程对该relation进行清理, 如果有，则跳过，skipit 置为 true.</li>
+<li>再次检查该relid是否需要清理, 并生成用于追踪的autovac_table结构。<code>table_recheck_autovac</code></li>
+<li>对所有的vacuum worker进行资源平衡 <code>autovac_balance_cost</code></li>
+<li>调用函数autovacuum_do_vac_analyze. 进行vacuum or  analyze<ul>
+<li><code>vacuum</code> 入口点.</li>
+</ul>
+</li>
+<li>释放缓存，更新之前的MyWorkerInfo结构</li>
+</ul>
+</li>
+<li><p>更新该database的datfrozenxid: <code>vac_update_datfrozenxid</code></p>
+</li>
+</ul>
+<h4 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h4><ul>
+<li><p>autovac_table  autovacuum利用共享内存AutoVacuumShmem获取并行worker运行情况。传递的autovac_tab结构体参数如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* struct to keep track of tables to vacuum and/or analyze, after rechecking */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">autovac_table</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	Oid			at_relid;</span><br><span class="line">	VacuumParams at_params;</span><br><span class="line">	<span class="keyword">double</span>		at_vacuum_cost_delay;</span><br><span class="line">	<span class="keyword">int</span>			at_vacuum_cost_limit;</span><br><span class="line">	<span class="keyword">bool</span>		at_dobalance;</span><br><span class="line">	<span class="keyword">bool</span>		at_sharedrel;</span><br><span class="line">	<span class="keyword">char</span>	   *at_relname;</span><br><span class="line">	<span class="keyword">char</span>	   *at_nspname;</span><br><span class="line">	<span class="keyword">char</span>	   *at_datname;</span><br><span class="line">&#125; autovac_table;</span><br></pre></td></tr></table></figure>
+<p>其中的VacuumParams</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Parameters customizing behavior of VACUUM and ANALYZE.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Note that at least one of VACOPT_VACUUM and VACOPT_ANALYZE must be set</span></span><br><span class="line"><span class="comment"> * in options.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">VacuumParams</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span>			options;		<span class="comment">/* bitmask of VacuumOption */</span></span><br><span class="line">	<span class="keyword">int</span>			freeze_min_age; <span class="comment">/* min freeze age, -1 to use default */</span></span><br><span class="line">	<span class="keyword">int</span>			freeze_table_age;	<span class="comment">/* age at which to scan whole table */</span></span><br><span class="line">	<span class="keyword">int</span>			multixact_freeze_min_age;	<span class="comment">/* min multixact freeze age, -1 to</span></span><br><span class="line"><span class="comment">											 * use default */</span></span><br><span class="line">	<span class="keyword">int</span>			multixact_freeze_table_age; <span class="comment">/* multixact age at which to scan</span></span><br><span class="line"><span class="comment">											 * whole table */</span></span><br><span class="line">	<span class="keyword">bool</span>		is_wraparound;	<span class="comment">/* force a for-wraparound vacuum */</span></span><br><span class="line">	<span class="keyword">int</span>			log_min_duration;	<span class="comment">/* minimum execution threshold in ms at</span></span><br><span class="line"><span class="comment">									 * which  verbose logs are activated, -1</span></span><br><span class="line"><span class="comment">									 * to use default */</span></span><br><span class="line">	VacOptTernaryValue index_cleanup;	<span class="comment">/* Do index vacuum and cleanup,</span></span><br><span class="line"><span class="comment">										 * default value depends on reloptions */</span></span><br><span class="line">	VacOptTernaryValue truncate;	<span class="comment">/* Truncate empty pages at the end,</span></span><br><span class="line"><span class="comment">									 * default value depends on reloptions */</span></span><br><span class="line">&#125; VacuumParams;</span><br></pre></td></tr></table></figure>
+<p>VacuumParams中options参数 定义了vacuum的操作类型.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> VacuumOption</span><br><span class="line">&#123;</span><br><span class="line">	VACOPT_VACUUM = <span class="number">1</span> &lt;&lt; <span class="number">0</span>,		<span class="comment">/* do VACUUM */</span></span><br><span class="line">	VACOPT_ANALYZE = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,	<span class="comment">/* do ANALYZE */</span></span><br><span class="line">	VACOPT_VERBOSE = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,	<span class="comment">/* print progress info */</span></span><br><span class="line">	VACOPT_FREEZE = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,		<span class="comment">/* FREEZE option */</span></span><br><span class="line">	VACOPT_FULL = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,		<span class="comment">/* FULL (non-concurrent) vacuum */</span></span><br><span class="line">	VACOPT_SKIP_LOCKED = <span class="number">1</span> &lt;&lt; <span class="number">5</span>,	<span class="comment">/* skip if cannot get lock */</span></span><br><span class="line">	VACOPT_SKIPTOAST = <span class="number">1</span> &lt;&lt; <span class="number">6</span>,	<span class="comment">/* don't process the TOAST table, if any */</span></span><br><span class="line">	VACOPT_DISABLE_PAGE_SKIPPING = <span class="number">1</span> &lt;&lt; <span class="number">7</span>	<span class="comment">/* don't skip any pages */</span></span><br><span class="line">&#125; VacuumOption;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="vacuum"><a href="#vacuum" class="headerlink" title="vacuum"></a>vacuum</h4><p>针对单个relation 其工作流程如下:</p>
+<p><code>src/backend/commands/vacuum.c:vacuum()</code> </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">vacuum(List *relations, VacuumParams *params,</span><br><span class="line">	 BufferAccessStrategy bstrategy, <span class="keyword">bool</span> isTopLevel)</span><br></pre></td></tr></table></figure>
+<p>传递<code>tab0-&gt;at_params</code> 校验vacuum类别;</p>
+<ul>
+<li><p>检查param参数</p>
+</li>
+<li><p>更新pgstat统计信息 [在AutoVacuumWorkerProcess下,则跳过.]</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess())</span><br><span class="line">	pgstat_vacuum_stat();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置内存上下文</p>
+</li>
+<li><p>进行relations链表循环</p>
+<ul>
+<li><p>VACOPT_VACUUM: 调用vacuum_rel函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (params-&gt;options &amp; VACOPT_VACUUM)  <span class="comment">//vacuum flag -</span></span><br><span class="line">	<span class="keyword">if</span> (!vacuum_rel(vrel-&gt;oid, vrel-&gt;relation, params))</span><br><span class="line">		<span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
+<p>从此处我们看得出，默认的autovacuum 执行的是lazy vacuum: 只是将dead元组，标记为可用; 并不会进行碎片整理，释放交换给操作系统。</p>
+<p>函数的主要流程如下:</p>
+<p>vacuum_rel—&gt;table_relation_vacuum-&gt;heap_vacuum_rel-&gt;lazy_scan_heap -&gt; {lazy_vacuum_index-&gt;index_bulk_delete,   lazy_vacuum_heap-&gt;lazy_vacuum_page};</p>
+<ul>
+<li>确认表的可读性与操作性.</li>
+<li>检查用户对表的操作权限.</li>
+<li>检查relation-&gt;relkind 是否可操作的类型.</li>
+<li>忽略其余的临时表.</li>
+<li>将relation所有页面，标记dead元组为可用 <code>ItemIdSetUnused</code>, 并设置脏页，刷新到磁盘;</li>
+<li>更新visibility map - </li>
+<li>更新pgstat统计信息.</li>
+</ul>
+</li>
+<li><p>VACOPT_ANALYZE: 调用analyze_rel函数</p>
+<p>……</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>释放上下文, 并更新vac_update_datfrozenxid();</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess())</span><br><span class="line">	vac_update_datfrozenxid();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="引申问题"><a href="#引申问题" class="headerlink" title="引申问题"></a>引申问题</h3><ul>
+<li><p>lazy vacuum &amp; vacuum full区别</p>
+<ul>
+<li><p>LAZY vacuum：只是找到dead的元组，把它们的状态标记为可用状态。但是它不进行空间合并。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VACUUM t_user_info;</span><br><span class="line">VACUUM <span class="keyword">ANALYZE</span> t_user_info;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>FULL vacuum：除了 LAZY vacuum，还进行空间合并,临时文件<code>pg_temp_%u</code>，因此它需要锁表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">VACUUM FULL VERBOSE;</span><br><span class="line">VACUUM FULL t_user_info;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>TupleDesc &amp; Relation 本质数据结构的区别以及作用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">TupleDescData</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span>			natts;			<span class="comment">/* number of attributes in the tuple */</span></span><br><span class="line">	Oid			tdtypeid;		<span class="comment">/* composite type ID for tuple type */</span></span><br><span class="line">	int32		tdtypmod;		<span class="comment">/* typmod for tuple type */</span></span><br><span class="line">	<span class="keyword">int</span>			tdrefcount;		<span class="comment">/* reference count, or -1 if not counting */</span></span><br><span class="line">	TupleConstr *constr;		<span class="comment">/* constraints, or NULL if none */</span></span><br><span class="line">	<span class="comment">/* attrs[N] is the description of Attribute Number N+1 */</span></span><br><span class="line">	FormData_pg_attribute attrs[FLEXIBLE_ARRAY_MEMBER];</span><br><span class="line">&#125;			TupleDescData;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">TupleDescData</span> *<span class="title">TupleDesc</span>;</span></span><br></pre></td></tr></table></figure>
+<p>此结构体是在后端间描述元组的结构.</p>
+<ul>
+<li><p>表结构: pg_attribute</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">tupdesc = CreateTemplateTupleDesc(<span class="number">6</span>);  <span class="comment">//初始化构建;</span></span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">1</span>, <span class="string">"name"</span>,</span><br><span class="line">					   TEXTOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">2</span>, <span class="string">"statement"</span>,</span><br><span class="line">					   TEXTOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">3</span>, <span class="string">"is_holdable"</span>,</span><br><span class="line">					   BOOLOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">4</span>, <span class="string">"is_binary"</span>,</span><br><span class="line">					   BOOLOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">5</span>, <span class="string">"is_scrollable"</span>,</span><br><span class="line">					   BOOLOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	TupleDescInitEntry(tupdesc, (AttrNumber) <span class="number">6</span>, <span class="string">"creation_time"</span>,</span><br><span class="line">					   TIMESTAMPTZOID, <span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">	.....</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png" alt="pg_cursors结构"></p>
+</li>
+<li><p>生成记录:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">HeapTuple   tuple;</span><br><span class="line">Relation    rel;</span><br><span class="line">TupleDesc    access_audit_desc;</span><br><span class="line">Datum       new_record[Natts_pg_accessaudit_count];</span><br><span class="line"><span class="keyword">bool</span>        nulls[Natts_pg_accessaudit_count];</span><br><span class="line"></span><br><span class="line">rel = heap_open(AccessAuditID, RowExclusiveLock);</span><br><span class="line">access_audit_desc = RelationGetDescr(rel);</span><br><span class="line">MemSet(new_record, <span class="number">1</span>, <span class="keyword">sizeof</span>(new_record));</span><br><span class="line">MemSet(nulls,  <span class="literal">false</span>, <span class="keyword">sizeof</span>(nulls));</span><br><span class="line"></span><br><span class="line">new_record[Anum_pg_accessaudit_tid - <span class="number">1</span>] = ObjectIdGetDatum(toid); <span class="comment">//插入新的记录;</span></span><br><span class="line">new_record[Anum_pg_accessaudit_tname - <span class="number">1</span>] = get_rel_name(toid);</span><br><span class="line">new_record[Anum_pg_accessaudit_selectcount - <span class="number">1</span>] = UInt32GetDatum(<span class="number">1000</span>);</span><br><span class="line">new_record[Anum_pg_accessaudit_insertcount - <span class="number">1</span>] = UInt32GetDatum(<span class="number">1000</span>);</span><br><span class="line">new_record[Anum_pg_accessaudit_updatecount - <span class="number">1</span>] = UInt32GetDatum(<span class="number">1000</span>);</span><br><span class="line">new_record[Anum_pg_accessaudit_deletecount - <span class="number">1</span>] = UInt32GetDatum(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">tuple = heap_form_tuple(access_audit_desc, new_record, nulls);</span><br><span class="line">CatalogTupleInsert(rel, tuple);</span><br><span class="line">heap_freetuple(tuple);</span><br><span class="line">heap_close(rel, NoLock);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">autovacuum_max_workers</span><br><span class="line">autovacuum_naptime</span><br><span class="line">autovacuum_vacuum_threshold</span><br><span class="line">autovacuum_analyze_threshold</span><br><span class="line">autovacuum_vacuum_scale_factor</span><br><span class="line">autovacuum_analyze_scale_factor</span><br><span class="line">autovacuum_freeze_max_age</span><br><span class="line">autovacuum_multixact_freeze_max_age</span><br><span class="line"></span><br><span class="line">autovacuum_vacuum_cost_delay</span><br><span class="line">autovacuum_vacuum_cost_limit</span><br><span class="line"></span><br><span class="line">vacuum_freeze_min_age</span><br><span class="line">vacuum_freeze_table_age</span><br><span class="line">vacuum_multixact_freeze_min_age</span><br><span class="line">vacuum_multixact_freeze_table_age</span><br><span class="line">vacuum_cleanup_index_scale_factor</span><br></pre></td></tr></table></figure>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p><a href="https://gangzai.online/2018/10/09/database/PostgreSql-page/" target="_blank" rel="noopener">Postgresql-Page-空间回收</a> </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>欣赏此文? 求鼓励,求支持!</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/zhifubao.png" alt="Rocky_Ansi 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.png" alt="Rocky_Ansi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Postgresql/" rel="tag"># Postgresql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/09/PostgreSQL/Postgresql-MVCC机制/" rel="next" title="Postgresql Mvcc">
+                <i class="fa fa-chevron-left"></i> Postgresql Mvcc
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/person.jpg"
+                alt="Rocky_Ansi" />
+            
+              <p class="site-author-name" itemprop="name">Rocky_Ansi</p>
+              <p class="site-description motion-element" itemprop="description">vagabond1132@gmail.com</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">118</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="http://github.com/vagabond1132" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/vagabond" target="_blank" title="博客园">
+                      
+                        <i class="fa fa-fw fa-globe"></i>博客园</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://rocky_ansi.gitee.io" title="新博客地址" target="_blank">新博客地址</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xtuer.github.io/" title="狗哥" target="_blank">狗哥</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://docs.pythontab.com" title="Python 在线手册" target="_blank">Python 在线手册</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://sec-redclub.com/index.php/604.html" title="安全类书籍" target="_blank">安全类书籍</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#autovacuum-launcher"><span class="nav-number">1.</span> <span class="nav-text">autovacuum launcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#autovacuum-worker"><span class="nav-number">2.</span> <span class="nav-text">autovacuum worker</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#结构体"><span class="nav-number">2.1.</span> <span class="nav-text">结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vacuum"><span class="nav-number">2.2.</span> <span class="nav-text">vacuum</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引申问题"><span class="nav-number">3.</span> <span class="nav-text">引申问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置参数"><span class="nav-number">4.</span> <span class="nav-text">配置参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接"><span class="nav-number">5.</span> <span class="nav-text">链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rocky_Ansi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+
+    <!-- 代码块复制功能 ligang -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+
+
+</body>
+</html>
