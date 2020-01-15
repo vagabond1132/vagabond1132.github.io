@@ -99,7 +99,7 @@
 <meta property="og:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
-<meta property="og:updated_time" content="2020-01-15T09:59:19.000Z">
+<meta property="og:updated_time" content="2020-01-15T10:41:39.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Vacuum进程">
 <meta name="twitter:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker, ​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到">
@@ -406,25 +406,20 @@
 </ul>
 <p>其中autovaucuum launcher主要负责调度worker,</p>
 <p>​    autovacuum worker进程进行具体的自动清理工作。</p>
-<p>其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple. </p>
-<p>好处:</p>
+<p>其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple.<br>好处:</p>
 <ul>
-<li><p>vacuum 进行扫描时，可以跳过page。</p>
-</li>
-<li><p>index-only sacn，可以减少tuple的可见性判断, 减少IO操作. 提高性能。</p>
-</li>
+<li>vacuum 进行扫描时，可以跳过page。</li>
+<li>index-only sacn，可以减少tuple的可见性判断, 减少IO操作. 提高性能。</li>
 </ul>
 <a id="more"></a>
 <h3 id="autovacuum-launcher"><a href="#autovacuum-launcher" class="headerlink" title="autovacuum launcher"></a>autovacuum launcher</h3><p>​    …… 待更新…</p>
+<p><br></p>
 <h3 id="autovacuum-worker"><a href="#autovacuum-worker" class="headerlink" title="autovacuum worker"></a>autovacuum worker</h3><p><code>src/backend/postmaster/autovacuum.c:AutoVacWorkerMain()</code>; </p>
 <p>函数工作流程如下:</p>
 <ul>
-<li><p>注册信号处理函数</p>
-</li>
-<li><p><code>BaseInit()</code></p>
-</li>
-<li><p>更新GUC参数配置</p>
-<ul>
+<li>注册信号处理函数</li>
+<li><code>BaseInit()</code></li>
+<li>更新GUC参数配置<ul>
 <li><code>zero_damaged_pages</code> 设置为 <code>false</code></li>
 <li><code>statement_timeout</code> 设置为 <code>0</code></li>
 <li><code>lock_timeout</code> 设置为 <code>0</code></li>
@@ -433,52 +428,37 @@
 <li><code>synchronous_commit</code> 设置为 <code>local</code>， 允许我们不接受备库的影响,能够进行正常的清理任务。</li>
 </ul>
 </li>
-<li><p>获取共享内存AutoVacuumShmem中av_startingWorker，并更新 dbid 和 MyWorkerInfo-&gt;wi_proc;</p>
-</li>
-<li><p>重新唤醒autovacuum launch; </p>
-</li>
-<li><p>获取 提交的最新xid 和 MultiXactId</p>
-</li>
+<li>获取共享内存AutoVacuumShmem中av_startingWorker，并更新 dbid 和 MyWorkerInfo-&gt;wi_proc;</li>
+<li>重新唤醒autovacuum launch; </li>
+<li>获取 提交的最新xid 和 MultiXactId</li>
 <li><p>执行do_autovacuum清理函数: =&gt; 从pg_class遍历所有表，进行清理工作</p>
 <ul>
-<li><p>初始化上下文</p>
-</li>
-<li><p>更新统计信息</p>
-</li>
-<li><p>获取effective_multixact_freeze_max_age</p>
-</li>
-<li><p>设置<code>default_freeze_min_age， default_freeze_table_age， default_multixact_freeze_min_age， default_multixact_freeze_table_age</code></p>
-</li>
+<li>初始化上下文</li>
+<li>更新统计信息</li>
+<li>获取effective_multixact_freeze_max_age</li>
+<li>设置<code>default_freeze_min_age， default_freeze_table_age， default_multixact_freeze_min_age， default_multixact_freeze_table_age</code></li>
 <li><p>开始遍历pg_class表记录，进行相应的逻辑处理</p>
 <ul>
 <li><p>孤儿临时表， continue。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (classForm-&gt;relpersistence == RELPERSISTENCE_TEMP)</span><br><span class="line">	if (!isTempNamespaceInUse(classForm-&gt;relnamespace))</span><br><span class="line">		orphan_oids = lappend_oid(orphan_oids, relid);</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>检查表 || [toase table] 是否需要vacuum &amp; analyzed &amp; multixact wraparound 过程如下:</p>
-<p><code>relation_needs_vacanalyze</code></p>
+<li><p>检查表 || [toase table] 是否需要vacuum &amp; analyzed &amp; multixact wraparound 过程如下:<br><code>relation_needs_vacanalyze</code></p>
 <ul>
 <li><p>do_vacuum: 该表统计信息中标记为dead的tuple数量大于<code>vac_base_thresh + vac_scale_factor * reltuples</code>时。具体细节如下:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vactuples = tabentry-&gt;n_dead_tuples; <span class="comment">//pgstat统计信息</span></span><br><span class="line"></span><br><span class="line">vac_base_thresh = (relopts &amp;&amp; relopts-&gt;vacuum_threshold &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;vacuum_threshold</span><br><span class="line">    : autovacuum_vac_thresh;</span><br><span class="line"></span><br><span class="line">vac_scale_factor = (relopts &amp;&amp; relopts-&gt;vacuum_scale_factor &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;vacuum_scale_factor</span><br><span class="line">    : autovacuum_vac_scale;</span><br><span class="line"></span><br><span class="line">vacthresh = (float4) vac_base_thresh + vac_scale_factor * reltuples;</span><br><span class="line"></span><br><span class="line">*dovacuum = force_vacuum || (vactuples &gt; vacthresh);</span><br></pre></td></tr></table></figure>
 </li>
-</ul>
+<li><p>do_analyze: 该表统计信息中上次analyze之后改变的元组数大于 <code>anl_base_thresh + anl_scale_factor * reltuples</code>时. 具体细节如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">anltuples = tabentry-&gt;changes_since_analyze; <span class="comment">//pgstat统计信息</span></span><br><span class="line"></span><br><span class="line">anl_base_thresh = (relopts &amp;&amp; relopts-&gt;analyze_threshold &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_threshold</span><br><span class="line">    : autovacuum_anl_thresh;</span><br><span class="line">anl_scale_factor = (relopts &amp;&amp; relopts-&gt;analyze_scale_factor &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_scale_factor</span><br><span class="line">    : autovacuum_anl_scale;</span><br><span class="line"></span><br><span class="line">anlthresh = (float4) anl_base_thresh + anl_scale_factor * reltuples;</span><br><span class="line"></span><br><span class="line">*doanalyze = (anltuples &gt; anlthresh);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>do_multixact_wraparound:<br>如果wraparound置为true，则将会强制执行do_vacuum;;</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xidForceLimit = recentXid - freeze_max_age; </span><br><span class="line"><span class="keyword">if</span> (xidForceLimit &lt; FirstNormalTransactionId) </span><br><span class="line">    xidForceLimit -= FirstNormalTransactionId;</span><br><span class="line">force_vacuum = (TransactionIdIsNormal(classForm-&gt;relfrozenxid) &amp;&amp;</span><br><span class="line">               TransactionIdPrecedes(classForm-&gt;relfrozenxid,  xidForceLimit)); </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!force_vacuum)</span><br><span class="line">&#123;</span><br><span class="line">    multiForceLimit = recentMulti - multixact_freeze_max_age;</span><br><span class="line">    <span class="keyword">if</span> (multiForceLimit &lt; FirstMultiXactId)</span><br><span class="line">        multiForceLimit -= FirstMultiXactId;</span><br><span class="line">    force_vacuum = MultiXactIdIsValid(classForm-&gt;relminmxid) &amp;&amp;</span><br><span class="line">       MultiXactIdPrecedes(classForm-&gt;relminmxid, multiForceLimit); </span><br><span class="line">&#125;</span><br><span class="line">*wraparound = force_vacuum;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<pre><code>* do_analyze: 该表统计信息中上次analyze之后改变的元组数大于 `anl_base_thresh + anl_scale_factor * reltuples`时. 具体细节如下:
-
-  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">anltuples = tabentry-&gt;changes_since_analyze; <span class="comment">//pgstat统计信息</span></span><br><span class="line"></span><br><span class="line">anl_base_thresh = (relopts &amp;&amp; relopts-&gt;analyze_threshold &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_threshold</span><br><span class="line">    : autovacuum_anl_thresh;</span><br><span class="line">anl_scale_factor = (relopts &amp;&amp; relopts-&gt;analyze_scale_factor &gt;= <span class="number">0</span>)</span><br><span class="line">    ? relopts-&gt;analyze_scale_factor</span><br><span class="line">    : autovacuum_anl_scale;</span><br><span class="line"></span><br><span class="line">anlthresh = (float4) anl_base_thresh + anl_scale_factor * reltuples;</span><br><span class="line"></span><br><span class="line">*doanalyze = (anltuples &gt; anlthresh);</span><br></pre></td></tr></table></figure>
-
-
-
-* do_multixact_wraparound: 
-
-  如果wraparound置为true，则将会强制执行do_vacuum;;
-
-  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xidForceLimit = recentXid - freeze_max_age; </span><br><span class="line"><span class="keyword">if</span> (xidForceLimit &lt; FirstNormalTransactionId) </span><br><span class="line">    xidForceLimit -= FirstNormalTransactionId;</span><br><span class="line">force_vacuum = (TransactionIdIsNormal(classForm-&gt;relfrozenxid) &amp;&amp;</span><br><span class="line">               TransactionIdPrecedes(classForm-&gt;relfrozenxid,  xidForceLimit)); </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!force_vacuum)</span><br><span class="line">&#123;</span><br><span class="line">    multiForceLimit = recentMulti - multixact_freeze_max_age;</span><br><span class="line">    <span class="keyword">if</span> (multiForceLimit &lt; FirstMultiXactId)</span><br><span class="line">        multiForceLimit -= FirstMultiXactId;</span><br><span class="line">    force_vacuum = MultiXactIdIsValid(classForm-&gt;relminmxid) &amp;&amp;</span><br><span class="line">       MultiXactIdPrecedes(classForm-&gt;relminmxid, multiForceLimit); </span><br><span class="line">&#125;</span><br><span class="line">*wraparound = force_vacuum;</span><br></pre></td></tr></table></figure>
-</code></pre><ul>
+</li>
 <li><p>获取需要进行vacuum or analyze的对象，存至table_oids;并进行遍历</p>
 <ul>
 <li>加载最新的GUC参数</li>
@@ -492,8 +472,7 @@
 <li>释放缓存，更新之前的MyWorkerInfo结构</li>
 </ul>
 </li>
-<li><p>更新该database的datfrozenxid: <code>vac_update_datfrozenxid</code></p>
-</li>
+<li>更新该database的datfrozenxid: <code>vac_update_datfrozenxid</code></li>
 </ul>
 <h4 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h4><ul>
 <li><p>autovac_table  autovacuum利用共享内存AutoVacuumShmem获取并行worker运行情况。传递的autovac_tab结构体参数如下:</p>
@@ -509,8 +488,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">vacuum(List *relations, VacuumParams *params,</span><br><span class="line">	 BufferAccessStrategy bstrategy, <span class="keyword">bool</span> isTopLevel)</span><br></pre></td></tr></table></figure>
 <p>传递<code>tab0-&gt;at_params</code> 校验vacuum类别;</p>
 <ul>
-<li><p>检查param参数</p>
-</li>
+<li>检查param参数</li>
 <li><p>更新pgstat统计信息 [在AutoVacuumWorkerProcess下,则跳过.]</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess())</span><br><span class="line">	pgstat_vacuum_stat();</span><br></pre></td></tr></table></figure>
 </li>

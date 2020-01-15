@@ -99,7 +99,7 @@
 <meta property="og:description" content="Pg 锁 与 Mvcc Mvcc- 事务 多版本并发控制 Postgresql也有表和行级别的锁功能，通常用于不需要完整事务隔离 并且想要显示管理特定冲突点的应用。 MVCC并发控制模型主要优点在MVCC中，对查询(读)数据的锁请求与写数据的锁请求不冲突，所以读不会堵塞写，而写也不堵塞读。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://www.gangzai.online/2020/01/09/PostgreSQL/Postgresql-MVCC机制/pg_img/update_delete_tuple_1.png">
-<meta property="og:updated_time" content="2020-01-15T10:35:09.855Z">
+<meta property="og:updated_time" content="2020-01-15T10:39:32.120Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Mvcc">
 <meta name="twitter:description" content="Pg 锁 与 Mvcc Mvcc- 事务 多版本并发控制 Postgresql也有表和行级别的锁功能，通常用于不需要完整事务隔离 并且想要显示管理特定冲突点的应用。 MVCC并发控制模型主要优点在MVCC中，对查询(读)数据的锁请求与写数据的锁请求不冲突，所以读不会堵塞写，而写也不堵塞读。">
@@ -464,20 +464,163 @@
 </ul>
 <p>事务对增、删、改所操作的数据上都留有其事务ID, 可以很方便的提交或者撤销。从而实现事务的原子性。</p>
 <h5 id="不希望的异常现象"><a href="#不希望的异常现象" class="headerlink" title="不希望的异常现象"></a>不希望的异常现象</h5><ul>
-<li><p>脏读(dirty reads)</p>
-<p>一个事务读取了另一个<strong>未提交的并行事务写的数据</strong>。</p>
-<p>|      |                     |                    |<br>| :–: | :—————–: | :—————-: |<br>| 时间 |        事务A        |       事务B        |<br>|  T1  |                     |      开始事务      |<br>|  T2  |      开始事务       |                    |<br>|  T3  |                     |  查询账户余额1000  |<br>|  T4  |                     | 去除500元，余额500 |<br>|  T5  |                     |       未提交       |<br>|  T6  | 查询余额为500(脏读) |                    |</p>
-</li>
-<li><p>不可重复读(non-repeatable reads)</p>
-<p>一个事务重新读取前面读取过的数据,发现该数据已经被另一个已提交的事务修改过。</p>
-<p>|      |                |                    |<br>| —- | ————– | —————— |<br>| 时间 | 事务A          | 事务B              |<br>| T1   | 开始事务       |                    |<br>| T2   | 查询余额为1000 | 开始事务           |<br>| T3   |                | 查询账户余额1000   |<br>| T4   |                | 去除500元，余额500 |<br>| T5   |                | 提交事务           |<br>| T6   | 查询余额为500  |                    |<br>| T7   | 提交事务       |                    |</p>
-</li>
-<li><p>幻读(phantom read)</p>
-<p>当前事务中重复执行相同的查询, 返回的记录数因另一个事务的插入或删除而得到不同的结果</p>
-<p>| 时间 | 事务A                                              | 事务B                                              |<br>| —- | ————————————————– | ————————————————– |<br>| T1   | 开始事务                                           |                                                    |<br>| T2   | select count(<em>) from Foos where flag1=1 //(10条)   | 开始事务                                           |<br>| T3   | update Foos set flag2=2 where flag1=1 //(10条)     |                                                    |<br>| T4   |                                                    | insert into Foos (..,flag1,…) values (.., 1 ,..) |<br>| T5   |                                                    | 提交事务                                           |<br>| T6   | select count(</em>) from Foos where flag1=1 //(11条)   |                                                    |<br>| T7   | update Foos set flag2=2 where flag1=1 //(更新11条) |                                                    |<br>| T8   | 提交事务                                           |                                                    |</p>
-<p>会看到新插入的那条数据会被更新。</p>
-</li>
+<li>脏读(dirty reads)</li>
 </ul>
+<p>一个事务读取了另一个<strong>未提交的并行事务写的数据</strong>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">时间</td>
+<td style="text-align:center">事务A</td>
+<td style="text-align:center">事务B</td>
+</tr>
+<tr>
+<td style="text-align:center">T1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">开始事务</td>
+</tr>
+<tr>
+<td style="text-align:center">T2</td>
+<td style="text-align:center">开始事务</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">T3</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">查询账户余额1000</td>
+</tr>
+<tr>
+<td style="text-align:center">T4</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">去除500元，余额500</td>
+</tr>
+<tr>
+<td style="text-align:center">T5</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">未提交</td>
+</tr>
+<tr>
+<td style="text-align:center">T6</td>
+<td style="text-align:center">查询余额为500(脏读)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>不可重复读(non-repeatable reads)</li>
+</ul>
+<p>一个事务重新读取前面读取过的数据,发现该数据已经被另一个已提交的事务修改过。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时间</td>
+<td>事务A</td>
+<td>事务B</td>
+</tr>
+<tr>
+<td>T1</td>
+<td>开始事务</td>
+<td></td>
+</tr>
+<tr>
+<td>T2</td>
+<td>查询余额为1000</td>
+<td>开始事务</td>
+</tr>
+<tr>
+<td>T3</td>
+<td></td>
+<td>查询账户余额1000</td>
+</tr>
+<tr>
+<td>T4</td>
+<td></td>
+<td>去除500元，余额500</td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>提交事务</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>查询余额为500</td>
+<td></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>提交事务</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>幻读(phantom read)</li>
+</ul>
+<p>当前事务中重复执行相同的查询, 返回的记录数因另一个事务的插入或删除而得到不同的结果</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>开始事务</td>
+<td></td>
+</tr>
+<tr>
+<td>T2</td>
+<td>select count(*) from Foos where flag1=1 //(10条)</td>
+<td>开始事务</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>update Foos set flag2=2 where flag1=1 //(10条)</td>
+<td></td>
+</tr>
+<tr>
+<td>T4</td>
+<td></td>
+<td>insert into Foos (..,flag1,…) values (.., 1 ,..)</td>
+</tr>
+<tr>
+<td>T5</td>
+<td></td>
+<td>提交事务</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>select count(*) from Foos where flag1=1 //(11条)</td>
+<td></td>
+</tr>
+<tr>
+<td>T7</td>
+<td>update Foos set flag2=2 where flag1=1 //(更新11条)</td>
+<td></td>
+</tr>
+<tr>
+<td>T8</td>
+<td>提交事务</td>
+</tr>
+</tbody>
+</table>
+<p>会看到新插入的那条数据会被更新。</p>
 <h5 id="MVCC保证事务的隔离性"><a href="#MVCC保证事务的隔离性" class="headerlink" title="MVCC保证事务的隔离性"></a>MVCC保证事务的隔离性</h5><table>
 <thead>
 <tr>
