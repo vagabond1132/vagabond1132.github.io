@@ -99,7 +99,7 @@
 <meta property="og:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker,​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://gitee.com/Rocky_Ansi/Picture/raw/master/2020-01-04-postgresql-vacuum/1579077220376.png">
-<meta property="og:updated_time" content="2020-01-15T10:47:48.013Z">
+<meta property="og:updated_time" content="2020-01-16T03:22:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Postgresql Vacuum进程">
 <meta name="twitter:description" content="Postgresql数据库为了定时清理因为MVCC引入的垃圾数据，实现了自动清理的机制。[基于pg12]  autovacuum launcher autovacuum worker  其中autovaucuum launcher主要负责调度worker,​    autovacuum worker进程进行具体的自动清理工作。 其中 visibility map[vm:PG8.4版本后增加]起到重">
@@ -499,22 +499,20 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (params-&gt;options &amp; VACOPT_VACUUM)  <span class="comment">//vacuum flag -</span></span><br><span class="line">	<span class="keyword">if</span> (!vacuum_rel(vrel-&gt;oid, vrel-&gt;relation, params))</span><br><span class="line">		<span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
 <p>从此处我们看得出，默认的autovacuum 执行的是lazy vacuum: 只是将dead元组，标记为可用; 并不会进行碎片整理，释放交换给操作系统。</p>
 <p>函数的主要流程如下:</p>
-<p>vacuum_rel—&gt;table_relation_vacuum-&gt;heap_vacuum_rel-&gt;lazy_scan_heap -&gt; {lazy_vacuum_index-&gt;index_bulk_delete,   lazy_vacuum_heap-&gt;lazy_vacuum_page};</p>
+<p>vacuum_rel—&gt;table_relation_vacuum-&gt;heap_vacuum_rel-&gt;lazy_scan_heap -&gt; {lazy_vacuum_index-&gt;index_bulk_delete,   lazy_vacuum_heap [循环page/更新fsm]-&gt;lazy_vacuum_page};</p>
 <ul>
 <li>确认表的可读性与操作性.</li>
 <li>检查用户对表的操作权限.</li>
 <li>检查relation-&gt;relkind 是否可操作的类型.</li>
 <li>忽略其余的临时表.</li>
 <li>将relation所有页面，标记dead元组为可用 <code>ItemIdSetUnused</code>, 并设置脏页，刷新到磁盘;</li>
-<li>更新visibility map - </li>
+<li>更新visibility map.</li>
 <li>更新pgstat统计信息.</li>
 </ul>
 </li>
 <li>VACOPT_ANALYZE: 调用analyze_rel函数<br>……</li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><p>释放上下文, 并更新vac_update_datfrozenxid();</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((params-&gt;options &amp; VACOPT_VACUUM) &amp;&amp; !IsAutoVacuumWorkerProcess())</span><br><span class="line">	vac_update_datfrozenxid();</span><br></pre></td></tr></table></figure>
 </li>
@@ -817,7 +815,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
 
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
