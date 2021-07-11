@@ -109,8 +109,8 @@
         <category>工具</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>C/C++</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -215,9 +215,9 @@
         <category>Debug</category>
       </categories>
       <tags>
+        <tag>Postgresql</tag>
         <tag>Linux</tag>
         <tag>Commands</tag>
-        <tag>Postgresql</tag>
       </tags>
   </entry>
   <entry>
@@ -240,8 +240,8 @@
         <category>LeetCode</category>
       </categories>
       <tags>
-        <tag>Algorithm</tag>
         <tag>C/C++</tag>
+        <tag>Algorithm</tag>
       </tags>
   </entry>
   <entry>
@@ -606,8 +606,8 @@
     <url>%2F2018%2F02%2F27%2Fcpluscplus%2FLinux-setjmp-longjmp%2F</url>
     <content type="text"><![CDATA[错误处理是任何语言都需要解决的问题，任何语言都不能保证100%的正确运行，都需要异常机制的存在，例如c++ 的try ... catch , c 语言因此提供 setjmp 与 longjmp 来实现 内存堆栈的跳转。 实现一种非本地局部跳转的机制, 本地局部跳转如:goto 函数定义12int setjmp(jmp_buf jb);void longjmp(jmp_buf jb, int r); setjmp 用于保存程序的运行时堆栈环境 cs:ip 寄存器; longjmp 恢复先前程序中调用setjmp 函数所保存的堆栈环境; 示例12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152[Postgres@yfslcentos71 code]$ cat jmp.c #include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;#include &lt;setjmp.h&gt;jmp_buf jb;void f1()&#123; printf(&quot;进入f1()\n&quot;); //if(0/*正确执行*/)&#123; &#125; if(1/*正确执行*/)&#123; printf(&quot;F1 正确执行\n&quot;); &#125; else &#123; printf(&quot;F1 执行错误\n&quot;); longjmp(jb,1); &#125; printf(&quot;退出f1()\n&quot;);&#125;void f2()&#123; printf(&quot;进入f2()\n&quot;); if(0/*正确执行*/) &#123; printf(&quot;F2 正确执行\n&quot;); &#125; else &#123; printf(&quot;F2 执行错误\n&quot;); longjmp(jb, 2); &#125; printf(&quot;退出f2()\n&quot;);&#125;int main()&#123; int r = setjmp(jb); printf(&quot;longjmp 返回值 r = %d\n&quot;, r); if(r==0)&#123; f1(); f2(); &#125;else if(r==1)&#123; printf(&quot;else if 1 返回值 r = %d\n&quot;, r); printf(&quot;处理错误1\n&quot;); exit(1); &#125;else if(r==2)&#123; printf(&quot;else if 2 返回值 r = %d\n&quot;, r); printf(&quot;处理错误2\n&quot;); exit(2); &#125; printf(&quot;所有函数执行完毕, 程序结束\n&quot;); return 0;&#125; 输出结果 12345678910[Postgres@yfslcentos71 code]$ ./jmp longjmp 返回值 r = 0 &lt;==&gt; 初始执行 返回值 为 0;进入f1()F1 正确执行退出f1()进入f2() F2 执行错误 &lt;==&gt; longjmp 跳转;longjmp 返回值 r = 2 &lt;==&gt; 重新返回 setjmp 处，其r值即为longjmp的第二参数;else if 2 返回值 r = 2 &lt;==&gt; 执行 else if 语句处理错误2]]></content>
       <tags>
-        <tag>Linux</tag>
         <tag>C/C++</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
