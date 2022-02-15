@@ -1218,18 +1218,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[Linux 常用命令]]></title>
-    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_command%2F</url>
-    <content type="text"><![CDATA[本文将常用的Linux 命令按照功能划分从以下八个方面讲解: 1. 文件管理 2. 文件传输 3. 文档编辑 4. 磁盘管理 5. 磁盘维护 6. 网络通讯 7. 系统管理 8. 系统设置 1. 文件管理 cat用法：cat [选项]… [文件]… 将[文件]或标准输入组合输出到标准输出。 tail tailftail : 默认将文件的末尾10行输出到标准输出中;tailf: 只显示新追加到文件的内容 等价于: tail -f cp用法：cp [选项]… [-T] 源文件 目标文件 或：cp [选项]… 源文件… 目录 或：cp [选项]… -t 目录 源文件…拷贝源文件 到目标地址， 可以选择多个源文件 mv用法：mv [选项]… [-T] 源文件 目标文件 或：mv [选项]… 源文件… 目录 或：mv [选项]… -t 目录 源文件…重命名源文件名为目标文件名, 或者是移动源文件到指定目录 rm用法：rm [选项]… 文件…移除 删除 文件; od用法：od [选项]… [文件]… 或：od [-abcdfilosx]… [文件] [[+]偏移量[.][b]] 或：od –traditional [选项]… [文件] [[+]偏移量[.][b] [+][标签][.][b]] 将指定文件以八进制形式(默认)转储到标准输出。如果指定了多于一个的文件参数，程序会自动将输入的内容整合为列表并以同样的形式输出。如果没有指定文件，或指定文件为”-“，程序从标准输入读取数据。 patchpatch 命令读取如何更改文件 的源文件指示信息，然后应用这些更改。源文件包含由 diff -c 或 -u 命令产生的差别列表（或者 diff 列表），以及一个或多个 diff 命令输出集（通常称为 hunks）。patch 结合差异的文件， 进行补全; diff 配合 patch: diff -ruN test1 test2 &gt; patch.log # 生成patch文件 patch test2 patch.log # 利用patch文件和patch命令打补丁 mkdir 用法：mkdir [选项]… 目录… 创建一个空的目录 rmdir用法：rm [选项]… 文件…删除一个空目录 chmod用法：chmod [选项]… 模式[,模式]… 文件… 或：chmod [选项]… 八进制模式 文件… 或：chmod [选项]… –reference=参考文件 文件…更改文件的属性: r w x chown 用法：chown [选项]… [所有者][:[组]] 文件… 或：chown [选项]… –reference=参考文件 文件… 更改文件的所属用户和所属组; whichUsage: /usr/bin/which [options] [–] COMMAND […]将命令的路径输出命令行界面; fileUsage: file [OPTION…] [FILE…]探测给定文件的类型 2. 文件传输 ftp scp rz/sz (串口) 3. 文档编辑 grep sort tr wc split sed awk 4. 磁盘管理 ls cd df du pwd tar tree find 5. 磁盘维护 dd fdisk mkfd mkswap sync 6. 网络通讯 ifconfig ip nc mesg ping netstat [ss] telnet traceroute route 7. 系统管理 date free kill ps last w whoami nice reboot shutdown su sudo top[htop] 8. 系统设置 alias [unlimit] set [unset] chkconfig service crontab at export passwd ulimit 参照: Linux Tools Quick Tutorial]]></content>
-      <categories>
-        <category>命令</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Commands</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[Linux 字符编码 查看与转换]]></title>
     <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_encoding%2F</url>
     <content type="text"><![CDATA[不同操作系统之间的换行表现形式不同需要常用编码转化 以及 文件转码; Linux 查看文件编码格式 Vim 查看文件编码 1set fileencoding // 即可显示文件编码格式 若想解决Vim查看文件乱码问题， 可以在 .vimrc 文件添加 1set encoding=utf-8 fileencoding=utf-8, cp936,gb2312 等 enca (yum install enca) 查看文件编码 1enca filename // enca对某些GBK编码文件并不识别 Unrecognized encoding 文件编码转化 Vim直接转化文件编码1set fileencoding=utf-8 iconv 1iconv -f encoding -t encoding inputfile 例如: 将一个utf-8 编码转化为GBK编码 1iconv -f utf-8 -t gbk file -o file2 1234567891011121314151617181920iconv命令用于转换指定文件的编码,默认输出到标准输出设备,亦可指定输出文件。 用法： iconv [选项...] [文件...] 有如下选项可用: 输入/输出格式规范： -f, --from-code=名称 原始文本编码 -t, --to-code=名称 输出编码 信息： -l, --list 列举所有已知的字符集 输出控制： -c 从输出中忽略无效的字符 -o, --output=FILE 输出文件 -s, --silent 关闭警告 --verbose 打印进度信息 -?, --help 给出该系统求助列表 --usage 给出简要的用法信息 -V, --version 打印程序版本号 例子: iconv -f utf-8 -t gb2312 aaa.txt &gt;bbb.txt 这个命令读取aaa.txt文件，从utf-8编码转换为gb2312编码,其输出定向到bbb.txt文件。 enconv将一个GBK编码转化为 utf-8编码 1enconv -L zh_CN -x utf-8 filename dos2unix : window 文件 cpoy 到 linux 格式转化 DOS下的文本文件是以\r\n作为断行标志的 Mac文本是以 \r 作为换行标志 Linux文本以 \n 作为换行标志 1dos2unix filename]]></content>
@@ -1240,6 +1228,18 @@
         <tag>Linux</tag>
         <tag>Commands</tag>
         <tag>Vim</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Linux 常用命令]]></title>
+    <url>%2F2017%2F07%2F09%2Fcommands%2FLinux_command%2F</url>
+    <content type="text"><![CDATA[本文将常用的Linux 命令按照功能划分从以下八个方面讲解: 1. 文件管理 2. 文件传输 3. 文档编辑 4. 磁盘管理 5. 磁盘维护 6. 网络通讯 7. 系统管理 8. 系统设置 1. 文件管理 cat用法：cat [选项]… [文件]… 将[文件]或标准输入组合输出到标准输出。 tail tailftail : 默认将文件的末尾10行输出到标准输出中;tailf: 只显示新追加到文件的内容 等价于: tail -f cp用法：cp [选项]… [-T] 源文件 目标文件 或：cp [选项]… 源文件… 目录 或：cp [选项]… -t 目录 源文件…拷贝源文件 到目标地址， 可以选择多个源文件 mv用法：mv [选项]… [-T] 源文件 目标文件 或：mv [选项]… 源文件… 目录 或：mv [选项]… -t 目录 源文件…重命名源文件名为目标文件名, 或者是移动源文件到指定目录 rm用法：rm [选项]… 文件…移除 删除 文件; od用法：od [选项]… [文件]… 或：od [-abcdfilosx]… [文件] [[+]偏移量[.][b]] 或：od –traditional [选项]… [文件] [[+]偏移量[.][b] [+][标签][.][b]] 将指定文件以八进制形式(默认)转储到标准输出。如果指定了多于一个的文件参数，程序会自动将输入的内容整合为列表并以同样的形式输出。如果没有指定文件，或指定文件为”-“，程序从标准输入读取数据。 patchpatch 命令读取如何更改文件 的源文件指示信息，然后应用这些更改。源文件包含由 diff -c 或 -u 命令产生的差别列表（或者 diff 列表），以及一个或多个 diff 命令输出集（通常称为 hunks）。patch 结合差异的文件， 进行补全; diff 配合 patch: diff -ruN test1 test2 &gt; patch.log # 生成patch文件 patch test2 patch.log # 利用patch文件和patch命令打补丁 mkdir 用法：mkdir [选项]… 目录… 创建一个空的目录 rmdir用法：rm [选项]… 文件…删除一个空目录 chmod用法：chmod [选项]… 模式[,模式]… 文件… 或：chmod [选项]… 八进制模式 文件… 或：chmod [选项]… –reference=参考文件 文件…更改文件的属性: r w x chown 用法：chown [选项]… [所有者][:[组]] 文件… 或：chown [选项]… –reference=参考文件 文件… 更改文件的所属用户和所属组; whichUsage: /usr/bin/which [options] [–] COMMAND […]将命令的路径输出命令行界面; fileUsage: file [OPTION…] [FILE…]探测给定文件的类型 2. 文件传输 ftp scp rz/sz (串口) 3. 文档编辑 grep sort tr wc split sed awk 4. 磁盘管理 ls cd df du pwd tar tree find 5. 磁盘维护 dd fdisk mkfd mkswap sync 6. 网络通讯 ifconfig ip nc mesg ping netstat [ss] telnet traceroute route 7. 系统管理 date free kill ps last w whoami nice reboot shutdown su sudo top[htop] 8. 系统设置 alias [unlimit] set [unset] chkconfig service crontab at export passwd ulimit 参照: Linux Tools Quick Tutorial]]></content>
+      <categories>
+        <category>命令</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Commands</tag>
       </tags>
   </entry>
   <entry>
